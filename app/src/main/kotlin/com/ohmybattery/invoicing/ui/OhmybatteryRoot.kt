@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ohmybattery.invoicing.ui.catalog.CatalogScreen
 import com.ohmybattery.invoicing.ui.invoices.create.CreateInvoiceScreen
 import com.ohmybattery.invoicing.ui.invoices.detail.InvoiceDetailScreen
 import com.ohmybattery.invoicing.ui.invoices.list.InvoiceListScreen
@@ -40,7 +41,13 @@ fun OhmybatteryRoot() {
             InvoiceDetailScreen(invoiceId = id, onBack = { nav.popBackStack() })
         }
         composable(Routes.SETTINGS) {
-            SettingsScreen(onBack = { nav.popBackStack() })
+            SettingsScreen(
+                onBack = { nav.popBackStack() },
+                onOpenCatalog = { nav.navigate(Routes.CATALOG) },
+            )
+        }
+        composable(Routes.CATALOG) {
+            CatalogScreen(onBack = { nav.popBackStack() })
         }
     }
 }

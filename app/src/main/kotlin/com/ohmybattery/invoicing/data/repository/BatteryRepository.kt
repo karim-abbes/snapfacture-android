@@ -9,6 +9,11 @@ import javax.inject.Singleton
 @Singleton
 class BatteryRepository @Inject constructor(private val dao: BatteryDao) {
     fun observeActive(): Flow<List<BatteryEntity>> = dao.observeActive()
-    suspend fun insert(item: BatteryEntity): Long = dao.insert(item)
+    fun observeAll(): Flow<List<BatteryEntity>> = dao.observeAll()
+    suspend fun insert(item: BatteryEntity): Long {
+        val nextOrder = (dao.maxSortOrder() ?: 0) + 1
+        return dao.insert(item.copy(sortOrder = if (item.sortOrder == 0) nextOrder else item.sortOrder))
+    }
     suspend fun update(item: BatteryEntity) = dao.update(item)
+    suspend fun setActive(id: Long, active: Boolean) = dao.setActive(id, active)
 }

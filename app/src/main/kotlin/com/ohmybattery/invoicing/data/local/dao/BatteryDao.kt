@@ -13,8 +13,17 @@ interface BatteryDao {
     @Query("SELECT * FROM batteries WHERE active = 1 ORDER BY sortOrder ASC, priceTtcCents ASC")
     fun observeActive(): Flow<List<BatteryEntity>>
 
+    @Query("SELECT * FROM batteries ORDER BY active DESC, sortOrder ASC, priceTtcCents ASC")
+    fun observeAll(): Flow<List<BatteryEntity>>
+
     @Query("SELECT COUNT(*) FROM batteries")
     suspend fun count(): Int
+
+    @Query("SELECT MAX(sortOrder) FROM batteries")
+    suspend fun maxSortOrder(): Int?
+
+    @Query("UPDATE batteries SET active = :active WHERE id = :id")
+    suspend fun setActive(id: Long, active: Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<BatteryEntity>)
