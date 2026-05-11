@@ -44,10 +44,24 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Rename APK
+      - name: Locate and rename APK
         run: |
+          set -e
           mkdir -p artifact
-          cp app/build/outputs/apk/debug/app-debug.apk artifact/ohmybattery-debug.apk
+          echo "::group::APK candidates"
+          find app/build/outputs -name "*.apk" -print || true
+          echo "::endgroup::"
+          APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          if [ -z "$APK" ]; then
+            echo "::error::No APK found under app/build/outputs/apk/debug"
+            echo "::group::Tail of build.log"
+            tail -n 200 build.log || true
+            echo "::endgroup::"
+            exit 1
+          fi
+          echo "Found APK: $APK"
+          cp "$APK" artifact/ohmybattery-debug.apk
+          ls -lh artifact/
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
