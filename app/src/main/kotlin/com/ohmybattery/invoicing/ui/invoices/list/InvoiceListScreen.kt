@@ -79,7 +79,7 @@ fun InvoiceListScreen(
         },
     ) { pad ->
         Column(modifier = Modifier.padding(pad).fillMaxSize()) {
-            MonthSummary(state.monthRevenueCents, state.monthCount)
+            PeriodSummary(state.period, state.periodRevenueCents, state.periodInvoiceCount)
             FilterBar(state, vm)
             if (state.invoices.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -109,13 +109,18 @@ fun InvoiceListScreen(
 }
 
 @Composable
-private fun MonthSummary(revenue: Long, count: Int) {
+private fun PeriodSummary(period: Period, revenue: Long, count: Int) {
+    val (title, suffix) = when (period) {
+        Period.Month -> "CA du mois" to "ce mois-ci"
+        Period.Year -> "CA de l'année" to "cette année"
+        Period.All -> "CA total" to "au total"
+    }
     Card(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
     ) {
         Column(Modifier.padding(20.dp)) {
-            Text("CA du mois", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelLarge)
+            Text(title, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelLarge)
             Spacer(Modifier.height(4.dp))
             Text(
                 Money.formatEurPlain(revenue),
@@ -123,7 +128,7 @@ private fun MonthSummary(revenue: Long, count: Int) {
                 style = MaterialTheme.typography.displayLarge,
             )
             Text(
-                "$count facture${if (count > 1) "s" else ""} ce mois-ci",
+                "$count facture${if (count > 1) "s" else ""} $suffix",
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
                 style = MaterialTheme.typography.bodyMedium,
             )

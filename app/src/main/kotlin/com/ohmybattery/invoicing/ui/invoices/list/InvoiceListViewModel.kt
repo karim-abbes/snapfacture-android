@@ -20,8 +20,8 @@ enum class Period { Month, Year, All }
 data class InvoiceListUiState(
     val invoices: List<InvoiceWithDetails> = emptyList(),
     val creditedInvoiceIds: Set<Long> = emptySet(),
-    val monthRevenueCents: Long = 0L,
-    val monthCount: Int = 0,
+    val periodRevenueCents: Long = 0L,
+    val periodInvoiceCount: Int = 0,
     val query: String = "",
     val period: Period = Period.Month,
     val descending: Boolean = true,
@@ -44,25 +44,24 @@ class InvoiceListViewModel @Inject constructor(
     )
 
     val state: StateFlow<InvoiceListUiState> =
-        combine(
-            repo.observeAll(),
-            repo.observeRevenueSince(monthStart),
-            repo.observeCountSince(monthStart),
-            filters,
-        ) { all, revenue, count, f ->
+        combine(repo.observeAll(), filters) { all, f ->
             val creditedIds = all
                 .filter { it.invoice.type == InvoiceType.CREDIT_NOTE }
                 .mapNotNull { it.invoice.linkedInvoiceId }
                 .toSet()
-            val filtered = all
-                .filter { matchesPeriod(it, f.period) }
+            val inPeriod = all.filter { matchesPeriod(it, f.period) }
+            val revenue = inPeriod.sumOf { it.invoice.totalTtcCents }
+            val invoiceCount = inPeriod.count { it.invoice.type == InvoiceType.INVOICE }
+
+            val filtered = inPeriod
                 .filter { matchesQuery(it, f.query) }
                 .let { if (f.descending) it.sortedByDescending(::sortKey) else it.sortedBy(::sortKey) }
+
             InvoiceListUiState(
                 invoices = filtered,
                 creditedInvoiceIds = creditedIds,
-                monthRevenueCents = revenue ?: 0L,
-                monthCount = count,
+                periodRevenueCents = revenue,
+                periodInvoiceCount = invoiceCount,
                 query = f.query,
                 period = f.period,
                 descending = f.descending,
