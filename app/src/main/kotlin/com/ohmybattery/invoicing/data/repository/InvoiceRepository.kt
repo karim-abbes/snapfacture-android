@@ -1,6 +1,7 @@
 package com.ohmybattery.invoicing.data.repository
 
 import androidx.room.withTransaction
+import com.ohmybattery.invoicing.core.backup.BackupManager
 import com.ohmybattery.invoicing.core.money.Money
 import com.ohmybattery.invoicing.data.local.AppDatabase
 import com.ohmybattery.invoicing.data.local.dao.AuditDao
@@ -43,6 +44,7 @@ class InvoiceRepository @Inject constructor(
     private val invoiceDao: InvoiceDao,
     private val companyDao: CompanyDao,
     private val auditDao: AuditDao,
+    private val backupManager: BackupManager,
 ) {
 
     fun observeAll(): Flow<List<InvoiceWithDetails>> = invoiceDao.observeAllWithDetails()
@@ -120,7 +122,7 @@ class InvoiceRepository @Inject constructor(
         appendAudit(invoiceId, "INVOICE_ISSUED", number.toString() + "|" + totalTtc.toString())
 
         invoiceId
-    }
+    }.also { backupManager.triggerIfEnabled() }
 
     suspend fun attachPdf(invoiceId: Long, path: String) {
         invoiceDao.setPdfPath(invoiceId, path)
@@ -176,6 +178,7 @@ class InvoiceRepository @Inject constructor(
         invoiceDao.insertLines(newLines)
 
         appendAudit(newId, "CREDIT_NOTE_ISSUED", "${orig.invoice.number}->$number")
+        backupManager.triggerIfEnabled()
         return newId
     }
 

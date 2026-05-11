@@ -8,6 +8,7 @@ object Routes {
     const val CATALOG = "catalog"
     const val IMPORT = "import"
     const val EXPORT = "export"
+    const val BACKUP = "backup"
 
     fun detail(invoiceId: Long) = "invoices/$invoiceId"
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Inventory2
@@ -48,6 +49,7 @@ fun SettingsScreen(
     onOpenCatalog: () -> Unit,
     onOpenImport: () -> Unit,
     onOpenExport: () -> Unit,
+    onOpenBackup: () -> Unit,
     vm: SettingsViewModel = hiltViewModel(),
 ) {
     val company by vm.company.collectAsStateWithLifecycle()
@@ -163,6 +165,30 @@ fun SettingsScreen(
                             Text("Exporter en CSV", style = MaterialTheme.typography.titleMedium)
                             Text(
                                 "Envoyer toutes les factures à votre comptable",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Icon(Icons.Default.ChevronRight, contentDescription = null)
+                    }
+                }
+            }
+            item {
+                Card(onClick = onOpenBackup, modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            Icons.Default.Backup,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                        Spacer(Modifier.size(12.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text("Sauvegarde automatique", style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                "Copie de la base après chaque facture (Drive, OneDrive...)",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
