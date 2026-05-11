@@ -3,13 +3,9 @@ package com.ohmybattery.invoicing.core.csv
 import java.io.PushbackReader
 import java.io.Reader
 
-/**
- * Minimal RFC 4180 CSV parser. Supports quoted fields, embedded commas, embedded
- * newlines inside quotes, and the doubled-quote escape ("").
- */
 object CsvParser {
 
-    private const val BOM: Char = '﻿'
+    private const val BOM: Char = '\uFEFF'
 
     fun parse(input: Reader, separator: Char = ','): List<List<String>> {
         val reader = PushbackReader(input, 4)
