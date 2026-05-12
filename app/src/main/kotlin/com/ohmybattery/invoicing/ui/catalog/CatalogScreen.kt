@@ -1,4 +1,4 @@
-package com.ohmybattery.invoicing.ui.catalog
+package com.ohmyproduct.invoicing.ui.catalog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,8 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.text.KeyboardOptions
-import com.ohmybattery.invoicing.core.money.Money
-import com.ohmybattery.invoicing.data.local.entity.BatteryEntity
+import com.ohmyproduct.invoicing.core.money.Money
+import com.ohmyproduct.invoicing.data.local.entity.ProductEntity
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,8 +99,8 @@ fun CatalogScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(items, key = { it.id }) { b ->
-                    BatteryListItem(
-                        battery = b,
+                    ProductListItem(
+                        product = b,
                         onEdit = { editing = CatalogDraft.from(b) },
                         onToggleActive = { vm.toggleActive(b) },
                     )
@@ -120,15 +120,15 @@ fun CatalogScreen(
 }
 
 @Composable
-private fun BatteryListItem(
-    battery: BatteryEntity,
+private fun ProductListItem(
+    product: ProductEntity,
     onEdit: () -> Unit,
     onToggleActive: () -> Unit,
 ) {
     Card(
         onClick = onEdit,
         colors = CardDefaults.cardColors(
-            containerColor = if (battery.active) MaterialTheme.colorScheme.surface
+            containerColor = if (product.active) MaterialTheme.colorScheme.surface
             else MaterialTheme.colorScheme.surfaceVariant,
         ),
     ) {
@@ -137,7 +137,7 @@ private fun BatteryListItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                if (battery.withInstall) {
+                if (product.withInstall) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Default.Build,
@@ -147,7 +147,7 @@ private fun BatteryListItem(
                         )
                         Spacer(Modifier.size(4.dp))
                         Text(
-                            "Pose à domicile",
+                            "Avec service à domicile",
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.secondary,
                         )
@@ -155,19 +155,19 @@ private fun BatteryListItem(
                     Spacer(Modifier.height(4.dp))
                 }
                 Text(
-                    battery.label,
+                    product.label,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = if (battery.active) MaterialTheme.colorScheme.onSurface
+                    color = if (product.active) MaterialTheme.colorScheme.onSurface
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    Money.formatEurPlain(battery.priceTtcCents) + " TTC",
+                    Money.formatEurPlain(product.priceTtcCents) + " TTC",
                     style = MaterialTheme.typography.titleMedium,
-                    color = if (battery.active) MaterialTheme.colorScheme.primary
+                    color = if (product.active) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold,
                 )
-                if (!battery.active) {
+                if (!product.active) {
                     Text(
                         "Désactivé",
                         style = MaterialTheme.typography.labelMedium,
@@ -175,7 +175,7 @@ private fun BatteryListItem(
                     )
                 }
             }
-            Switch(checked = battery.active, onCheckedChange = { onToggleActive() })
+            Switch(checked = product.active, onCheckedChange = { onToggleActive() })
             Spacer(Modifier.size(4.dp))
             IconButton(onClick = onEdit) {
                 Icon(Icons.Default.Edit, contentDescription = "Modifier")
@@ -234,9 +234,9 @@ private fun EditSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("Pose à domicile", style = MaterialTheme.typography.bodyLarge)
+                    Text("Service à domicile inclus", style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        "Ajoute automatiquement la mention « Changement de batterie effectué par notre technicien chez le client »",
+                        "Ajoute automatiquement une note de service sur la facture (intervention chez le client).",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

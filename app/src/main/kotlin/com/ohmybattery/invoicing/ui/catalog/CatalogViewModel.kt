@@ -2,8 +2,8 @@ package com.ohmybattery.invoicing.ui.catalog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ohmybattery.invoicing.data.local.entity.BatteryEntity
-import com.ohmybattery.invoicing.data.repository.BatteryRepository
+import com.ohmybattery.invoicing.data.local.entity.ProductEntity
+import com.ohmybattery.invoicing.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +29,7 @@ data class CatalogDraft(
             ?.let { Math.round(it * 100.0) }
 
     companion object {
-        fun from(b: BatteryEntity) = CatalogDraft(
+        fun from(b: ProductEntity) = CatalogDraft(
             id = b.id,
             label = b.label,
             priceTtcEuros = "%.2f".format(b.priceTtcCents / 100.0).replace('.', ','),
@@ -41,10 +41,10 @@ data class CatalogDraft(
 
 @HiltViewModel
 class CatalogViewModel @Inject constructor(
-    private val repo: BatteryRepository,
+    private val repo: ProductRepository,
 ) : ViewModel() {
 
-    val items: StateFlow<List<BatteryEntity>> =
+    val items: StateFlow<List<ProductEntity>> =
         repo.observeAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun save(draft: CatalogDraft, onDone: () -> Unit) {
@@ -52,7 +52,7 @@ class CatalogViewModel @Inject constructor(
         viewModelScope.launch {
             if (draft.id == 0L) {
                 repo.insert(
-                    BatteryEntity(
+                    ProductEntity(
                         label = draft.label.trim(),
                         priceTtcCents = cents,
                         withInstall = draft.withInstall,
@@ -74,7 +74,7 @@ class CatalogViewModel @Inject constructor(
         }
     }
 
-    fun toggleActive(item: BatteryEntity) {
+    fun toggleActive(item: ProductEntity) {
         viewModelScope.launch { repo.setActive(item.id, !item.active) }
     }
 }

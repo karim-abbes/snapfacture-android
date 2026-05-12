@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ohmybattery.invoicing.core.money.Money
 import com.ohmybattery.invoicing.core.pdf.InvoicePdfGenerator
-import com.ohmybattery.invoicing.data.local.entity.BatteryEntity
+import com.ohmybattery.invoicing.data.local.entity.ProductEntity
 import com.ohmybattery.invoicing.data.local.entity.ClientEntity
 import com.ohmybattery.invoicing.data.local.entity.PaymentMethod
 import com.ohmybattery.invoicing.data.preferences.CountryPreferences
-import com.ohmybattery.invoicing.data.repository.BatteryRepository
+import com.ohmybattery.invoicing.data.repository.ProductRepository
 import com.ohmybattery.invoicing.data.repository.ClientRepository
 import com.ohmybattery.invoicing.data.repository.CompanyRepository
 import com.ohmybattery.invoicing.data.repository.DraftLine
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class CartLine(
-    val battery: BatteryEntity,
+    val product: ProductEntity,
     val quantity: Int,
 )
 
@@ -46,16 +46,16 @@ data class CreateUiState(
     val isSaving: Boolean = false,
     val error: String? = null,
 ) {
-    val totalTtcCents: Long get() = cart.sumOf { it.battery.priceTtcCents * it.quantity }
+    val totalTtcCents: Long get() = cart.sumOf { it.product.priceTtcCents * it.quantity }
     val totalHtCents: Long get() =
         if (taxOptedOut) totalTtcCents
         else cart.sumOf {
-            val ht = Money.htFromTtc(it.battery.priceTtcCents, it.battery.vatRatePermille)
+            val ht = Money.htFromTtc(it.product.priceTtcCents, it.product.vatRatePermille)
             ht * it.quantity
         }
     val totalVatCents: Long get() = if (taxOptedOut) 0L else totalTtcCents - totalHtCents
 
-    val hasInstallLine: Boolean get() = cart.any { it.battery.withInstall }
+    val hasInstallLine: Boolean get() = cart.any { it.product.withInstall }
 
     val canIssue: Boolean get() {
         if (isSaving) return false
@@ -72,7 +72,7 @@ data class CreateUiState(
 @HiltViewModel
 class CreateInvoiceViewModel @Inject constructor(
     private val clientRepo: ClientRepository,
-    batteryRepo: BatteryRepository,
+    productRepo: ProductRepository,
     private val companyRepo: CompanyRepository,
     private val invoiceRepo: InvoiceRepository,
     private val pdfGenerator: InvoicePdfGenerator,
@@ -82,8 +82,8 @@ class CreateInvoiceViewModel @Inject constructor(
     private val _state = MutableStateFlow(CreateUiState())
     val state: StateFlow<CreateUiState> = _state.asStateFlow()
 
-    val catalog: StateFlow<List<BatteryEntity>> =
-        batteryRepo.observeActive().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val catalog: StateFlow<List<ProductEntity>> =
+        productRepo.observeActive().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
         viewModelScope.launch {
@@ -121,9 +121,9 @@ class CreateInvoiceViewModel @Inject constructor(
         _state.update { it.copy(vehicleRegistration = s.uppercase()) }
     fun onCommentChange(s: String) = _state.update { it.copy(comment = s) }
 
-    fun addBattery(b: BatteryEntity) {
+    fun addProduct(b: ProductEntity) {
         _state.update { st ->
-            val idx = st.cart.indexOfFirst { it.battery.id == b.id }
+            val idx = st.cart.indexOfFirst { it.product.id == b.id }
             val newCart = if (idx >= 0) {
                 st.cart.toMutableList().also { it[idx] = it[idx].copy(quantity = it[idx].quantity + 1) }
             } else st.cart + CartLine(b, 1)
@@ -131,9 +131,9 @@ class CreateInvoiceViewModel @Inject constructor(
         }
     }
 
-    fun decrement(b: BatteryEntity) {
+    fun decrement(b: ProductEntity) {
         _state.update { st ->
-            val idx = st.cart.indexOfFirst { it.battery.id == b.id }
+            val idx = st.cart.indexOfFirst { it.product.id == b.id }
             if (idx < 0) return@update st
             val current = st.cart[idx]
             val newCart = if (current.quantity <= 1) {
@@ -165,13 +165,13 @@ class CreateInvoiceViewModel @Inject constructor(
                 val now = System.currentTimeMillis()
                 val lines = st.cart.map { line ->
                     DraftLine(
-                        description = line.battery.label,
-                        extraNote = if (line.battery.withInstall) {
+                        description = line.product.label,
+                        extraNote = if (line.product.withInstall) {
                             "Changement de batterie effectué par notre technicien chez le client"
                         } else null,
                         quantity = line.quantity,
-                        unitPriceTtcCents = line.battery.priceTtcCents,
-                        vatRatePermille = line.battery.vatRatePermille,
+                        unitPriceTtcCents = line.product.priceTtcCents,
+                        vatRatePermille = line.product.vatRatePermille,
                     )
                 }
                 val invoiceId = invoiceRepo.issue(

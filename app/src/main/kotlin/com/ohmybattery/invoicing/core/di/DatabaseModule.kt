@@ -10,12 +10,13 @@ import com.ohmybattery.invoicing.data.local.MIGRATION_3_4
 import com.ohmybattery.invoicing.data.local.MIGRATION_4_5
 import com.ohmybattery.invoicing.data.local.MIGRATION_5_6
 import com.ohmybattery.invoicing.data.local.MIGRATION_6_7
+import com.ohmybattery.invoicing.data.local.MIGRATION_7_8
 import com.ohmybattery.invoicing.data.local.Seed
 import com.ohmybattery.invoicing.data.local.dao.AuditDao
-import com.ohmybattery.invoicing.data.local.dao.BatteryDao
 import com.ohmybattery.invoicing.data.local.dao.ClientDao
 import com.ohmybattery.invoicing.data.local.dao.CompanyDao
 import com.ohmybattery.invoicing.data.local.dao.InvoiceDao
+import com.ohmybattery.invoicing.data.local.dao.ProductDao
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -37,18 +38,21 @@ object DatabaseModule {
     fun provideDatabase(
         @ApplicationContext context: Context,
         companyDao: Lazy<CompanyDao>,
-        batteryDao: Lazy<BatteryDao>,
+        productDao: Lazy<ProductDao>,
     ): AppDatabase {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DB_NAME)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+            .addMigrations(
+                MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
+                MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8,
+            )
             .addCallback(object : androidx.room.RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     scope.launch {
                         companyDao.get().upsert(Seed.Company)
-                        if (batteryDao.get().count() == 0) {
-                            batteryDao.get().insertAll(Seed.Catalog)
+                        if (productDao.get().count() == 0) {
+                            productDao.get().insertAll(Seed.Catalog)
                         }
                     }
                 }
@@ -58,7 +62,7 @@ object DatabaseModule {
 
     @Provides fun companyDao(db: AppDatabase): CompanyDao = db.companyDao()
     @Provides fun clientDao(db: AppDatabase): ClientDao = db.clientDao()
-    @Provides fun batteryDao(db: AppDatabase): BatteryDao = db.batteryDao()
+    @Provides fun productDao(db: AppDatabase): ProductDao = db.productDao()
     @Provides fun invoiceDao(db: AppDatabase): InvoiceDao = db.invoiceDao()
     @Provides fun auditDao(db: AppDatabase): AuditDao = db.auditDao()
 }

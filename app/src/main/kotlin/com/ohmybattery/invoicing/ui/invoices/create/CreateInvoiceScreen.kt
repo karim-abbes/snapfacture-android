@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ohmybattery.invoicing.core.money.Money
-import com.ohmybattery.invoicing.data.local.entity.BatteryEntity
+import com.ohmybattery.invoicing.data.local.entity.ProductEntity
 import com.ohmybattery.invoicing.data.local.entity.PaymentMethod
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,7 +100,7 @@ fun CreateInvoiceScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item { ClientCard(state, vm) }
-            item { CatalogGrid(catalog, state, vm::addBattery, vm::decrement) }
+            item { CatalogGrid(catalog, state, vm::addProduct, vm::decrement) }
             if (state.hasInstallLine) item { DeliveryCard(state, vm) }
             if (state.cart.isNotEmpty()) item { CartSummary(state) }
             if (state.cart.isNotEmpty()) item { CommentCard(state, vm) }
@@ -151,7 +151,7 @@ private fun DeliveryCard(state: CreateUiState, vm: CreateInvoiceViewModel) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
                 Spacer(Modifier.size(8.dp))
-                Text("Pose à domicile", style = MaterialTheme.typography.titleMedium)
+                Text("Coordonnées du service", style = MaterialTheme.typography.titleMedium)
             }
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(
@@ -207,10 +207,10 @@ private fun DeliveryCard(state: CreateUiState, vm: CreateInvoiceViewModel) {
 
 @Composable
 private fun CatalogGrid(
-    catalog: List<BatteryEntity>,
+    catalog: List<ProductEntity>,
     state: CreateUiState,
-    onAdd: (BatteryEntity) -> Unit,
-    onRemove: (BatteryEntity) -> Unit,
+    onAdd: (ProductEntity) -> Unit,
+    onRemove: (ProductEntity) -> Unit,
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -227,19 +227,19 @@ private fun CatalogGrid(
             userScrollEnabled = false,
         ) {
             items(catalog, key = { it.id }) { b ->
-                val qty = state.cart.firstOrNull { it.battery.id == b.id }?.quantity ?: 0
-                BatteryTile(b, qty, onAdd, onRemove)
+                val qty = state.cart.firstOrNull { it.product.id == b.id }?.quantity ?: 0
+                ProductTile(b, qty, onAdd, onRemove)
             }
         }
     }
 }
 
 @Composable
-private fun BatteryTile(
-    b: BatteryEntity,
+private fun ProductTile(
+    b: ProductEntity,
     qty: Int,
-    onAdd: (BatteryEntity) -> Unit,
-    onRemove: (BatteryEntity) -> Unit,
+    onAdd: (ProductEntity) -> Unit,
+    onRemove: (ProductEntity) -> Unit,
 ) {
     val selected = qty > 0
     Card(
@@ -262,7 +262,7 @@ private fun BatteryTile(
                     Spacer(Modifier.size(4.dp))
                 }
                 Text(
-                    if (b.withInstall) "Pose à domicile" else "Vente seule",
+                    if (b.withInstall) "Avec service à domicile" else "Produit seul",
                     style = MaterialTheme.typography.labelLarge,
                     color = if (selected) MaterialTheme.colorScheme.onPrimary
                     else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
@@ -321,8 +321,8 @@ private fun CartSummary(state: CreateUiState) {
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text("${line.quantity} × ${line.battery.label}", Modifier.weight(1f))
-                    Text(Money.formatEurPlain(line.battery.priceTtcCents * line.quantity))
+                    Text("${line.quantity} × ${line.product.label}", Modifier.weight(1f))
+                    Text(Money.formatEurPlain(line.product.priceTtcCents * line.quantity))
                 }
                 Spacer(Modifier.height(4.dp))
             }
