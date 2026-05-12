@@ -253,4 +253,12 @@
     <string name="pdf_credit_reference_date_suffix"> du %1$s</string>
     <string name="pdf_footer_manager">%1$s • Gérant</string>
     <string name="pdf_contact_line">Tél. %1$s  •  %2$s  •  %3$s</string>
+
+    <!-- Issue confirmation -->
+    <string name="confirm_issue_title">Confirmer la facture</string>
+    <string name="confirm_issue_intro">Une fois émise, cette facture n\'est plus modifiable. Seul un avoir permet de l\'annuler.</string>
+    <string name="confirm_issue_client">Client : %1$s</string>
+    <string name="confirm_issue_payment">Paiement : %1$s</string>
+    <string name="confirm_issue_count">%1$d ligne(s)</string>
+    <string name="confirm_issue_confirm">Confirmer • %1$s</string>
 </resources>

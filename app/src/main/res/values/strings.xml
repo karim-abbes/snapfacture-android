@@ -166,6 +166,14 @@
     <string name="pdf_footer_manager">%1$s • Manager</string>
     <string name="pdf_contact_line">Tel. %1$s  •  %2$s  •  %3$s</string>
 
+    <!-- Issue confirmation -->
+    <string name="confirm_issue_title">Confirm the invoice</string>
+    <string name="confirm_issue_intro">Once issued, this invoice cannot be edited. Only a credit note can cancel it.</string>
+    <string name="confirm_issue_client">Customer: %1$s</string>
+    <string name="confirm_issue_payment">Payment: %1$s</string>
+    <string name="confirm_issue_count">%1$d line(s)</string>
+    <string name="confirm_issue_confirm">Confirm • %1$s</string>
+
     <!-- Company info -->
     <string name="company_title">Business</string>
     <string name="company_name">Business name</string>
