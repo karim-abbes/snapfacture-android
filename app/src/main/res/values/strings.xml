@@ -179,4 +179,13 @@
     <string name="backup_last">Dernière sauvegarde</string>
     <string name="backup_last_never">Jamais</string>
     <string name="backup_now">Sauvegarder maintenant</string>
+    <string name="restore_section_title">Restaurer une sauvegarde</string>
+    <string name="restore_section_body">Choisissez un fichier .db précédemment sauvegardé. ⚠️ Toutes les données actuelles seront remplacées. L\'app redémarrera après la restauration.</string>
+    <string name="restore_button">Restaurer un fichier .db</string>
+    <string name="restore_dialog_title">Restauration définitive</string>
+    <string name="restore_dialog_body">Cette opération va REMPLACER toutes vos factures, clients, produits et réglages actuels par le contenu du fichier choisi. Action irréversible.\n\nContinuer ?</string>
+    <string name="restore_dialog_confirm">Restaurer maintenant</string>
+    <string name="restore_done_title">Restauration terminée</string>
+    <string name="restore_done_body">L\'app va redémarrer pour appliquer la nouvelle base.</string>
+    <string name="restore_done_relaunch">Redémarrer maintenant</string>
 </resources>

@@ -23,6 +23,11 @@ sealed interface BackupResult {
     data class Failure(val message: String) : BackupResult
 }
 
+sealed interface RestoreResult {
+    data object Success : RestoreResult
+    data class Failure(val message: String) : RestoreResult
+}
+
 @Singleton
 class BackupManager @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -39,6 +44,31 @@ class BackupManager @Inject constructor(
             if (s.autoEnabled && s.folderUri != null) {
                 runBackup(Uri.parse(s.folderUri))
             }
+        }
+    }
+
+    suspend fun restore(fileUri: Uri): RestoreResult = withContext(Dispatchers.IO) {
+        try {
+            val header = ByteArray(16)
+            val read = context.contentResolver.openInputStream(fileUri)?.use { it.read(header) } ?: 0
+            if (read < 16 || !String(header, 0, 15, Charsets.US_ASCII).startsWith("SQLite format 3")) {
+                return@withContext RestoreResult.Failure("Le fichier sélectionné n'est pas une sauvegarde Facturix valide.")
+            }
+
+            runCatching { database.close() }
+
+            val dbFile = context.getDatabasePath(AppDatabase.DB_NAME)
+            java.io.File(dbFile.parent, "${dbFile.name}-wal").delete()
+            java.io.File(dbFile.parent, "${dbFile.name}-shm").delete()
+            java.io.File(dbFile.parent, "${dbFile.name}-journal").delete()
+
+            context.contentResolver.openInputStream(fileUri)?.use { src ->
+                dbFile.outputStream().use { dst -> src.copyTo(dst) }
+            } ?: return@withContext RestoreResult.Failure("Impossible de lire le fichier.")
+
+            RestoreResult.Success
+        } catch (t: Throwable) {
+            RestoreResult.Failure(t.message ?: "Erreur inconnue lors de la restauration")
         }
     }
 

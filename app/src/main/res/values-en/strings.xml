@@ -179,4 +179,13 @@
     <string name="backup_last">Last backup</string>
     <string name="backup_last_never">Never</string>
     <string name="backup_now">Back up now</string>
+    <string name="restore_section_title">Restore a backup</string>
+    <string name="restore_section_body">Pick a previously saved .db file. ⚠️ All current data will be replaced. The app will restart after restoring.</string>
+    <string name="restore_button">Restore a .db file</string>
+    <string name="restore_dialog_title">Permanent restore</string>
+    <string name="restore_dialog_body">This will REPLACE every invoice, customer, product, and setting with the contents of the chosen file. Irreversible.\n\nContinue?</string>
+    <string name="restore_dialog_confirm">Restore now</string>
+    <string name="restore_done_title">Restore complete</string>
+    <string name="restore_done_body">The app will restart to apply the new database.</string>
+    <string name="restore_done_relaunch">Restart now</string>
 </resources>

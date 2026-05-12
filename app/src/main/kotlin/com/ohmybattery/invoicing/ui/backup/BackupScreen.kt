@@ -17,7 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,12 +35,15 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -58,6 +64,7 @@ fun BackupScreen(
     val settings by vm.settings.collectAsStateWithLifecycle()
     val running by vm.running.collectAsStateWithLifecycle()
     val message by vm.message.collectAsStateWithLifecycle()
+    val restoreDone by vm.restoreDone.collectAsStateWithLifecycle()
 
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(message) {
@@ -71,6 +78,13 @@ fun BackupScreen(
         contract = ActivityResultContracts.OpenDocumentTree()
     ) { uri ->
         if (uri != null) vm.onFolderPicked(uri)
+    }
+
+    var pendingRestoreUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    val restorePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) pendingRestoreUri = uri
     }
 
     Scaffold(
@@ -119,8 +133,102 @@ fun BackupScreen(
                     }
                 }
             }
+            item { Spacer(Modifier.height(8.dp)) }
+            item { RestoreCard(running) { restorePicker.launch(arrayOf("*/*")) } }
         }
     }
+
+    pendingRestoreUri?.let { uri ->
+        RestoreConfirmDialog(
+            isRunning = running,
+            onDismiss = { pendingRestoreUri = null },
+            onConfirm = {
+                vm.restore(uri)
+                pendingRestoreUri = null
+            },
+        )
+    }
+
+    if (restoreDone) {
+        RestoreSuccessDialog(onRelaunch = vm::relaunchApp)
+    }
+}
+
+@Composable
+private fun RestoreCard(disabled: Boolean, onPick: () -> Unit) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.35f)),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Restore, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                Spacer(Modifier.size(8.dp))
+                Text(stringResource(R.string.restore_section_title), style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                stringResource(R.string.restore_section_body),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onPick,
+                enabled = !disabled,
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+            ) {
+                Icon(Icons.Default.Restore, contentDescription = null)
+                Spacer(Modifier.padding(end = 8.dp))
+                Text(stringResource(R.string.restore_button))
+            }
+        }
+    }
+}
+
+@Composable
+private fun RestoreConfirmDialog(
+    isRunning: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = { if (!isRunning) onDismiss() },
+        title = { Text(stringResource(R.string.restore_dialog_title)) },
+        text = { Text(stringResource(R.string.restore_dialog_body)) },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                enabled = !isRunning,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+            ) {
+                if (isRunning) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = MaterialTheme.colorScheme.onError,
+                        strokeWidth = 2.dp,
+                    )
+                } else Text(stringResource(R.string.restore_dialog_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, enabled = !isRunning) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
+}
+
+@Composable
+private fun RestoreSuccessDialog(onRelaunch: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onRelaunch,
+        title = { Text(stringResource(R.string.restore_done_title)) },
+        text = { Text(stringResource(R.string.restore_done_body)) },
+        confirmButton = {
+            Button(onClick = onRelaunch) { Text(stringResource(R.string.restore_done_relaunch)) }
+        },
+    )
 }
 
 @Composable

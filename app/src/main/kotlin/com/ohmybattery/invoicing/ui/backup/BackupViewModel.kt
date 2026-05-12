@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ohmybattery.invoicing.core.backup.BackupManager
 import com.ohmybattery.invoicing.core.backup.BackupResult
+import com.ohmybattery.invoicing.core.backup.RestoreResult
 import com.ohmybattery.invoicing.data.preferences.BackupPreferences
 import com.ohmybattery.invoicing.data.preferences.BackupSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -82,5 +83,29 @@ class BackupViewModel @Inject constructor(
 
     fun dismissMessage() {
         _message.update { null }
+    }
+
+    private val _restoreDone = MutableStateFlow(false)
+    val restoreDone: StateFlow<Boolean> = _restoreDone.asStateFlow()
+
+    fun restore(uri: Uri) {
+        _running.update { true }
+        _message.update { null }
+        viewModelScope.launch {
+            val result = manager.restore(uri)
+            _running.update { false }
+            when (result) {
+                RestoreResult.Success -> _restoreDone.update { true }
+                is RestoreResult.Failure -> _message.update { result.message }
+            }
+        }
+    }
+
+    fun relaunchApp() {
+        val pm = context.packageManager
+        val launch = pm.getLaunchIntentForPackage(context.packageName)
+        launch?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        if (launch != null) context.startActivity(launch)
+        android.os.Process.killProcess(android.os.Process.myPid())
     }
 }
