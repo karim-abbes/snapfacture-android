@@ -1,21 +1,107 @@
-# Build log for 1ac49b7c55fa55ec7f40b25312e8f1408627a32c
+# Build log for 3b138f53128b2126d78cf0edc863f63dab9cf487
 
 ## Kotlin errors (grep e:)
 ```
-e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/company/CompanyInfoScreen.kt:117:29 Unresolved reference 'Column'.
-e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/company/CompanyInfoScreen.kt:118:33 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/company/CompanyInfoScreen.kt:120:59 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/company/CompanyInfoScreen.kt:122:33 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/company/CompanyInfoScreen.kt:127:59 @Composable invocations can only happen from the context of a @Composable function
-e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/company/CompanyInfoScreen.kt:128:59 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/OhmybatteryRoot.kt:13:45 Unresolved reference 'CatalogScreen'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/OhmybatteryRoot.kt:72:13 Unresolved reference 'CatalogScreen'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:54:34 Unresolved reference 'core'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:55:34 Unresolved reference 'data'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:62:9 Unresolved reference 'CatalogViewModel'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:62:28 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:64:18 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:64:18 Property delegate must have a 'getValue(Nothing?, KProperty0<ERROR CLASS: Cannot infer argument for type parameter T>)' method. None of the following functions is applicable:
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:64:18 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:64:21 Function invocation 'items(...)' expected.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:64:27 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:64:27 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:65:20 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:65:20 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:65:29 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:65:46 Unresolved reference 'CatalogDraft'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:65:61 Null cannot be a value of a non-null type 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:85:39 Unresolved reference 'CatalogDraft'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:91:19 Overload resolution ambiguity between candidates:
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:101:41 Unresolved reference 'id'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:104:46 Unresolved reference 'CatalogDraft'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:105:47 Unresolved reference 'toggleActive'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:113:14 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:113:14 Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:113:20 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:114:9 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:117:24 Unresolved reference 'CatalogDraft'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:117:39 Unresolved reference 'save'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:124:14 Unresolved reference 'ProductEntity'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:131:42 Unresolved reference 'active'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:140:29 Unresolved reference 'withInstall'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:158:29 Unresolved reference 'label'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:160:41 Unresolved reference 'active'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:164:21 Unresolved reference 'Money'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:164:50 Unresolved reference 'priceTtcCents'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:166:41 Unresolved reference 'active'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:170:30 Unresolved reference 'active'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:178:38 Unresolved reference 'active'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:190:14 Unresolved reference 'CatalogDraft'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:192:14 Unresolved reference 'CatalogDraft'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:18 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:18 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:18 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:18 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:27 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:29 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:196:29 Not enough information to infer type argument for 'T'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:197:25 Unresolved reference 'id'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:213:31 Unresolved reference 'label'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:214:49 Unresolved reference 'copy'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:214:62 Unresolved reference 'it'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:215:27 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:216:33 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:222:31 Unresolved reference 'priceTtcEuros'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:223:49 Unresolved reference 'copy'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:223:70 Unresolved reference 'it'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:224:27 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:225:33 @Composable invocations can only happen from the context of a @Composable function
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:245:37 Unresolved reference 'withInstall'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:246:55 Unresolved reference 'copy'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:258:41 Unresolved reference 'active'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:259:59 Unresolved reference 'copy'.
+e: file:///home/runner/work/facturation-android/facturation-android/app/src/main/kotlin/com/ohmybattery/invoicing/ui/catalog/CatalogScreen.kt:273:37 Unresolved reference 'isValid'.
 ```
 
 ## Last 200 lines of build.log
 ```
-	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
 	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
@@ -145,35 +231,6 @@ Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionExcept
 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
-	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
-	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
-	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
-	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
-	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
-	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
-	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
-	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
-	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
-	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
-	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
-	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
-	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
-	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
-	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
-	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
-	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
-	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
@@ -209,7 +266,7 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	... 2 more
 
 
-BUILD FAILED in 33s
+BUILD FAILED in 34s
 30 actionable tasks: 14 executed, 16 from cache
 Configuration cache entry stored.
 ```
