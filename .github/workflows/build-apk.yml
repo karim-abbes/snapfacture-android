@@ -110,3 +110,18 @@ jobs:
           files: artifact/ohmybattery-debug.apk
           prerelease: true
           make_latest: false
+
+      - name: Publish frozen v1-france-batteries
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1-france-batteries
+          name: v1 — France + spécialisé batteries auto
+          body: |
+            Version figée avant le grand refactor « universalisation »
+            (multi-pays + produits génériques). Ohmybattery France,
+            catalogue batteries auto Torus.
+
+            Commit: ${{ github.sha }}
+          files: artifact/ohmybattery-debug.apk
+          prerelease: false
+          make_latest: false
