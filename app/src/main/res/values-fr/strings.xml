@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Facturix</string>
+    <string name="app_name">Snapfacture</string>
 
     <!-- Common actions -->
     <string name="action_save">Enregistrer</string>
@@ -150,6 +150,9 @@
     <string name="welcome_footer_hint">Adresse, SIREN, téléphone et IBAN s\'ajoutent à tout moment depuis Réglages → Entreprise.</string>
     <string name="country_france">France</string>
     <string name="country_us">États-Unis</string>
+    <string name="share_subject">Facture %1$s N° %2$d</string>
+    <string name="share_body">Bonjour,\n\nVeuillez trouver ci-joint votre facture N° %1$d.\n\nCordialement,\n%2$s</string>
+    <string name="share_chooser_title">Partager la facture</string>
     <string name="company_name">Raison sociale</string>
     <string name="company_legal_id">Identifiant légal</string>
     <string name="company_address">Adresse</string>

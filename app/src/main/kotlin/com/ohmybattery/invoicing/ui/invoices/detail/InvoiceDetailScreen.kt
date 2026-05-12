@@ -244,6 +244,7 @@ fun InvoiceDetailScreen(
                                     context = context,
                                     file = file,
                                     invoiceNumber = inv.invoice.number,
+                                    companyName = inv.invoice.companyNameAtIssue.orEmpty(),
                                     recipientEmail = inv.client.email,
                                 ),
                             )

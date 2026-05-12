@@ -86,7 +86,7 @@ class BackupManager @Inject constructor(
                 return@withContext BackupResult.Failure("Permission d'écriture refusée sur le dossier choisi")
             }
 
-            val fileName = "ohmybattery_${stampFmt.format(Date())}.db"
+            val fileName = "snapfacture_${stampFmt.format(Date())}.db"
             val dbFile = context.getDatabasePath(AppDatabase.DB_NAME)
             if (!dbFile.exists()) {
                 return@withContext BackupResult.Failure("Base de données introuvable")

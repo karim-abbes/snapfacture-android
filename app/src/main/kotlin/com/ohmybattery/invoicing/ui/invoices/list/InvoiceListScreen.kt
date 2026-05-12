@@ -61,7 +61,7 @@ fun InvoiceListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.companyName) },
+                title = { Text(state.companyName.ifBlank { stringResource(R.string.app_name) }) },
                 actions = {
                     IconButton(onClick = onStats) {
                         Icon(Icons.Default.BarChart, contentDescription = stringResource(R.string.stats_title))

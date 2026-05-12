@@ -48,7 +48,7 @@ class ExportViewModel @Inject constructor(
             try {
                 val (count, file) = withContext(Dispatchers.IO) {
                     val dir = File(context.filesDir, "exports").apply { mkdirs() }
-                    val file = File(dir, "ohmybattery_${stampFmt.format(Date())}.csv")
+                    val file = File(dir, "snapfacture_${stampFmt.format(Date())}.csv")
                     val written = BufferedWriter(OutputStreamWriter(file.outputStream(), Charsets.UTF_8)).use {
                         exporter.exportAll(it)
                     }
