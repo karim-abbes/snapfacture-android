@@ -134,6 +134,8 @@ private fun ConfirmIssueDialog(
         PaymentMethod.CASH -> stringResource(R.string.create_payment_cash)
         PaymentMethod.CARD -> stringResource(R.string.create_payment_card)
         PaymentMethod.TRANSFER -> stringResource(R.string.create_payment_transfer)
+        PaymentMethod.CHECK -> stringResource(R.string.create_payment_check)
+        PaymentMethod.OTHER -> stringResource(R.string.create_payment_other)
     }
     val lineCount = state.cart.sumOf { it.quantity }
     val totalLabel = Money.formatEurPlain(state.totalTtcCents)
