@@ -16,6 +16,7 @@ data class CatalogDraft(
     val label: String = "",
     val priceTtcEuros: String = "",
     val withInstall: Boolean = false,
+    val serviceNote: String = "",
     val active: Boolean = true,
 ) {
     val isValid: Boolean
@@ -34,6 +35,7 @@ data class CatalogDraft(
             label = b.label,
             priceTtcEuros = "%.2f".format(b.priceTtcCents / 100.0).replace('.', ','),
             withInstall = b.withInstall,
+            serviceNote = b.serviceNote.orEmpty(),
             active = b.active,
         )
     }
@@ -50,12 +52,14 @@ class CatalogViewModel @Inject constructor(
     fun save(draft: CatalogDraft, onDone: () -> Unit) {
         val cents = draft.parsedCents ?: return
         viewModelScope.launch {
+            val note = draft.serviceNote.trim().ifBlank { null }
             if (draft.id == 0L) {
                 repo.insert(
                     ProductEntity(
                         label = draft.label.trim(),
                         priceTtcCents = cents,
                         withInstall = draft.withInstall,
+                        serviceNote = if (draft.withInstall) note else null,
                         active = draft.active,
                     )
                 )
@@ -66,6 +70,7 @@ class CatalogViewModel @Inject constructor(
                         label = draft.label.trim(),
                         priceTtcCents = cents,
                         withInstall = draft.withInstall,
+                        serviceNote = if (draft.withInstall) note else null,
                         active = draft.active,
                     )
                 )

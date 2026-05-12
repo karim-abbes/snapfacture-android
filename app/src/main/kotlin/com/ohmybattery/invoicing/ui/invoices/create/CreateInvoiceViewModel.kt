@@ -167,7 +167,7 @@ class CreateInvoiceViewModel @Inject constructor(
                     DraftLine(
                         description = line.product.label,
                         extraNote = if (line.product.withInstall) {
-                            "Changement de batterie effectué par notre technicien chez le client"
+                            line.product.serviceNote?.takeIf { it.isNotBlank() }
                         } else null,
                         quantity = line.quantity,
                         unitPriceTtcCents = line.product.priceTtcCents,

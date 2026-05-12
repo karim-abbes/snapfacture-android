@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import com.ohmybattery.invoicing.core.country.CountryProfiles
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -107,6 +109,21 @@ fun CompanyInfoScreen(
             country?.let { settings ->
                 item {
                     Spacer(Modifier.height(8.dp))
+                    Text("Pays / régime fiscal", style = MaterialTheme.typography.titleMedium)
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        CountryProfiles.all.forEach { profile ->
+                            FilterChip(
+                                selected = profile.code == settings.profile.code,
+                                onClick = { vm.setCountry(profile.code) },
+                                label = { Text(profile.displayName) },
+                            )
+                        }
+                    }
+                }
+                item {
+                    Spacer(Modifier.height(4.dp))
                     Text("Régime de ${settings.profile.taxLabel}", style = MaterialTheme.typography.titleMedium)
                 }
                 item {

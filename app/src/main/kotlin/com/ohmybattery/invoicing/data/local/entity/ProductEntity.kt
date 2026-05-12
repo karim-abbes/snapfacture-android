@@ -10,6 +10,7 @@ data class ProductEntity(
     val priceTtcCents: Long,
     val vatRatePermille: Int = 200,
     val withInstall: Boolean = false,
+    val serviceNote: String? = null,
     val sortOrder: Int = 0,
     val active: Boolean = true,
 )

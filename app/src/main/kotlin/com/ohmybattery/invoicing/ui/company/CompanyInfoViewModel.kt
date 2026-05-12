@@ -32,4 +32,8 @@ class CompanyInfoViewModel @Inject constructor(
     fun setTaxOptedOut(opted: Boolean) {
         viewModelScope.launch { countryPrefs.setTaxOptedOut(opted) }
     }
+
+    fun setCountry(code: String) {
+        viewModelScope.launch { countryPrefs.setCountry(code) }
+    }
 }

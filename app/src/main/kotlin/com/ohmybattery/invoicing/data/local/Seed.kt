@@ -25,15 +25,18 @@ object Seed {
         nextInvoiceNumber = START_INVOICE_NUMBER,
     )
 
+    private const val LEGACY_INSTALL_NOTE =
+        "Changement de batterie effectué par notre technicien chez le client"
+
     val Catalog: List<ProductEntity> = listOf(
         ProductEntity(label = "Torus 50Ah 420A", priceTtcCents = 8_000, withInstall = false, sortOrder = 1),
         ProductEntity(label = "Torus 60Ah 540A", priceTtcCents = 9_000, withInstall = false, sortOrder = 2),
         ProductEntity(label = "Torus 70Ah 640A", priceTtcCents = 10_000, withInstall = false, sortOrder = 3),
         ProductEntity(label = "Torus 95Ah 750A", priceTtcCents = 13_000, withInstall = false, sortOrder = 4),
-        ProductEntity(label = "Torus 60Ah 540A + pose domicile", priceTtcCents = 16_000, withInstall = true, sortOrder = 5),
-        ProductEntity(label = "Torus 60Ah 540A + pose domicile (var.)", priceTtcCents = 17_000, withInstall = true, sortOrder = 6),
-        ProductEntity(label = "Torus 60Ah 540A + pose domicile (var.)", priceTtcCents = 18_000, withInstall = true, sortOrder = 7),
-        ProductEntity(label = "Torus 60Ah Start & Stop + pose", priceTtcCents = 20_000, withInstall = true, sortOrder = 8),
-        ProductEntity(label = "Torus 60Ah Start & Stop 680A + pose", priceTtcCents = 22_000, withInstall = true, sortOrder = 9),
+        ProductEntity(label = "Torus 60Ah 540A + pose domicile", priceTtcCents = 16_000, withInstall = true, serviceNote = LEGACY_INSTALL_NOTE, sortOrder = 5),
+        ProductEntity(label = "Torus 60Ah 540A + pose domicile (var.)", priceTtcCents = 17_000, withInstall = true, serviceNote = LEGACY_INSTALL_NOTE, sortOrder = 6),
+        ProductEntity(label = "Torus 60Ah 540A + pose domicile (var.)", priceTtcCents = 18_000, withInstall = true, serviceNote = LEGACY_INSTALL_NOTE, sortOrder = 7),
+        ProductEntity(label = "Torus 60Ah Start & Stop + pose", priceTtcCents = 20_000, withInstall = true, serviceNote = LEGACY_INSTALL_NOTE, sortOrder = 8),
+        ProductEntity(label = "Torus 60Ah Start & Stop 680A + pose", priceTtcCents = 22_000, withInstall = true, serviceNote = LEGACY_INSTALL_NOTE, sortOrder = 9),
     )
 }

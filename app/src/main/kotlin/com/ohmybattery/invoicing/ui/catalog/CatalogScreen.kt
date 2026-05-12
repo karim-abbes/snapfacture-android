@@ -247,6 +247,17 @@ private fun EditSheet(
                 )
             }
 
+            if (draft.withInstall) {
+                OutlinedTextField(
+                    value = draft.serviceNote,
+                    onValueChange = { draft = draft.copy(serviceNote = it) },
+                    label = { Text("Note de service") },
+                    placeholder = { Text("Ex: Pose à domicile par notre technicien") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3,
+                )
+            }
+
             if (!isNew) {
                 Row(
                     Modifier.fillMaxWidth(),

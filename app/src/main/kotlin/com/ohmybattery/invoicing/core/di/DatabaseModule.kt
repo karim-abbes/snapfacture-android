@@ -11,6 +11,7 @@ import com.ohmybattery.invoicing.data.local.MIGRATION_4_5
 import com.ohmybattery.invoicing.data.local.MIGRATION_5_6
 import com.ohmybattery.invoicing.data.local.MIGRATION_6_7
 import com.ohmybattery.invoicing.data.local.MIGRATION_7_8
+import com.ohmybattery.invoicing.data.local.MIGRATION_8_9
 import com.ohmybattery.invoicing.data.local.Seed
 import com.ohmybattery.invoicing.data.local.dao.AuditDao
 import com.ohmybattery.invoicing.data.local.dao.ClientDao
@@ -44,7 +45,7 @@ object DatabaseModule {
         return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DB_NAME)
             .addMigrations(
                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8,
+                MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
             )
             .addCallback(object : androidx.room.RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {

@@ -78,3 +78,16 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
         db.execSQL("ALTER TABLE batteries RENAME TO products")
     }
 }
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE products ADD COLUMN serviceNote TEXT")
+        // Backfill existing service-bundled rows with the legacy battery copy
+        // so issued invoices keep the same wording until the user edits it.
+        db.execSQL(
+            "UPDATE products SET serviceNote = " +
+                "'Changement de batterie effectué par notre technicien chez le client' " +
+                "WHERE withInstall = 1"
+        )
+    }
+}
