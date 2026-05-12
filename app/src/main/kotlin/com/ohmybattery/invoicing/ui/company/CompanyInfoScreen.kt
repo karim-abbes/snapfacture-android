@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ohmybattery.invoicing.R
-import com.ohmybattery.invoicing.core.country.CountryProfiles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,21 +112,6 @@ fun CompanyInfoScreen(
             item { OutlinedTextField(value = nextNumber, onValueChange = { nextNumber = it }, label = { Text(stringResource(R.string.company_next_invoice_number)) }, modifier = Modifier.fillMaxWidth()) }
 
             country?.let { settings ->
-                item {
-                    Spacer(Modifier.height(8.dp))
-                    Text(stringResource(R.string.company_country_section), style = MaterialTheme.typography.titleMedium)
-                }
-                item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        CountryProfiles.all.forEach { profile ->
-                            FilterChip(
-                                selected = profile.code == settings.profile.code,
-                                onClick = { vm.setCountry(profile.code) },
-                                label = { Text(profile.displayName) },
-                            )
-                        }
-                    }
-                }
                 item {
                     Spacer(Modifier.height(4.dp))
                     Text(

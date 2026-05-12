@@ -3,7 +3,6 @@ package com.ohmybattery.invoicing.data.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ohmybattery.invoicing.core.country.CountryProfile
 import com.ohmybattery.invoicing.core.country.CountryProfiles
@@ -24,20 +23,13 @@ data class CountrySettings(
 class CountryPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    private val keyCountryCode = stringPreferencesKey("country_code")
     private val keyTaxOptedOut = booleanPreferencesKey("tax_opted_out")
 
     val flow: Flow<CountrySettings> = context.countryDataStore.data.map { prefs ->
-        val code = prefs[keyCountryCode]
-        val profile = if (code == null) CountryProfiles.detect() else CountryProfiles.byCode(code)
         CountrySettings(
-            profile = profile,
+            profile = CountryProfiles.detect(),
             taxOptedOut = prefs[keyTaxOptedOut] ?: false,
         )
-    }
-
-    suspend fun setCountry(code: String) {
-        context.countryDataStore.edit { it[keyCountryCode] = code.uppercase() }
     }
 
     suspend fun setTaxOptedOut(opted: Boolean) {
