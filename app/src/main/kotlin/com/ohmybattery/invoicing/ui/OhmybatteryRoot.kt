@@ -17,6 +17,7 @@ import com.ohmybattery.invoicing.ui.invoices.list.InvoiceListScreen
 import com.ohmybattery.invoicing.ui.navigation.Routes
 import com.ohmybattery.invoicing.ui.security.SecurityScreen
 import com.ohmybattery.invoicing.ui.settings.SettingsScreen
+import com.ohmybattery.invoicing.ui.stats.StatsScreen
 
 @Composable
 fun OhmybatteryRoot() {
@@ -27,7 +28,11 @@ fun OhmybatteryRoot() {
                 onCreate = { nav.navigate(Routes.CREATE) },
                 onOpen = { nav.navigate(Routes.detail(it)) },
                 onSettings = { nav.navigate(Routes.SETTINGS) },
+                onStats = { nav.navigate(Routes.STATS) },
             )
+        }
+        composable(Routes.STATS) {
+            StatsScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.CREATE) {
             CreateInvoiceScreen(

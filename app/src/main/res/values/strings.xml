@@ -119,6 +119,22 @@
     <string name="lock_retry">Réessayer</string>
     <string name="lock_no_auth_available">Aucune méthode d\'authentification configurée sur ce téléphone.</string>
 
+    <!-- Stats -->
+    <string name="stats_title">Statistiques</string>
+    <string name="stats_period_month">Mois</string>
+    <string name="stats_period_quarter">Trimestre</string>
+    <string name="stats_period_year">Année</string>
+    <string name="stats_kpi_revenue_ttc">CA TTC</string>
+    <string name="stats_kpi_revenue_ht_value">dont %1$s HT</string>
+    <string name="stats_kpi_invoice_count">Factures</string>
+    <string name="stats_kpi_avg_ticket">Panier moyen</string>
+    <string name="stats_tax_collected">%1$s collectée</string>
+    <string name="stats_tax_subtitle">Montant à reverser lors de la prochaine déclaration</string>
+    <string name="stats_top_products">Top produits</string>
+    <string name="stats_top_clients">Top clients</string>
+    <string name="stats_count_units">%1$d unité(s) vendue(s)</string>
+    <string name="stats_no_data">Aucune donnée pour cette période</string>
+
     <!-- Company info -->
     <string name="company_title">Entreprise</string>
     <string name="company_name">Raison sociale</string>

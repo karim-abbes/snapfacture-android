@@ -11,6 +11,7 @@ object Routes {
     const val BACKUP = "backup"
     const val COMPANY = "company"
     const val SECURITY = "security"
+    const val STATS = "stats"
 
     fun detail(invoiceId: Long) = "invoices/$invoiceId"
 }

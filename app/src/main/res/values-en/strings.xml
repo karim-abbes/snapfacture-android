@@ -119,6 +119,22 @@
     <string name="lock_retry">Retry</string>
     <string name="lock_no_auth_available">No authentication method configured on this phone.</string>
 
+    <!-- Stats -->
+    <string name="stats_title">Statistics</string>
+    <string name="stats_period_month">Month</string>
+    <string name="stats_period_quarter">Quarter</string>
+    <string name="stats_period_year">Year</string>
+    <string name="stats_kpi_revenue_ttc">Revenue (incl. tax)</string>
+    <string name="stats_kpi_revenue_ht_value">incl. %1$s pre-tax</string>
+    <string name="stats_kpi_invoice_count">Invoices</string>
+    <string name="stats_kpi_avg_ticket">Avg ticket</string>
+    <string name="stats_tax_collected">%1$s collected</string>
+    <string name="stats_tax_subtitle">Amount to remit at next filing</string>
+    <string name="stats_top_products">Top products</string>
+    <string name="stats_top_clients">Top customers</string>
+    <string name="stats_count_units">%1$d unit(s) sold</string>
+    <string name="stats_no_data">No data for this period</string>
+
     <!-- Company info -->
     <string name="company_title">Business</string>
     <string name="company_name">Business name</string>

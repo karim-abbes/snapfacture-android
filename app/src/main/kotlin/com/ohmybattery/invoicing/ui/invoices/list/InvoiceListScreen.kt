@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -53,6 +54,7 @@ fun InvoiceListScreen(
     onCreate: () -> Unit,
     onOpen: (Long) -> Unit,
     onSettings: () -> Unit,
+    onStats: () -> Unit,
     vm: InvoiceListViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -61,6 +63,9 @@ fun InvoiceListScreen(
             TopAppBar(
                 title = { Text(state.companyName) },
                 actions = {
+                    IconButton(onClick = onStats) {
+                        Icon(Icons.Default.BarChart, contentDescription = stringResource(R.string.stats_title))
+                    }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.invoice_list_settings))
                     }
