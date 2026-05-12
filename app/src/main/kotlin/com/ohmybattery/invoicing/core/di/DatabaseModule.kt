@@ -8,6 +8,7 @@ import com.ohmybattery.invoicing.data.local.MIGRATION_1_2
 import com.ohmybattery.invoicing.data.local.MIGRATION_2_3
 import com.ohmybattery.invoicing.data.local.MIGRATION_3_4
 import com.ohmybattery.invoicing.data.local.MIGRATION_4_5
+import com.ohmybattery.invoicing.data.local.MIGRATION_5_6
 import com.ohmybattery.invoicing.data.local.Seed
 import com.ohmybattery.invoicing.data.local.dao.AuditDao
 import com.ohmybattery.invoicing.data.local.dao.BatteryDao
@@ -39,7 +40,7 @@ object DatabaseModule {
     ): AppDatabase {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.DB_NAME)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
             .addCallback(object : androidx.room.RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)

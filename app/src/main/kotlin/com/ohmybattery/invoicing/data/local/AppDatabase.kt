@@ -24,7 +24,7 @@ import com.ohmybattery.invoicing.data.local.entity.InvoiceLineEntity
         InvoiceLineEntity::class,
         AuditLogEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false,
 )
 @TypeConverters(RoomConverters::class)

@@ -47,6 +47,7 @@ class InvoiceCsvImporter @Inject constructor(
         var skipped = 0
         var maxNumber: Int? = null
         val clientCache = mutableMapOf<String, Long>()
+        val companyAtImport = db.companyDao().get()
 
         for ((rowIndex, row) in data.withIndex()) {
             val lineNo = rowIndex + 2
@@ -128,6 +129,13 @@ class InvoiceCsvImporter @Inject constructor(
                         paymentDate = paymentDate,
                         status = InvoiceStatus.PAID,
                         issuerName = issuer,
+                        companyNameAtIssue = companyAtImport?.name,
+                        companySirenAtIssue = companyAtImport?.siren,
+                        companyAddressAtIssue = companyAtImport?.addressLine,
+                        companyPostalAtIssue = companyAtImport?.postalCode,
+                        companyCityAtIssue = companyAtImport?.city,
+                        companyVatNumberAtIssue = companyAtImport?.vatNumber,
+                        companyManagerAtIssue = companyAtImport?.managerName,
                     )
                 )
                 db.invoiceDao().insertLines(

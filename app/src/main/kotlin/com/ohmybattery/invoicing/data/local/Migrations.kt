@@ -44,3 +44,19 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         )
     }
 }
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "UPDATE invoices SET " +
+                "companyNameAtIssue = (SELECT name FROM company WHERE id = 1), " +
+                "companySirenAtIssue = (SELECT siren FROM company WHERE id = 1), " +
+                "companyAddressAtIssue = (SELECT addressLine FROM company WHERE id = 1), " +
+                "companyPostalAtIssue = (SELECT postalCode FROM company WHERE id = 1), " +
+                "companyCityAtIssue = (SELECT city FROM company WHERE id = 1), " +
+                "companyVatNumberAtIssue = (SELECT vatNumber FROM company WHERE id = 1), " +
+                "companyManagerAtIssue = (SELECT managerName FROM company WHERE id = 1) " +
+                "WHERE companyNameAtIssue IS NULL"
+        )
+    }
+}
