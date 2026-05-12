@@ -7,6 +7,8 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import androidx.core.content.FileProvider
+import com.ohmybattery.invoicing.core.country.CountryProfile
+import com.ohmybattery.invoicing.core.country.FranceProfile
 import com.ohmybattery.invoicing.core.money.Money
 import com.ohmybattery.invoicing.data.local.entity.CompanyEntity
 import com.ohmybattery.invoicing.data.local.entity.InvoiceType
@@ -30,6 +32,8 @@ class InvoicePdfGenerator @Inject constructor(
     fun generate(
         invoice: InvoiceWithDetails,
         company: CompanyEntity,
+        country: CountryProfile = FranceProfile,
+        taxOptedOut: Boolean = false,
         sourceInvoiceNumber: Int? = null,
         sourceInvoiceDateMillis: Long? = null,
     ): File {
@@ -49,7 +53,7 @@ class InvoicePdfGenerator @Inject constructor(
         cursor = drawComment(canvas, invoice, cursor + 8f)
         cursor = drawTotalsCard(canvas, invoice, cursor + 16f)
         drawPaidStamp(canvas, invoice, cursor + 18f)
-        drawFooter(canvas, company, invoice)
+        drawFooter(canvas, company, invoice, country, taxOptedOut)
 
         pdf.finishPage(page)
 
@@ -367,7 +371,13 @@ class InvoicePdfGenerator @Inject constructor(
         canvas.drawText(stamp, MARGIN + 14f, top + 23f, label)
     }
 
-    private fun drawFooter(canvas: android.graphics.Canvas, company: CompanyEntity, inv: InvoiceWithDetails) {
+    private fun drawFooter(
+        canvas: android.graphics.Canvas,
+        company: CompanyEntity,
+        inv: InvoiceWithDetails,
+        country: CountryProfile,
+        taxOptedOut: Boolean,
+    ) {
         val legalName = inv.invoice.companyNameAtIssue ?: company.name
         val legalSiren = inv.invoice.companySirenAtIssue ?: company.siren
         val legalAddress = inv.invoice.companyAddressAtIssue ?: company.addressLine
@@ -379,10 +389,12 @@ class InvoicePdfGenerator @Inject constructor(
         canvas.drawLine(MARGIN, PAGE_H - 90f, PAGE_W - MARGIN, PAGE_H - 90f, divider)
 
         val small = Paint().apply { color = MUTED; textSize = 9f; isAntiAlias = true }
-        canvas.drawText("$legalName — SIREN $legalSiren", MARGIN, PAGE_H - 70f, small)
+        canvas.drawText("$legalName — ${country.legalIdLabel} $legalSiren", MARGIN, PAGE_H - 70f, small)
         canvas.drawText("$legalAddress, $legalPostal $legalCity, ${company.country}", MARGIN, PAGE_H - 58f, small)
         canvas.drawText("Tél. ${company.phone}  •  ${company.email}  •  ${company.website}", MARGIN, PAGE_H - 46f, small)
-        canvas.drawText("TVA non applicable, art. 293 B du CGI — sauf option contraire", MARGIN, PAGE_H - 32f, small)
+        country.footerMention(taxOptedOut)?.let { mention ->
+            canvas.drawText(mention, MARGIN, PAGE_H - 32f, small)
+        }
 
         val signature = Paint().apply {
             color = MUTED; textSize = 10f; isAntiAlias = true; textAlign = Paint.Align.RIGHT

@@ -7,6 +7,7 @@ import com.ohmybattery.invoicing.core.pdf.InvoicePdfGenerator
 import com.ohmybattery.invoicing.data.local.entity.BatteryEntity
 import com.ohmybattery.invoicing.data.local.entity.ClientEntity
 import com.ohmybattery.invoicing.data.local.entity.PaymentMethod
+import com.ohmybattery.invoicing.data.preferences.CountryPreferences
 import com.ohmybattery.invoicing.data.repository.BatteryRepository
 import com.ohmybattery.invoicing.data.repository.ClientRepository
 import com.ohmybattery.invoicing.data.repository.CompanyRepository
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -71,6 +73,7 @@ class CreateInvoiceViewModel @Inject constructor(
     private val companyRepo: CompanyRepository,
     private val invoiceRepo: InvoiceRepository,
     private val pdfGenerator: InvoicePdfGenerator,
+    private val countryPrefs: CountryPreferences,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateUiState())
@@ -175,7 +178,13 @@ class CreateInvoiceViewModel @Inject constructor(
                 )
                 val company = companyRepo.get() ?: error("Company missing")
                 val details = invoiceRepo.get(invoiceId) ?: error("Invoice missing")
-                val file = pdfGenerator.generate(details, company)
+                val countrySettings = countryPrefs.flow.first()
+                val file = pdfGenerator.generate(
+                    invoice = details,
+                    company = company,
+                    country = countrySettings.profile,
+                    taxOptedOut = countrySettings.taxOptedOut,
+                )
                 invoiceRepo.attachPdf(invoiceId, file.absolutePath)
                 _state.update { it.copy(isSaving = false) }
                 onIssued(invoiceId)

@@ -9,15 +9,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -37,6 +43,7 @@ fun CompanyInfoScreen(
     vm: CompanyInfoViewModel = hiltViewModel(),
 ) {
     val company by vm.company.collectAsStateWithLifecycle()
+    val country by vm.country.collectAsStateWithLifecycle()
 
     var name by remember { mutableStateOf("") }
     var siren by remember { mutableStateOf("") }
@@ -95,6 +102,41 @@ fun CompanyInfoScreen(
             item { OutlinedTextField(value = website, onValueChange = { website = it }, label = { Text("Site web") }, modifier = Modifier.fillMaxWidth()) }
             item { OutlinedTextField(value = manager, onValueChange = { manager = it }, label = { Text("Gérant") }, modifier = Modifier.fillMaxWidth()) }
             item { OutlinedTextField(value = nextNumber, onValueChange = { nextNumber = it }, label = { Text("Prochain n° de facture") }, modifier = Modifier.fillMaxWidth()) }
+
+            country?.let { settings ->
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    Text("Régime de ${settings.profile.taxLabel}", style = MaterialTheme.typography.titleMedium)
+                }
+                item {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    "Franchise de ${settings.profile.taxLabel}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Text(
+                                    if (settings.profile.code == "FR")
+                                        "Auto-entrepreneur sous le seuil — la facture affichera « TVA non applicable, art. 293 B du CGI ». Désactivez si vous facturez avec TVA."
+                                    else
+                                        "Cette entreprise n'applique pas de taxe sur ses ventes.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Switch(
+                                checked = settings.taxOptedOut,
+                                onCheckedChange = vm::setTaxOptedOut,
+                            )
+                        }
+                    }
+                }
+            }
+
             item {
                 Button(
                     onClick = {

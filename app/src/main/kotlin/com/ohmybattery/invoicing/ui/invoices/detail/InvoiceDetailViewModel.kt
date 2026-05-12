@@ -7,12 +7,14 @@ import com.ohmybattery.invoicing.core.pdf.InvoicePdfGenerator
 import com.ohmybattery.invoicing.data.local.entity.CompanyEntity
 import com.ohmybattery.invoicing.data.local.entity.InvoiceType
 import com.ohmybattery.invoicing.data.local.relation.InvoiceWithDetails
+import com.ohmybattery.invoicing.data.preferences.CountryPreferences
 import com.ohmybattery.invoicing.data.repository.CompanyRepository
 import com.ohmybattery.invoicing.data.repository.InvoiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -34,6 +36,7 @@ class InvoiceDetailViewModel @Inject constructor(
     private val invoiceRepo: InvoiceRepository,
     private val companyRepo: CompanyRepository,
     private val pdfGenerator: InvoicePdfGenerator,
+    private val countryPrefs: CountryPreferences,
 ) : ViewModel() {
 
     val invoiceId: Long = handle.get<Long>("invoiceId") ?: 0L
@@ -66,9 +69,12 @@ class InvoiceDetailViewModel @Inject constructor(
     fun regeneratePdf() = viewModelScope.launch {
         val inv = _state.value.invoice ?: return@launch
         val company = _state.value.company ?: return@launch
+        val countrySettings = countryPrefs.flow.first()
         val file = pdfGenerator.generate(
             invoice = inv,
             company = company,
+            country = countrySettings.profile,
+            taxOptedOut = countrySettings.taxOptedOut,
             sourceInvoiceNumber = _state.value.sourceInvoiceNumber,
             sourceInvoiceDateMillis = _state.value.sourceInvoiceDate,
         )
@@ -86,9 +92,12 @@ class InvoiceDetailViewModel @Inject constructor(
             try {
                 val newId = invoiceRepo.issueCredit(inv.invoice.id, reason)
                 val details = invoiceRepo.get(newId) ?: error("Avoir introuvable")
+                val countrySettings = countryPrefs.flow.first()
                 val file = pdfGenerator.generate(
                     invoice = details,
                     company = company,
+                    country = countrySettings.profile,
+                    taxOptedOut = countrySettings.taxOptedOut,
                     sourceInvoiceNumber = inv.invoice.number,
                     sourceInvoiceDateMillis = inv.invoice.issueDate,
                 )
