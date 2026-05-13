@@ -123,6 +123,10 @@ The APK lands in `app/build/outputs/apk/debug/`.
 
 ---
 
+## Roadmap
+
+Voir [ROADMAP.md](ROADMAP.md) — what's shipped, what's planned, and what is intentionally out of scope.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
