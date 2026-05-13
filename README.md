@@ -23,10 +23,12 @@ Pas de cloud, pas d'abonnement, pas de compte à créer. Tes données restent su
 ## Fonctionnalités
 
 - Facturation en quelques taps, optimisée pour usage au comptoir ou à domicile (gros boutons, gants OK)
-- Numérotation chronologique sans rupture (conforme art. 242 nonies A CGI)
-- Chaîne anti-fraude SHA-256 (conforme loi anti-fraude TVA 2018)
+- **Profils pays France et États-Unis** : devise (€ / $), format de date (jj/mm/aaaa ou mm/jj/aaaa), libellé de taxe (TVA ou Sales Tax), mentions légales et anti-fraude appliqués automatiquement selon le pays renseigné dans la fiche entreprise
+- Numérotation chronologique sans rupture (conforme art. 242 nonies A CGI) — France uniquement
+- Chaîne anti-fraude SHA-256 (conforme loi anti-fraude TVA 2018) — France uniquement
 - Mode auto-entrepreneur (mention « TVA non applicable, art. 293 B du CGI »)
-- Mentions B2B (SIRET, pénalités de retard, indemnité 40 €) quand le client est un pro
+- Taux de sales tax par défaut configurable (États-Unis)
+- Mentions B2B (SIRET, pénalités de retard, indemnité 40 €) quand le client est un pro — France uniquement
 - Avoir (note de crédit) en 1 tap depuis une facture
 - Génération PDF locale + partage par email/WhatsApp/AirDrop
 - Verrouillage biométrique optionnel
@@ -81,10 +83,12 @@ No cloud, no subscription, no account. Your data stays on your phone.
 ## Features
 
 - A few-tap invoicing flow, optimised for counter or on-site use
-- Gapless chronological numbering (French anti-fraud compliant)
-- SHA-256 audit chain (French anti-fraud compliant)
+- **Built-in profiles for France and the United States**: currency (€ / $), date format (dd/mm/yyyy or mm/dd/yyyy), tax label (VAT or Sales Tax), legal mentions and anti-fraud features are applied automatically based on the country set in the business profile
+- Gapless chronological numbering (French anti-fraud compliant) — France only
+- SHA-256 audit chain (French anti-fraud compliant) — France only
 - VAT-free regime support (French auto-entrepreneur)
-- B2B mentions (SIRET, late-payment penalties, 40 € recovery indemnity) when the customer is a business
+- Configurable default sales tax rate (United States)
+- B2B mentions (SIRET, late-payment penalties, 40 € recovery indemnity) when the customer is a business — France only
 - 1-tap credit notes
 - Local PDF generation + share via email / messaging / AirDrop
 - Optional biometric lock
