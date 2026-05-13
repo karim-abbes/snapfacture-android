@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ohmybattery.invoicing.R
+import com.ohmybattery.invoicing.core.country.LocalCountryProfile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +48,7 @@ fun SettingsScreen(
     onOpenCompany: () -> Unit,
     onOpenSecurity: () -> Unit,
 ) {
+    val isFr = LocalCountryProfile.current.code == "FR"
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,21 +79,23 @@ fun SettingsScreen(
                     onClick = onOpenCatalog,
                 )
             }
-            item {
-                SettingsCard(
-                    icon = Icons.Default.UploadFile,
-                    title = stringResource(R.string.settings_import_title),
-                    subtitle = stringResource(R.string.settings_import_subtitle),
-                    onClick = onOpenImport,
-                )
-            }
-            item {
-                SettingsCard(
-                    icon = Icons.Default.Download,
-                    title = stringResource(R.string.settings_export_title),
-                    subtitle = stringResource(R.string.settings_export_subtitle),
-                    onClick = onOpenExport,
-                )
+            if (isFr) {
+                item {
+                    SettingsCard(
+                        icon = Icons.Default.UploadFile,
+                        title = stringResource(R.string.settings_import_title),
+                        subtitle = stringResource(R.string.settings_import_subtitle),
+                        onClick = onOpenImport,
+                    )
+                }
+                item {
+                    SettingsCard(
+                        icon = Icons.Default.Download,
+                        title = stringResource(R.string.settings_export_title),
+                        subtitle = stringResource(R.string.settings_export_subtitle),
+                        onClick = onOpenExport,
+                    )
+                }
             }
             item {
                 SettingsCard(

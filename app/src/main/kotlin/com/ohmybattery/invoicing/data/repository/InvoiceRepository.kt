@@ -91,6 +91,7 @@ class InvoiceRepository @Inject constructor(
         val number = companyDao.peekNextInvoiceNumber()
         companyDao.bumpInvoiceNumber()
         val company = companyDao.get()
+        val activeCurrency = countryPrefs.flow.first().profile.currency.currencyCode
 
         val invoice = InvoiceEntity(
             number = number,
@@ -101,6 +102,7 @@ class InvoiceRepository @Inject constructor(
             totalHtCents = totalHt,
             totalVatCents = totalVat,
             totalTtcCents = totalTtc,
+            currency = activeCurrency,
             paymentMethod = input.paymentMethod,
             paymentDate = input.issueDateMillis,
             status = InvoiceStatus.PAID,
@@ -167,6 +169,7 @@ class InvoiceRepository @Inject constructor(
             totalHtCents = -orig.invoice.totalHtCents,
             totalVatCents = -orig.invoice.totalVatCents,
             totalTtcCents = -orig.invoice.totalTtcCents,
+            currency = orig.invoice.currency,
             paymentMethod = orig.invoice.paymentMethod,
             paymentDate = now,
             paymentNote = reason?.takeIf { it.isNotBlank() },

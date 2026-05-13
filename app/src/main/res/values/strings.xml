@@ -211,7 +211,6 @@
     <string name="company_tax_regime_section">%1$s regime</string>
     <string name="company_franchise_label">No %1$s</string>
     <string name="company_franchise_subtitle_fr">From now on, new invoices will be issued without VAT (mention &quot;art. 293 B CGI&quot;). Already issued invoices stay unchanged.</string>
-    <string name="company_franchise_subtitle_other">From now on, new invoices will be issued without tax. Already issued invoices stay unchanged.</string>
 
     <!-- Catalog -->
     <string name="catalog_title">Product catalog</string>

@@ -163,7 +163,6 @@
     <string name="company_tax_regime_section">Régime de %1$s</string>
     <string name="company_franchise_label">Franchise de %1$s</string>
     <string name="company_franchise_subtitle_fr">À partir de maintenant, les nouvelles factures seront émises sans TVA (mention « art. 293 B du CGI »). Les factures déjà émises restent inchangées.</string>
-    <string name="company_franchise_subtitle_other">À partir de maintenant, les nouvelles factures seront émises sans taxe. Les factures déjà émises restent inchangées.</string>
 
     <!-- Catalog -->
     <string name="catalog_title">Catalogue produits</string>
