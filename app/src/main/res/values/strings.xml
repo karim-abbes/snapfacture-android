@@ -181,14 +181,9 @@
 
     <!-- Welcome / onboarding -->
     <string name="welcome_title">Welcome</string>
-    <string name="welcome_intro">A few details to get started. You can complete everything later in Settings → Business.</string>
-    <string name="welcome_business_name">Business or trading name *</string>
-    <string name="welcome_country_label">Country</string>
-    <string name="welcome_manager_name">Issuer name (printed on invoices) *</string>
-    <string name="welcome_franchise_label">VAT-free regime</string>
-    <string name="welcome_franchise_subtitle">Turn on if you do not charge VAT (auto-entrepreneur, micro-BIC under the threshold). Adds the legal mention to your invoices.</string>
+    <string name="welcome_business_name">Business name *</string>
+    <string name="welcome_manager_name">Your name *</string>
     <string name="welcome_start">Start invoicing</string>
-    <string name="welcome_footer_hint">You can add address, SIREN/EIN, phone and IBAN anytime from Settings → Business.</string>
 
     <!-- Country labels -->
     <string name="country_france">France</string>

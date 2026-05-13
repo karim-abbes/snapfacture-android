@@ -16,7 +16,6 @@ data class WelcomeUiState(
     val name: String = "",
     val countryCode: String = "FR",
     val manager: String = "",
-    val taxOptedOut: Boolean = true,
     val saving: Boolean = false,
 ) {
     val canSave: Boolean get() = !saving && name.isNotBlank() && manager.isNotBlank()
@@ -33,10 +32,7 @@ class WelcomeViewModel @Inject constructor(
 
     fun onNameChange(v: String) = _state.update { it.copy(name = v) }
     fun onManagerChange(v: String) = _state.update { it.copy(manager = v) }
-    fun onCountryChange(code: String) = _state.update {
-        it.copy(countryCode = code, taxOptedOut = if (code == "US") false else it.taxOptedOut)
-    }
-    fun onTaxOptedOutChange(v: Boolean) = _state.update { it.copy(taxOptedOut = v) }
+    fun onCountryChange(code: String) = _state.update { it.copy(countryCode = code) }
 
     fun save(onDone: () -> Unit) {
         val s = _state.value
@@ -51,7 +47,10 @@ class WelcomeViewModel @Inject constructor(
                     country = if (s.countryCode == "US") "United States" else "France",
                 )
             )
-            countryPrefs.setTaxOptedOut(if (s.countryCode == "US") false else s.taxOptedOut)
+            // Sensible default: solo FR entrepreneurs are overwhelmingly under the
+            // VAT-free threshold; US has no such regime. Power users can flip this
+            // later in Settings → Business.
+            countryPrefs.setTaxOptedOut(s.countryCode == "FR")
             _state.update { it.copy(saving = false) }
             onDone()
         }

@@ -140,14 +140,9 @@
     <!-- Company info -->
     <string name="company_title">Entreprise</string>
     <string name="welcome_title">Bienvenue</string>
-    <string name="welcome_intro">Quelques infos pour démarrer. Tout est modifiable plus tard dans Réglages → Entreprise.</string>
     <string name="welcome_business_name">Nom de l\'entreprise *</string>
-    <string name="welcome_country_label">Pays</string>
-    <string name="welcome_manager_name">Nom du gérant (apparaît sur les factures) *</string>
-    <string name="welcome_franchise_label">Franchise de TVA</string>
-    <string name="welcome_franchise_subtitle">Activer si tu ne factures pas de TVA (auto-entrepreneur, micro-BIC sous le seuil). Ajoute la mention légale aux factures.</string>
-    <string name="welcome_start">Commencer à facturer</string>
-    <string name="welcome_footer_hint">Adresse, SIREN, téléphone et IBAN s\'ajoutent à tout moment depuis Réglages → Entreprise.</string>
+    <string name="welcome_manager_name">Votre nom *</string>
+    <string name="welcome_start">Commencer</string>
     <string name="country_france">France</string>
     <string name="country_us">États-Unis</string>
     <string name="share_subject">Facture %1$s N° %2$d</string>

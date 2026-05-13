@@ -1,86 +1,91 @@
 package com.ohmybattery.invoicing.ui.welcome
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ohmybattery.invoicing.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WelcomeScreen(
     onDone: () -> Unit,
     vm: WelcomeViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    val backdrop = Brush.verticalGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.primaryContainer,
+        ),
+    )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.welcome_title)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-        },
-    ) { pad ->
-        Column(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backdrop),
+        contentAlignment = Alignment.Center,
+    ) {
+        Card(
             modifier = Modifier
-                .padding(pad)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(PaddingValues(20.dp)),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .fillMaxWidth()
+                .widthIn(max = 460.dp)
+                .padding(24.dp),
+            shape = RoundedCornerShape(28.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
         ) {
-            Text(
-                stringResource(R.string.welcome_intro),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            OutlinedTextField(
-                value = state.name,
-                onValueChange = vm::onNameChange,
-                label = { Text(stringResource(R.string.welcome_business_name)) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(28.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp),
+            ) {
                 Text(
-                    stringResource(R.string.welcome_country_label),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    stringResource(R.string.welcome_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                OutlinedTextField(
+                    value = state.name,
+                    onValueChange = vm::onNameChange,
+                    label = { Text(stringResource(R.string.welcome_business_name)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
                     FilterChip(
                         selected = state.countryCode == "FR",
                         onClick = { vm.onCountryChange("FR") },
@@ -92,59 +97,29 @@ fun WelcomeScreen(
                         label = { Text(stringResource(R.string.country_us)) },
                     )
                 }
-            }
 
-            OutlinedTextField(
-                value = state.manager,
-                onValueChange = vm::onManagerChange,
-                label = { Text(stringResource(R.string.welcome_manager_name)) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
+                OutlinedTextField(
+                    value = state.manager,
+                    onValueChange = vm::onManagerChange,
+                    label = { Text(stringResource(R.string.welcome_manager_name)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
 
-            if (state.countryCode == "FR") {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(Modifier.weight(1f)) {
-                            Text(
-                                stringResource(R.string.welcome_franchise_label),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Text(
-                                stringResource(R.string.welcome_franchise_subtitle),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        Switch(
-                            checked = state.taxOptedOut,
-                            onCheckedChange = vm::onTaxOptedOutChange,
-                        )
-                    }
+                Spacer(Modifier.height(4.dp))
+
+                Button(
+                    onClick = { vm.save(onDone) },
+                    enabled = state.canSave,
+                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    shape = RoundedCornerShape(28.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.welcome_start),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
                 }
             }
-
-            Spacer(Modifier.height(8.dp))
-
-            Button(
-                onClick = { vm.save(onDone) },
-                enabled = state.canSave,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-            ) {
-                Text(
-                    stringResource(R.string.welcome_start),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-
-            Text(
-                stringResource(R.string.welcome_footer_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }
