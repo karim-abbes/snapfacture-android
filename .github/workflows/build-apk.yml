@@ -88,14 +88,14 @@ jobs:
             exit 1
           fi
           echo "Found APK: $APK"
-          cp "$APK" artifact/ohmybattery-debug.apk
+          cp "$APK" artifact/snapfacture-debug.apk
           ls -lh artifact/
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ohmybattery-debug-apk
-          path: artifact/ohmybattery-debug.apk
+          name: snapfacture-debug-apk
+          path: artifact/snapfacture-debug.apk
           if-no-files-found: error
           retention-days: 30
 
@@ -107,6 +107,6 @@ jobs:
           body: |
             Build automatique du dernier commit sur ${{ github.ref_name }}.
             Commit: ${{ github.sha }}
-          files: artifact/ohmybattery-debug.apk
+          files: artifact/snapfacture-debug.apk
           prerelease: true
           make_latest: false

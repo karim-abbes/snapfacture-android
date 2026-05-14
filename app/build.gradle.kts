@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ohmybattery.invoicing"
+    namespace = "com.snapfacture"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.ohmybattery.invoicing"
+        applicationId = "com.snapfacture"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

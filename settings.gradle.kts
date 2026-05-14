@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Ohmybattery Facturation"
+rootProject.name = "Snapfacture"
 include(":app")

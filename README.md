@@ -58,8 +58,8 @@ Détails complets : [PRIVACY.md](PRIVACY.md).
 ## Compiler depuis les sources
 
 ```bash
-git clone https://github.com/karimlancien/facturation-android.git
-cd facturation-android
+git clone https://github.com/karimlancien/snapfacture-android.git
+cd snapfacture-android
 ./gradlew assembleDebug
 ```
 
@@ -118,8 +118,8 @@ Full details: [PRIVACY.md](PRIVACY.md).
 ## Build from source
 
 ```bash
-git clone https://github.com/karimlancien/facturation-android.git
-cd facturation-android
+git clone https://github.com/karimlancien/snapfacture-android.git
+cd snapfacture-android
 ./gradlew assembleDebug
 ```
 

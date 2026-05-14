@@ -41,7 +41,7 @@ jobs:
           set -e
           mkdir -p artifact
           APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
-          cp "$APK" "artifact/ohmybattery-${{ github.ref_name }}.apk"
+          cp "$APK" "artifact/snapfacture-${{ github.ref_name }}.apk"
           ls -lh artifact/
 
       - name: Publish frozen GitHub Release

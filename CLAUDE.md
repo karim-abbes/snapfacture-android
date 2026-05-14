@@ -6,7 +6,7 @@ Application de facturation Android **minimaliste, 100 % locale, open source (MIT
 
 - Produit pensé pour **artisans, auto-entrepreneurs, indépendants 1 à 3 personnes**, payés au comptant (espèces, CB, virement instantané).
 - Marchés visés : **France** (priorité, marché mal servi face à Pennylane / Sellsy trop chers) et **États-Unis** (profil pays existant, à activer si traction FR).
-- **Premier utilisateur de référence** : Ohmybattery (vente + pose de batteries auto à domicile, SIREN 887714228, propriétaire = Karim). Toute décision UX/architecture doit rester compatible avec ce cas d'usage réel.
+- **Historique** : ce repo a été extrait d'une app interne Ohmybattery (vente + pose de batteries auto). Cette version-là est conservée dans un fork séparé. Ici, on cible le grand public et on garde le code générique — pas de retour en arrière sur les concepts spécifiques (véhicule, batteries, etc.).
 
 ## Principe directeur
 
