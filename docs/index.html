@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snapfacture — facturation Android gratuite pour artisans et auto-entrepreneurs</title>
+<meta name="description" content="Application de facturation Android 100 % gratuite, 100 % locale, sans abonnement. Conforme à la loi française. Open source MIT. Pour artisans, auto-entrepreneurs et indépendants payés au comptant.">
+<meta name="theme-color" content="#0D47A1">
+
+<meta property="og:title" content="Snapfacture — facturation Android gratuite, 100 % locale">
+<meta property="og:description" content="L'app de facturation qui ne t'envoie pas la facture à la fin du mois. Gratuite à vie, open source, conforme loi française.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="screenshots/invoice-b2c.jpg">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --primary: #0D47A1;
+  --primary-light: #1565C0;
+  --accent: #FFB300;
+  --accent-soft: rgba(255, 179, 0, 0.15);
+  --bg: #0A0E1A;
+  --bg-elevated: #131825;
+  --bg-card: #1A2030;
+  --text: #E8EAED;
+  --text-muted: #8B92A5;
+  --border: #2A3142;
+  --success: #4CAF50;
+  --danger: #F44336;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --max-width: 1100px;
+}
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 16px; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0 0 16px; }
+.container { max-width: var(--max-width); margin: 0 auto; padding: 0 20px; }
+.section { padding: 80px 0; }
+.section-tight { padding: 48px 0; }
+
+/* Nav */
+nav.top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+nav.top .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+}
+nav.top .brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+nav.top .brand-dot {
+  color: var(--accent);
+}
+nav.top a.gh {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Hero */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  background: radial-gradient(ellipse at top, rgba(13, 71, 161, 0.25) 0%, transparent 60%);
+}
+.hero .tagline-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 179, 0, 0.3);
+}
+.hero h1 .accent { color: var(--accent); }
+.hero .subtitle {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  color: var(--text-muted);
+  max-width: 640px;
+  margin: 0 auto 36px;
+}
+.cta-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: var(--radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #1A0F00;
+  box-shadow: 0 8px 24px rgba(255, 179, 0, 0.3);
+}
+.btn-primary:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 179, 0, 0.45);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  text-decoration: none;
+  border-color: var(--text-muted);
+}
+.hero .fine {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* Trust bar */
+.trust {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+.trust .row {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 24px 20px;
+}
+.trust .badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.trust .badge svg { width: 18px; height: 18px; color: var(--accent); }
+
+/* Pain */
+.pain-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  border: 1px solid var(--border);
+  max-width: 720px;
+  margin: 0 auto;
+}
+.pain-card .quote {
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.pain-card p { color: var(--text-muted); }
+
+/* Comparison */
+.compare-wrap {
+  overflow-x: auto;
+  margin: 32px 0;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+table.compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+table.compare th, table.compare td {
+  padding: 16px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+table.compare thead { background: var(--bg-elevated); }
+table.compare th { font-weight: 600; color: var(--text-muted); }
+table.compare .row-name { font-weight: 500; }
+table.compare .snap-col { background: rgba(255, 179, 0, 0.06); font-weight: 600; color: var(--text); }
+table.compare .yes { color: var(--success); }
+table.compare .no { color: var(--danger); }
+
+/* Features */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+.feature {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  border: 1px solid var(--border);
+  transition: transform 0.2s, border-color 0.2s;
+}
+.feature:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+.feature .icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.feature .icon svg { width: 22px; height: 22px; color: var(--accent); }
+.feature h3 { font-size: 1.05rem; margin-bottom: 8px; }
+.feature p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
+
+/* Screenshots */
+.screens-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+.screen-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.screen-card img {
+  width: 100%;
+  height: auto;
+  max-width: 280px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+.screen-card h3 { font-size: 1rem; margin-bottom: 4px; }
+.screen-card p { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+
+/* Steps */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+.step {
+  text-align: center;
+}
+.step .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #1A0F00;
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+.step h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.step p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
+
+/* Pricing */
+.price-card {
+  background: linear-gradient(160deg, var(--primary) 0%, var(--bg-card) 100%);
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  text-align: center;
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  max-width: 560px;
+  margin: 40px auto 0;
+}
+.price-card .amount {
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  margin: 8px 0;
+}
+.price-card .per { color: var(--text-muted); font-size: 1rem; }
+.price-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 28px 0;
+  text-align: left;
+  display: inline-block;
+}
+.price-card li {
+  padding: 6px 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.price-card li::before {
+  content: "✓";
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 10px;
+}
+
+/* FAQ */
+.faq details {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.faq details[open] { border-color: var(--accent); }
+.faq summary {
+  padding: 18px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+";
+  font-size: 1.4rem;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+.faq details[open] summary::after { content: "−"; }
+.faq .answer {
+  padding: 0 20px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+.faq .answer p { margin: 0 0 10px; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 0 32px;
+  background: var(--bg-elevated);
+}
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+footer .left p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+footer .links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+footer .links a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+footer .links a:hover { color: var(--accent); }
+
+.center { text-align: center; }
+.mt-0 { margin-top: 0; }
+.muted { color: var(--text-muted); }
+
+@media (max-width: 640px) {
+  .section { padding: 60px 0; }
+  .hero { padding: 60px 0 40px; }
+  .pain-card { padding: 28px 22px; }
+  .pain-card .quote { font-size: 1.15rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="Navigation principale">
+  <div class="container">
+    <span class="brand">Snap<span class="brand-dot">facture</span></span>
+    <a href="#telecharger" class="gh" aria-label="Télécharger l'application">Télécharger</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <span class="tagline-pill">100 % gratuit · 100 % local · Open source</span>
+    <h1>Facture en 4 taps.<br><span class="accent">Sans payer 30 € par mois.</span></h1>
+    <p class="subtitle">L'app de facturation Android pour artisans, auto-entrepreneurs et indépendants payés au comptant. Ouverte. Sans abonnement. Sans cloud. Sans pub.</p>
+    <div class="cta-row">
+      <a id="telecharger" href="https://github.com/karimlancien/snapfacture-android/releases/download/latest-debug/snapfacture-debug.apk" class="btn btn-primary" aria-label="Télécharger Snapfacture pour Android">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Télécharger pour Android
+      </a>
+    </div>
+    <p class="fine">Android 8.0+ · ~7 Mo · aucun compte, aucune permission réseau</p>
+  </div>
+</header>
+
+<section class="trust" aria-label="Promesses Snapfacture">
+  <div class="row">
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100 % gratuit, à vie</span>
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Aucune donnée envoyée sur Internet</span>
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Code source ouvert (MIT)</span>
+    <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Conforme à la loi française</span>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="pain-card">
+      <p class="quote">"J'en avais marre de payer 30 € par mois à Pennylane juste pour faire 5 factures."</p>
+      <p>Alors j'ai construit l'app que je voulais utiliser. Une app qui fait <strong>une seule chose</strong>, qui la fait <strong>vite</strong>, et qui <strong>ne touche pas à tes données</strong>.</p>
+      <p class="mt-0">Pas de compte à créer. Pas d'envoi de mails par hasard. Pas de migration d'écran qui sort de nulle part. Tu ouvres l'app, tu tapes 4 boutons, ta facture est faite. Le PDF reste sur ton téléphone tant que tu décides pas de le partager.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight" aria-labelledby="compare-title">
+  <div class="container">
+    <h2 id="compare-title" class="center">Comparé aux concurrents</h2>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th class="snap-col">Snapfacture</th>
+            <th>Pennylane</th>
+            <th>Sellsy</th>
+            <th>Indy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-name">Prix mensuel</td>
+            <td class="snap-col">0 €</td>
+            <td>~30 €</td>
+            <td>~40 €</td>
+            <td>~20 €</td>
+          </tr>
+          <tr>
+            <td class="row-name">Compte obligatoire</td>
+            <td class="snap-col no">Non</td>
+            <td class="yes">Oui</td>
+            <td class="yes">Oui</td>
+            <td class="yes">Oui</td>
+          </tr>
+          <tr>
+            <td class="row-name">Données dans le cloud</td>
+            <td class="snap-col no">Non</td>
+            <td class="yes">Oui</td>
+            <td class="yes">Oui</td>
+            <td class="yes">Oui</td>
+          </tr>
+          <tr>
+            <td class="row-name">Code auditable</td>
+            <td class="snap-col yes">Oui (MIT)</td>
+            <td class="no">Non</td>
+            <td class="no">Non</td>
+            <td class="no">Non</td>
+          </tr>
+          <tr>
+            <td class="row-name">Marche hors-ligne</td>
+            <td class="snap-col yes">Oui</td>
+            <td class="no">Partiel</td>
+            <td class="no">Non</td>
+            <td class="no">Non</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="features-title">
+  <div class="container">
+    <h2 id="features-title" class="center">Ce que tu peux faire</h2>
+    <p class="center muted" style="max-width:560px;margin:0 auto;">Toutes les fonctions essentielles d'une vraie app de facturation française, zéro fioriture.</p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <h3>Création en 4 taps</h3>
+        <p>Client, prestation, montant, paiement. C'est tout. Optimisé pour usage au comptoir ou sur la route, gros boutons, gants OK.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Conforme loi française</h3>
+        <p>Numérotation chronologique sans rupture, chaîne anti-fraude SHA-256, mention art. 293 B CGI pour la franchise TVA.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg></div>
+        <h3>Mentions B2B auto</h3>
+        <p>Quand le client a un SIRET, les mentions L441-10 et indemnité 40 € D441-5 s'ajoutent automatiquement au PDF.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Avoir en 1 tap</h3>
+        <p>Tu t'es trompé ? Émets une note d'avoir depuis le détail de la facture. Une seule action, conforme légalement.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8 21v-4M16 21v-4M8 7v4M16 7v4M3 11h18"/></svg></div>
+        <h3>Sauvegarde où tu veux</h3>
+        <p>Google Drive, OneDrive, dossier local. Tu choisis. Snapfacture ne sait pas ce que devient le fichier après.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 12 7 8 11 12 17 6 21 10"/><line x1="3" y1="20" x2="21" y2="20"/></svg></div>
+        <h3>Stats claires</h3>
+        <p>CA mensuel et annuel, TVA collectée, top produits, top clients. Prêt pour ta déclaration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="screens-title">
+  <div class="container">
+    <h2 id="screens-title" class="center">À quoi ressemble une vraie facture</h2>
+    <p class="center muted" style="max-width:560px;margin:0 auto;">Données fictives "Plomberie Saadi" — un cas réel d'auto-entrepreneur.</p>
+    <div class="screens-wrap">
+      <div class="screen-card">
+        <img src="screenshots/invoice-b2c.jpg" alt="Facture pour un particulier, design propre avec mention de paiement réglé">
+        <h3>Facture particulier</h3>
+        <p>Layout simple, paiement marqué payé, mention auto-entrepreneur.</p>
+      </div>
+      <div class="screen-card">
+        <img src="screenshots/invoice-b2b.jpg" alt="Facture pour une entreprise avec mentions légales B2B en pied de page">
+        <h3>Facture pro (B2B)</h3>
+        <p>SIRET client + pénalités de retard + indemnité 40 € auto-ajoutés.</p>
+      </div>
+      <div class="screen-card">
+        <img src="screenshots/credit-note.jpg" alt="Note d'avoir avec en-tête rouge et montant négatif">
+        <h3>Avoir (annulation)</h3>
+        <p>Couleur rouge pour distinguer, chaînage légal avec la facture d'origine.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight" aria-labelledby="steps-title">
+  <div class="container">
+    <h2 id="steps-title" class="center">Tu démarres en 3 minutes</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Tu télécharges</h3>
+        <p>Clic sur le bouton, l'APK arrive sur ton tél. ~7 Mo.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Tu installes</h3>
+        <p>Android peut demander "autoriser sources inconnues" — c'est normal pour un APK hors Play Store.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Tu factures</h3>
+        <p>Premier lancement : 3 champs à remplir (nom, pays, ton nom). C'est parti.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="center">Le prix, c'est simple</h2>
+    <div class="price-card">
+      <p class="muted mt-0" style="margin-bottom:0;">Snapfacture</p>
+      <p class="amount">0 €</p>
+      <p class="per">par mois, pour toujours</p>
+      <ul>
+        <li>Factures illimitées</li>
+        <li>Avoirs illimités</li>
+        <li>Clients illimités</li>
+        <li>Aucun compte à créer</li>
+        <li>Aucune pub, aucun tracking</li>
+        <li>Code source auditable</li>
+      </ul>
+      <p class="muted" style="font-size:0.85rem;margin-top:8px;">Pas de version premium cachée. Pas de paiement après 30 jours. Pas de email de relance.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="faq-title">
+  <div class="container">
+    <h2 id="faq-title" class="center">Les questions qu'on me pose</h2>
+    <div class="faq" style="max-width:720px;margin:40px auto 0;">
+
+      <details>
+        <summary>Pourquoi c'est gratuit ? C'est louche.</summary>
+        <div class="answer">
+          <p>Snapfacture est un projet personnel. Je l'ai construit parce que les outils existants me coûtaient trop cher pour ce que j'en faisais. Tant que ça reste un projet solo, ça reste gratuit. Aucune mécanique cachée : pas de version premium qui apparaît après 30 jours, pas de pub, pas de revente de données.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Mes données vont où ?</summary>
+        <div class="answer">
+          <p>Sur ton téléphone uniquement. Snapfacture ne demande même pas la permission Internet à Android. Aucune donnée n'est envoyée à un serveur, jamais. Si tu actives la sauvegarde, tu choisis le dossier (Drive, OneDrive, local…) et c'est ton fournisseur de stockage qui gère, pas moi.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Comment je sauvegarde mes factures ?</summary>
+        <div class="answer">
+          <p>Réglages → Sauvegarde → choisis un dossier (par exemple Google Drive). Tu peux faire un export manuel ou activer la sauvegarde automatique. Le fichier est une base SQLite que tu peux restaurer à tout moment.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>C'est légal ? Conforme à l'admin française ?</summary>
+        <div class="answer">
+          <p>Oui. Snapfacture applique : numérotation chronologique sans rupture (art. 242 nonies A CGI), chaîne anti-fraude SHA-256 (loi anti-fraude TVA 2018), mention "TVA non applicable, art. 293 B du CGI" pour les auto-entrepreneurs en franchise, snapshot des infos entreprise à l'émission de chaque facture (immutabilité légale).</p>
+          <p>Pour la réforme e-facturation B2B (Factur-X / PDP) obligatoire en septembre 2027, le support est prévu pour le printemps 2027.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>iOS, c'est pour quand ?</summary>
+        <div class="answer">
+          <p>Pas tout de suite. Une version iOS demande de réécrire toute l'interface en SwiftUI + 99 $ par an chez Apple + validation App Store. Je l'envisage quand Snapfacture aura 50+ utilisateurs actifs Android, pour ne pas perdre 2 mois sur quelque chose que personne ne demande.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Et hors de France ?</summary>
+        <div class="answer">
+          <p>Snapfacture supporte aussi les États-Unis (devise $, format de date MM/DD/YYYY, label "Sales Tax", pas de mentions françaises). Le pays est demandé à l'onboarding et toute l'app s'adapte automatiquement.</p>
+          <p>D'autres pays (Canada, Belgique, Algérie…) peuvent être ajoutés rapidement — l'architecture est faite pour. Écris-moi.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Pourquoi pas le Play Store ?</summary>
+        <div class="answer">
+          <p>Pour l'instant, distribution directe par téléchargement APK. Une mise en Play Store sera envisagée quand le projet aura de la traction, pour réduire la friction des installations.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container center">
+    <h2>Prêt ?</h2>
+    <p class="muted" style="max-width:480px;margin:0 auto 28px;">Télécharge l'APK, fais ta première facture en 3 minutes.</p>
+    <a href="https://github.com/karimlancien/snapfacture-android/releases/download/latest-debug/snapfacture-debug.apk" class="btn btn-primary">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Télécharger Snapfacture
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="left">
+      <p><strong>Snapfacture</strong> · Construit par Karim Lancien</p>
+      <p style="margin-top:6px;font-size:0.85rem;">Aucun tracking sur cette page. Aucune donnée collectée. Aucun cookie.</p>
+    </div>
+    <nav class="links" aria-label="Liens utiles">
+      <a href="#faq-title">FAQ</a>
+      <a href="#faq-title">Vie privée</a>
+      <a href="mailto:feedback@snapfacture.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
