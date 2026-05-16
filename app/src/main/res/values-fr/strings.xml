@@ -233,7 +233,7 @@
 
     <!-- PDF -->
     <string name="pdf_title_invoice">FACTURE N° %1$d</string>
-    <string name="pdf_title_credit">FACTURE D\'AVOIR N° %1$d</string>
+    <string name="pdf_title_credit">AVOIR N° %1$d</string>
     <string name="pdf_issued_on_f">Émise le %1$s</string>
     <string name="pdf_issued_on_m">Émis le %1$s</string>
     <string name="pdf_billed_to">FACTURÉ À</string>
@@ -257,7 +257,7 @@
     <string name="pdf_paid_stamp">PAYÉE • %1$s</string>
     <string name="pdf_refunded_stamp">REMBOURSÉ • %1$s</string>
     <string name="pdf_credit_reference">Annule et remplace la facture N° %1$d%2$s</string>
-    <string name="pdf_credit_reference_date_suffix"> du %1$s</string>
+    <string name="pdf_credit_reference_date_suffix">" du %1$s"</string>
     <string name="pdf_footer_manager">%1$s • Gérant</string>
     <string name="pdf_contact_line">Tél. %1$s  •  %2$s  •  %3$s</string>
     <string name="pdf_client_siret">SIRET %1$s</string>

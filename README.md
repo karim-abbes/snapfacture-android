@@ -4,12 +4,11 @@
 
 Pas de cloud, pas d'abonnement, pas de compte à créer. Tes données restent sur ton téléphone.
 
-<!-- Captures d'écran : déposer les images dans docs/screenshots/ puis dé-commenter ci-dessous -->
-<!--
-| Liste | Création | Détail |
+| Facture B2C | Facture B2B | Avoir |
 |---|---|---|
-| ![Liste des factures](docs/screenshots/list.png) | ![Création](docs/screenshots/create.png) | ![Détail](docs/screenshots/detail.png) |
--->
+| ![Facture B2C](docs/screenshots/invoice-b2c.jpg) | ![Facture B2B](docs/screenshots/invoice-b2b.jpg) | ![Avoir](docs/screenshots/credit-note.jpg) |
+
+*PDF générés à partir des données démo « Plomberie Saadi » fournies dans [docs/demo/](docs/demo/).*
 
 ---
 

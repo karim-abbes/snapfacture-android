@@ -160,7 +160,7 @@
     <string name="pdf_paid_stamp">PAID • %1$s</string>
     <string name="pdf_refunded_stamp">REFUNDED • %1$s</string>
     <string name="pdf_credit_reference">Cancels and replaces invoice #%1$d%2$s</string>
-    <string name="pdf_credit_reference_date_suffix"> from %1$s</string>
+    <string name="pdf_credit_reference_date_suffix">" from %1$s"</string>
     <string name="pdf_footer_manager">%1$s • Manager</string>
     <string name="pdf_client_siret">SIRET %1$s</string>
     <string name="pdf_b2b_penalties">Late-payment penalties: ECB main refinancing rate plus 10 percentage points (Art. L441-10 French Commercial Code).</string>
