@@ -24,7 +24,7 @@ import com.snapfacture.data.local.entity.ProductEntity
         InvoiceLineEntity::class,
         AuditLogEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(RoomConverters::class)
@@ -37,5 +37,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "snapfacture.db"
+
+        // Keep in sync with @Database(version = ...) above. Used by restore
+        // to refuse backups produced by a newer version of the app.
+        const val SCHEMA_VERSION = 2
     }
 }

@@ -102,6 +102,16 @@
     <string name="settings_company_subtitle">Coordonnées, identifiant légal, numéro de facture</string>
     <string name="settings_security_title">Sécurité</string>
     <string name="settings_security_subtitle">Verrouiller l\'app par empreinte / PIN du téléphone</string>
+    <string name="settings_verify_title">Vérifier l\'intégrité</string>
+    <string name="settings_verify_subtitle">Recalcule la chaîne anti-fraude et contrôle chaque facture émise</string>
+    <string name="verify_dialog_title">Intégrité de la comptabilité</string>
+    <string name="verify_running">Vérification de toutes les écritures…</string>
+    <string name="verify_failed">La vérification n\'a pas pu aboutir. Réessayez.</string>
+    <string name="verify_ok">Tout est cohérent — %1$d écritures vérifiées, chaque facture émise correspond à son empreinte.</string>
+    <string name="verify_legacy_note">%1$d écritures plus anciennes sont antérieures aux empreintes vérifiables et ont été ignorées.</string>
+    <string name="verify_broken">Anomalie détectée : la chaîne est rompue à l\'écriture n° %1$d. Le journal d\'audit a été modifié hors de l\'app.</string>
+    <string name="verify_tampered">Anomalie détectée : la facture N° %1$d ne correspond plus à son empreinte. Son contenu a été modifié hors de l\'app.</string>
+    <string name="verify_close">Fermer</string>
 
     <!-- Security -->
     <string name="security_title">Sécurité</string>

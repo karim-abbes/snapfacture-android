@@ -12,4 +12,7 @@ interface AuditDao {
 
     @Query("SELECT payloadHash FROM audit_log ORDER BY id DESC LIMIT 1")
     suspend fun lastHash(): String?
+
+    @Query("SELECT * FROM audit_log ORDER BY id ASC")
+    suspend fun all(): List<AuditLogEntity>
 }

@@ -102,6 +102,16 @@
     <string name="settings_company_subtitle">Contact details, legal ID, invoice number</string>
     <string name="settings_security_title">Security</string>
     <string name="settings_security_subtitle">Lock the app with fingerprint / phone PIN</string>
+    <string name="settings_verify_title">Verify ledger integrity</string>
+    <string name="settings_verify_subtitle">Recompute the anti-fraud hash chain and check every issued invoice</string>
+    <string name="verify_dialog_title">Ledger integrity</string>
+    <string name="verify_running">Checking every entry…</string>
+    <string name="verify_failed">The check could not be completed. Try again.</string>
+    <string name="verify_ok">All good — %1$d entries verified, every issued invoice matches its fingerprint.</string>
+    <string name="verify_legacy_note">%1$d older entries predate verifiable fingerprints and were skipped.</string>
+    <string name="verify_broken">Anomaly detected: the hash chain is broken at entry #%1$d. The audit log has been modified outside the app.</string>
+    <string name="verify_tampered">Anomaly detected: invoice #%1$d no longer matches its fingerprint. Its content has been modified outside the app.</string>
+    <string name="verify_close">Close</string>
 
     <!-- Security -->
     <string name="security_title">Security</string>

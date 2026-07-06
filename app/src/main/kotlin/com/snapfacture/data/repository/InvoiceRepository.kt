@@ -132,14 +132,14 @@ class InvoiceRepository @Inject constructor(
         }
         invoiceDao.insertLines(lineRows)
 
-        appendAudit(invoiceId, "INVOICE_ISSUED", number.toString() + "|" + totalTtc.toString())
+        appendAudit(invoiceId, EVENT_INVOICE_ISSUED, auditPayload(invoice, lineRows))
 
         invoiceId
     }.also { backupManager.triggerIfEnabled() }
 
     suspend fun attachPdf(invoiceId: Long, path: String) {
         invoiceDao.setPdfPath(invoiceId, path)
-        appendAudit(invoiceId, "PDF_GENERATED", path)
+        appendAudit(invoiceId, EVENT_PDF_GENERATED, path)
     }
 
     // The whole credit note must be atomic: a crash between the number bump and
@@ -202,7 +202,7 @@ class InvoiceRepository @Inject constructor(
         }
         invoiceDao.insertLines(newLines)
 
-        appendAudit(newId, "CREDIT_NOTE_ISSUED", "${orig.invoice.number}->$number")
+        appendAudit(newId, EVENT_CREDIT_ISSUED, auditPayload(credit, newLines))
         newId
     }.also { backupManager.triggerIfEnabled() }
 
@@ -211,16 +211,62 @@ class InvoiceRepository @Inject constructor(
         // Skip in countries that don't impose it.
         if (!countryPrefs.flow.first().profile.antiFraudHashChain) return
         val prev = auditDao.lastHash()
-        val md = MessageDigest.getInstance("SHA-256")
-        val raw = (prev ?: "") + "|" + event + "|" + payload + "|" + System.currentTimeMillis()
-        val hash = md.digest(raw.toByteArray()).joinToString("") { "%02x".format(it) }
+        val timestamp = System.currentTimeMillis()
         auditDao.append(
             AuditLogEntity(
                 invoiceId = invoiceId,
                 event = event,
-                payloadHash = hash,
+                payload = payload,
+                payloadHash = chainHash(prev, event, payload, timestamp),
                 previousHash = prev,
+                timestamp = timestamp,
             )
+        )
+    }
+
+    /**
+     * Walks the whole audit log and re-derives every hash from the stored
+     * columns, then cross-checks each issue event's payload against the
+     * invoice as it exists in the database today. Any manual edit of either
+     * the log or an issued invoice breaks one of the two checks.
+     */
+    suspend fun verifyAuditChain(): AuditVerification {
+        val entries = auditDao.all()
+        var prev: String? = null
+        var verified = 0
+        var legacy = 0
+        var brokenAtEntry: Long? = null
+        var tamperedInvoiceNumber: Int? = null
+        for (e in entries) {
+            if (e.payload.isEmpty()) {
+                // Pre-v2 row: its hash included a timestamp that was never
+                // stored, so it cannot be recomputed. Counted, not verified.
+                legacy++
+                prev = e.payloadHash
+                continue
+            }
+            if (brokenAtEntry == null &&
+                (e.previousHash != prev || e.payloadHash != chainHash(prev, e.event, e.payload, e.timestamp))
+            ) {
+                brokenAtEntry = e.id
+            }
+            prev = e.payloadHash
+            if (tamperedInvoiceNumber == null && e.invoiceId != null &&
+                (e.event == EVENT_INVOICE_ISSUED || e.event == EVENT_CREDIT_ISSUED)
+            ) {
+                val current = invoiceDao.getWithDetails(e.invoiceId)
+                if (current == null || auditPayload(current.invoice, current.lines) != e.payload) {
+                    tamperedInvoiceNumber = current?.invoice?.number ?: -1
+                }
+            }
+            verified++
+        }
+        return AuditVerification(
+            totalEntries = entries.size,
+            verifiedEntries = verified,
+            legacyEntries = legacy,
+            brokenAtEntryId = brokenAtEntry,
+            tamperedInvoiceNumber = tamperedInvoiceNumber,
         )
     }
 
@@ -234,4 +280,55 @@ class InvoiceRepository @Inject constructor(
         val lineVat: Long,
         val lineTtc: Long,
     )
+
+    companion object {
+        const val EVENT_INVOICE_ISSUED = "INVOICE_ISSUED"
+        const val EVENT_CREDIT_ISSUED = "CREDIT_NOTE_ISSUED"
+        const val EVENT_PDF_GENERATED = "PDF_GENERATED"
+
+        fun chainHash(prev: String?, event: String, payload: String, timestamp: Long): String {
+            val raw = (prev ?: "") + "|" + event + "|" + payload + "|" + timestamp
+            return MessageDigest.getInstance("SHA-256")
+                .digest(raw.toByteArray())
+                .joinToString("") { "%02x".format(it) }
+        }
+
+        /**
+         * Deterministic serialization of everything that makes the invoice a
+         * legal document. '|' is the field separator, so it is stripped from
+         * free-text fields before hashing.
+         */
+        fun auditPayload(invoice: InvoiceEntity, lines: List<InvoiceLineEntity>): String = buildString {
+            append("n=").append(invoice.number)
+            append("|type=").append(invoice.type)
+            append("|client=").append(invoice.clientId)
+            append("|issued=").append(invoice.issueDate)
+            append("|ht=").append(invoice.totalHtCents)
+            append("|vat=").append(invoice.totalVatCents)
+            append("|ttc=").append(invoice.totalTtcCents)
+            append("|cur=").append(invoice.currency)
+            append("|pay=").append(invoice.paymentMethod)
+            append("|franchise=").append(invoice.taxOptedOutAtIssue)
+            append("|linked=").append(invoice.linkedInvoiceId)
+            lines.sortedBy { it.position }.forEach { l ->
+                append("|L").append(l.position)
+                    .append(":").append(l.description.replace('|', '/'))
+                    .append(",").append(l.quantity)
+                    .append(",").append(l.vatRatePermille)
+                    .append(",").append(l.lineHtCents)
+                    .append(",").append(l.lineVatCents)
+                    .append(",").append(l.lineTtcCents)
+            }
+        }
+    }
+}
+
+data class AuditVerification(
+    val totalEntries: Int,
+    val verifiedEntries: Int,
+    val legacyEntries: Int,
+    val brokenAtEntryId: Long?,
+    val tamperedInvoiceNumber: Int?,
+) {
+    val ok: Boolean get() = brokenAtEntryId == null && tamperedInvoiceNumber == null
 }
