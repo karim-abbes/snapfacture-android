@@ -1,0 +1,17 @@
+Snapfacture is a minimalist invoicing app for tradespeople, freelancers and one-person businesses paid on the spot (cash, card, instant transfer).
+
+<b>Issue a legal invoice in about 20 seconds</b>: tap your products, charge, share the PDF by email or messaging before your customer walks out.
+
+<b>Features</b>
+- Few-tap invoice creation from your product catalog
+- Credit notes in one tap
+- Gapless sequential numbering and immutable issued invoices
+- Verifiable SHA-256 anti-fraud audit chain (French profile)
+- PDF generation and sharing, fully offline
+- Country profiles: France (VAT, statutory B2B mentions, franchise regime) and United States (sales tax)
+- Revenue dashboard and tax summary
+- CSV export for your accountant
+- Manual or automatic backup to a folder you choose (Drive, OneDrive, SD card…)
+- Optional biometric lock
+
+<b>Private by design</b>: no account, no server, no analytics, and no network permission at all — your invoices and customers never leave your phone unless you export them yourself.
