@@ -67,9 +67,7 @@ class InvoiceRepository @Inject constructor(
             val ttcUnit = l.unitPriceTtcCents
             val effectiveRate = if (input.taxOptedOut) 0 else l.vatRatePermille
             val htUnit = if (input.taxOptedOut) ttcUnit else Money.htFromTtc(ttcUnit, effectiveRate)
-            val lineTtc = ttcUnit * l.quantity
-            val lineHt = htUnit * l.quantity
-            val lineVat = lineTtc - lineHt
+            val (lineHt, lineVat, lineTtc) = Money.lineAmounts(ttcUnit, l.quantity, effectiveRate)
             ComputedLine(
                 description = l.description,
                 extraNote = l.extraNote,
@@ -144,7 +142,10 @@ class InvoiceRepository @Inject constructor(
         appendAudit(invoiceId, "PDF_GENERATED", path)
     }
 
-    suspend fun issueCredit(originalId: Long, reason: String?): Long {
+    // The whole credit note must be atomic: a crash between the number bump and
+    // the insert would burn an invoice number, breaking the gapless sequence
+    // required by art. 242 nonies A CGI.
+    suspend fun issueCredit(originalId: Long, reason: String?): Long = db.withTransaction {
         val orig = invoiceDao.getWithDetails(originalId)
             ?: error("Facture introuvable")
         require(orig.invoice.type == InvoiceType.INVOICE) {
@@ -202,9 +203,8 @@ class InvoiceRepository @Inject constructor(
         invoiceDao.insertLines(newLines)
 
         appendAudit(newId, "CREDIT_NOTE_ISSUED", "${orig.invoice.number}->$number")
-        backupManager.triggerIfEnabled()
-        return newId
-    }
+        newId
+    }.also { backupManager.triggerIfEnabled() }
 
     private suspend fun appendAudit(invoiceId: Long?, event: String, payload: String) {
         // Hash chain is a French anti-fraud requirement (loi anti-fraude TVA 2018).

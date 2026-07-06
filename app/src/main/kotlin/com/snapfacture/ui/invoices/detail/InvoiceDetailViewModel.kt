@@ -11,12 +11,15 @@ import com.snapfacture.data.preferences.CountryPreferences
 import com.snapfacture.data.repository.CompanyRepository
 import com.snapfacture.data.repository.InvoiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -28,6 +31,7 @@ data class DetailUiState(
     val sourceInvoiceNumber: Int? = null,
     val sourceInvoiceDate: Long? = null,
     val isIssuingCredit: Boolean = false,
+    val creditFailed: Boolean = false,
 )
 
 @HiltViewModel
@@ -70,14 +74,16 @@ class InvoiceDetailViewModel @Inject constructor(
         val inv = _state.value.invoice ?: return@launch
         val company = _state.value.company ?: return@launch
         val countrySettings = countryPrefs.flow.first()
-        val file = pdfGenerator.generate(
-            invoice = inv,
-            company = company,
-            country = countrySettings.profile,
-            taxOptedOut = countrySettings.taxOptedOut,
-            sourceInvoiceNumber = _state.value.sourceInvoiceNumber,
-            sourceInvoiceDateMillis = _state.value.sourceInvoiceDate,
-        )
+        val file = withContext(Dispatchers.IO) {
+            pdfGenerator.generate(
+                invoice = inv,
+                company = company,
+                country = countrySettings.profile,
+                taxOptedOut = countrySettings.taxOptedOut,
+                sourceInvoiceNumber = _state.value.sourceInvoiceNumber,
+                sourceInvoiceDateMillis = _state.value.sourceInvoiceDate,
+            )
+        }
         invoiceRepo.attachPdf(inv.invoice.id, file.absolutePath)
         _state.update { it.copy(pdfFile = file) }
     }
@@ -87,26 +93,36 @@ class InvoiceDetailViewModel @Inject constructor(
         val company = _state.value.company ?: return
         if (inv.invoice.type != InvoiceType.INVOICE) return
         if (_state.value.linkedCreditNumber != null) return
-        _state.update { it.copy(isIssuingCredit = true) }
+        _state.update { it.copy(isIssuingCredit = true, creditFailed = false) }
         viewModelScope.launch {
-            try {
-                val newId = invoiceRepo.issueCredit(inv.invoice.id, reason)
-                val details = invoiceRepo.get(newId) ?: error("Avoir introuvable")
-                val countrySettings = countryPrefs.flow.first()
-                val file = pdfGenerator.generate(
-                    invoice = details,
-                    company = company,
-                    country = countrySettings.profile,
-                    taxOptedOut = countrySettings.taxOptedOut,
-                    sourceInvoiceNumber = inv.invoice.number,
-                    sourceInvoiceDateMillis = inv.invoice.issueDate,
-                )
-                invoiceRepo.attachPdf(newId, file.absolutePath)
-                _state.update { it.copy(isIssuingCredit = false) }
-                onDone(newId)
-            } catch (_: Throwable) {
-                _state.update { it.copy(isIssuingCredit = false) }
+            val newId = try {
+                invoiceRepo.issueCredit(inv.invoice.id, reason)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                _state.update { it.copy(isIssuingCredit = false, creditFailed = true) }
+                return@launch
             }
+            // The credit note legally exists past this point: a PDF failure must
+            // not keep the user on a screen where a second one could be issued.
+            // The PDF can be regenerated from the credit note's detail screen.
+            runCatching {
+                val details = invoiceRepo.get(newId) ?: error("Credit note not found after issue")
+                val countrySettings = countryPrefs.flow.first()
+                val file = withContext(Dispatchers.IO) {
+                    pdfGenerator.generate(
+                        invoice = details,
+                        company = company,
+                        country = countrySettings.profile,
+                        taxOptedOut = countrySettings.taxOptedOut,
+                        sourceInvoiceNumber = inv.invoice.number,
+                        sourceInvoiceDateMillis = inv.invoice.issueDate,
+                    )
+                }
+                invoiceRepo.attachPdf(newId, file.absolutePath)
+            }.onFailure { if (it is CancellationException) throw it }
+            _state.update { it.copy(isIssuingCredit = false) }
+            onDone(newId)
         }
     }
 }

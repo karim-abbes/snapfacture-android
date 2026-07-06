@@ -303,6 +303,7 @@ fun InvoiceDetailScreen(
     if (showCreditDialog) {
         CreditDialog(
             isSaving = state.isIssuingCredit,
+            failed = state.creditFailed,
             onDismiss = { showCreditDialog = false },
             onConfirm = { reason ->
                 vm.issueCredit(reason) { newId ->
@@ -317,6 +318,7 @@ fun InvoiceDetailScreen(
 @Composable
 private fun CreditDialog(
     isSaving: Boolean,
+    failed: Boolean,
     onDismiss: () -> Unit,
     onConfirm: (String?) -> Unit,
 ) {
@@ -338,6 +340,14 @@ private fun CreditDialog(
                     label = { Text(stringResource(R.string.credit_dialog_motif_label)) },
                     placeholder = { Text(stringResource(R.string.credit_dialog_motif_hint)) },
                 )
+                if (failed) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.credit_dialog_error),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         },
         confirmButton = {

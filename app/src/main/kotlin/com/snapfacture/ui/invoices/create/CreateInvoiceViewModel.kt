@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.snapfacture.core.money.Money
 import com.snapfacture.core.pdf.InvoicePdfGenerator
+import com.snapfacture.data.local.entity.CompanyEntity
 import com.snapfacture.data.local.entity.ProductEntity
 import com.snapfacture.data.local.entity.ClientEntity
 import com.snapfacture.data.local.entity.PaymentMethod
@@ -15,6 +16,8 @@ import com.snapfacture.data.repository.DraftLine
 import com.snapfacture.data.repository.InvoiceRepository
 import com.snapfacture.data.repository.IssueInvoiceInput
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class CartLine(
@@ -50,8 +54,7 @@ data class CreateUiState(
     val totalHtCents: Long get() =
         if (taxOptedOut) totalTtcCents
         else cart.sumOf {
-            val ht = Money.htFromTtc(it.product.priceTtcCents, it.product.vatRatePermille)
-            ht * it.quantity
+            Money.lineAmounts(it.product.priceTtcCents, it.quantity, it.product.vatRatePermille).ht
         }
     val totalVatCents: Long get() = if (taxOptedOut) 0L else totalTtcCents - totalHtCents
 
@@ -158,7 +161,7 @@ class CreateInvoiceViewModel @Inject constructor(
         if (!st.canIssue) return
         _state.update { it.copy(isSaving = true, error = null) }
         viewModelScope.launch {
-            try {
+            val issued: Pair<Long, CompanyEntity>? = try {
                 val effectiveSiret = if (st.isPro) st.clientSiret else null
                 val clientId = clientRepo.upsertByName(
                     name = st.selectedClient?.name ?: st.clientName,
@@ -194,20 +197,33 @@ class CreateInvoiceViewModel @Inject constructor(
                         clientSiret = effectiveSiret,
                     )
                 )
+                invoiceId to company
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Exception) {
+                _state.update { it.copy(isSaving = false, error = t.message ?: "Erreur") }
+                null
+            }
+            if (issued == null) return@launch
+            val (invoiceId, company) = issued
+            // The invoice legally exists past this point: a PDF failure must not
+            // leave the cart armed for a duplicate issue. Navigate to the detail
+            // screen anyway — the PDF can be regenerated from there.
+            runCatching {
                 val details = invoiceRepo.get(invoiceId) ?: error("Invoice missing")
                 val countrySettings = countryPrefs.flow.first()
-                val file = pdfGenerator.generate(
-                    invoice = details,
-                    company = company,
-                    country = countrySettings.profile,
-                    taxOptedOut = countrySettings.taxOptedOut,
-                )
+                val file = withContext(Dispatchers.IO) {
+                    pdfGenerator.generate(
+                        invoice = details,
+                        company = company,
+                        country = countrySettings.profile,
+                        taxOptedOut = countrySettings.taxOptedOut,
+                    )
+                }
                 invoiceRepo.attachPdf(invoiceId, file.absolutePath)
-                _state.update { it.copy(isSaving = false) }
-                onIssued(invoiceId)
-            } catch (t: Throwable) {
-                _state.update { it.copy(isSaving = false, error = t.message ?: "Erreur") }
-            }
+            }.onFailure { if (it is CancellationException) throw it }
+            _state.update { it.copy(isSaving = false) }
+            onIssued(invoiceId)
         }
     }
 }
