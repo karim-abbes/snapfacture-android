@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.LocationOn
@@ -37,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,10 +50,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,11 +70,13 @@ import com.snapfacture.data.local.entity.ProductEntity
 fun CreateInvoiceScreen(
     onBack: () -> Unit,
     onIssued: (Long) -> Unit,
+    onOpenCatalog: () -> Unit,
     vm: CreateInvoiceViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val catalog by vm.catalog.collectAsStateWithLifecycle()
-    var showConfirm by remember { mutableStateOf(false) }
+    var showConfirm by rememberSaveable { mutableStateOf(false) }
+    var showFreeLine by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -104,12 +111,22 @@ fun CreateInvoiceScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item { ClientCard(state, vm) }
-            item { CatalogGrid(catalog, state, vm::addProduct, vm::decrement) }
+            item { CatalogGrid(catalog, state, vm::addProduct, vm::decrement, onOpenCatalog, onFreeLine = { showFreeLine = true }) }
             if (state.hasInstallLine) item { DeliveryCard(state, vm) }
-            if (state.cart.isNotEmpty()) item { CartSummary(state) }
+            if (state.cart.isNotEmpty()) item { CartSummary(state, onRemove = vm::decrement) }
             if (state.cart.isNotEmpty()) item { CommentCard(state, vm) }
             state.error?.let { item { ErrorBanner(it) } }
         }
+    }
+
+    if (showFreeLine) {
+        FreeLineDialog(
+            onDismiss = { showFreeLine = false },
+            onAdd = { label, cents ->
+                showFreeLine = false
+                vm.addFreeLine(label, cents)
+            },
+        )
     }
 
     if (showConfirm) {
@@ -213,9 +230,14 @@ private fun ClientCard(state: CreateUiState, vm: CreateInvoiceViewModel) {
                     singleLine = true,
                 )
             }
-            if (state.matchingClients.isNotEmpty()) {
+            val suggestions = when {
+                state.matchingClients.isNotEmpty() -> state.matchingClients
+                state.clientName.isBlank() && state.selectedClient == null -> state.recentClients
+                else -> emptyList()
+            }
+            if (suggestions.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
-                state.matchingClients.forEach { c ->
+                suggestions.forEach { c ->
                     AssistChip(
                         onClick = { vm.selectClient(c) },
                         label = { Text(c.name) },
@@ -275,6 +297,8 @@ private fun CatalogGrid(
     state: CreateUiState,
     onAdd: (ProductEntity) -> Unit,
     onRemove: (ProductEntity) -> Unit,
+    onOpenCatalog: () -> Unit,
+    onFreeLine: () -> Unit,
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -283,7 +307,27 @@ private fun CatalogGrid(
             Text(stringResource(R.string.create_catalog_section), style = MaterialTheme.typography.titleMedium)
         }
         Spacer(Modifier.height(8.dp))
-        LazyVerticalGrid(
+        if (catalog.isEmpty()) {
+            Card {
+                Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                    Text(
+                        stringResource(R.string.create_catalog_empty_title),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.create_catalog_empty_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Button(onClick = onOpenCatalog, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.create_catalog_open))
+                    }
+                }
+            }
+        }
+        if (catalog.isNotEmpty()) LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxWidth().height(((catalog.size + 1) / 2 * 130).dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -295,7 +339,57 @@ private fun CatalogGrid(
                 ProductTile(b, qty, onAdd, onRemove)
             }
         }
+        Spacer(Modifier.height(10.dp))
+        OutlinedButton(onClick = onFreeLine, modifier = Modifier.fillMaxWidth()) {
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(Modifier.size(8.dp))
+            Text(stringResource(R.string.create_free_line))
+        }
     }
+}
+
+@Composable
+private fun FreeLineDialog(
+    onDismiss: () -> Unit,
+    onAdd: (label: String, priceTtcCents: Long) -> Unit,
+) {
+    var label by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+    val parsedCents = price.replace(',', '.').toDoubleOrNull()?.let { Math.round(it * 100.0) }
+    val canAdd = label.isNotBlank() && (parsedCents ?: 0L) > 0L
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.free_line_dialog_title)) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = label,
+                    onValueChange = { label = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.free_line_label)) },
+                    singleLine = true,
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.free_line_price)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onAdd(label, parsedCents ?: 0L) },
+                enabled = canAdd,
+            ) { Text(stringResource(R.string.action_add)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
+        },
+    )
 }
 
 @Composable
@@ -376,7 +470,7 @@ private fun ProductTile(
 }
 
 @Composable
-private fun CartSummary(state: CreateUiState) {
+private fun CartSummary(state: CreateUiState, onRemove: (ProductEntity) -> Unit) {
     val profile = LocalCountryProfile.current
     Card {
         Column(Modifier.padding(16.dp)) {
@@ -385,10 +479,18 @@ private fun CartSummary(state: CreateUiState) {
             state.cart.forEach { line ->
                 Row(
                     Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text("${line.quantity} × ${line.product.label}", Modifier.weight(1f))
                     Text(profile.formatMoney(line.product.priceTtcCents * line.quantity))
+                    // Free lines have no catalog tile to decrement from, so they
+                    // get their remove affordance here.
+                    if (line.product.id < 0) {
+                        TextButton(onClick = { onRemove(line.product) }) {
+                            Text(stringResource(R.string.action_remove))
+                        }
+                    }
                 }
                 Spacer(Modifier.height(4.dp))
             }

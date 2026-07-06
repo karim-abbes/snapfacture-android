@@ -27,6 +27,7 @@ data class InvoiceListUiState(
     val query: String = "",
     val period: Period = Period.Month,
     val descending: Boolean = true,
+    val isFirstRun: Boolean = false,
 )
 
 @HiltViewModel
@@ -66,6 +67,7 @@ class InvoiceListViewModel @Inject constructor(
                 periodRevenueCents = revenue,
                 periodInvoiceCount = invoiceCount,
                 companyName = company?.name?.takeIf { it.isNotBlank() }.orEmpty(),
+                isFirstRun = all.isEmpty(),
                 query = f.query,
                 period = f.period,
                 descending = f.descending,

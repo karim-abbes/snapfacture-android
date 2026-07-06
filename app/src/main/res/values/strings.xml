@@ -28,6 +28,8 @@
     <string name="invoice_list_count_year">%1$d invoice(s) this year</string>
     <string name="invoice_list_count_all">%1$d invoice(s) total</string>
     <string name="invoice_list_empty_period">No invoices for this period.</string>
+    <string name="list_first_run_title">Welcome!</string>
+    <string name="list_first_run_body">Start by adding your products and services to the catalog — your first invoice will then take a few taps.</string>
     <string name="invoice_list_empty_query">No results for &quot;%1$s&quot;</string>
     <string name="invoice_list_settings">Settings</string>
     <string name="invoice_list_invoice_n">Invoice #%1$d</string>
@@ -60,6 +62,13 @@
     <string name="create_payment_check">Check</string>
     <string name="create_payment_other">Other</string>
     <string name="create_cash_in">Charge • %1$s</string>
+    <string name="create_free_line">Custom line</string>
+    <string name="free_line_dialog_title">Add a custom line</string>
+    <string name="free_line_label">Description</string>
+    <string name="free_line_price">Price incl. tax</string>
+    <string name="create_catalog_empty_title">Your catalog is empty</string>
+    <string name="create_catalog_empty_body">Add your products and services once — invoicing then takes a few taps. For a one-off, use a custom line below.</string>
+    <string name="create_catalog_open">Open the catalog</string>
 
     <!-- Invoice detail -->
     <string name="detail_invoice_n">Invoice #%1$d</string>

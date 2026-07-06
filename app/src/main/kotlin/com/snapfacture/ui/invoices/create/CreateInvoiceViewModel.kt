@@ -46,6 +46,7 @@ data class CreateUiState(
     val clientSiret: String = "",
     val comment: String = "",
     val matchingClients: List<ClientEntity> = emptyList(),
+    val recentClients: List<ClientEntity> = emptyList(),
     val selectedClient: ClientEntity? = null,
     val cart: List<CartLine> = emptyList(),
     val paymentMethod: PaymentMethod = PaymentMethod.CASH,
@@ -97,6 +98,9 @@ class CreateInvoiceViewModel @Inject constructor(
             countryPrefs.flow.collect { settings ->
                 _state.update { it.copy(taxOptedOut = settings.taxOptedOut) }
             }
+        }
+        viewModelScope.launch {
+            _state.update { it.copy(recentClients = clientRepo.recent()) }
         }
     }
 
@@ -158,6 +162,27 @@ class CreateInvoiceViewModel @Inject constructor(
 
     fun setPaymentMethod(m: PaymentMethod) {
         _state.update { it.copy(paymentMethod = m) }
+    }
+
+    // Free lines live only in the cart: a transient ProductEntity with a
+    // negative id keeps the existing cart plumbing working without ever
+    // touching the catalog. DraftLine (what actually gets issued) only
+    // carries the description/price/rate, so nothing fake is persisted.
+    private var nextFreeLineId = -1L
+
+    fun addFreeLine(label: String, priceTtcCents: Long) {
+        if (label.isBlank() || priceTtcCents <= 0) return
+        viewModelScope.launch {
+            val rate = countryPrefs.flow.first().profile.defaultTaxRatePermille
+            val transient = ProductEntity(
+                id = nextFreeLineId--,
+                label = label.trim(),
+                priceTtcCents = priceTtcCents,
+                vatRatePermille = rate,
+                active = false,
+            )
+            _state.update { it.copy(cart = it.cart + CartLine(transient, 1)) }
+        }
     }
 
     fun issue(onIssued: (Long) -> Unit) {

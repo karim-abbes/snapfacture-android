@@ -19,6 +19,9 @@ interface ClientDao {
     @Query("SELECT * FROM clients WHERE id = :id")
     suspend fun get(id: Long): ClientEntity?
 
+    @Query("SELECT * FROM clients ORDER BY createdAt DESC LIMIT :limit")
+    suspend fun recent(limit: Int): List<ClientEntity>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(client: ClientEntity): Long
 

@@ -28,6 +28,8 @@
     <string name="invoice_list_count_year">%1$d facture(s) cette année</string>
     <string name="invoice_list_count_all">%1$d facture(s) au total</string>
     <string name="invoice_list_empty_period">Aucune facture pour cette période.</string>
+    <string name="list_first_run_title">Bienvenue !</string>
+    <string name="list_first_run_body">Commencez par ajouter vos produits et prestations au catalogue — votre première facture ne prendra ensuite que quelques taps.</string>
     <string name="invoice_list_empty_query">Aucun résultat pour « %1$s »</string>
     <string name="invoice_list_settings">Réglages</string>
     <string name="invoice_list_invoice_n">Facture N° %1$d</string>
@@ -60,6 +62,13 @@
     <string name="create_payment_check">Chèque</string>
     <string name="create_payment_other">Autre</string>
     <string name="create_cash_in">Encaisser • %1$s</string>
+    <string name="create_free_line">Ligne libre</string>
+    <string name="free_line_dialog_title">Ajouter une ligne libre</string>
+    <string name="free_line_label">Libellé</string>
+    <string name="free_line_price">Prix TTC</string>
+    <string name="create_catalog_empty_title">Votre catalogue est vide</string>
+    <string name="create_catalog_empty_body">Ajoutez vos produits et prestations une fois — la facturation ne prendra ensuite que quelques taps. Pour un cas ponctuel, utilisez une ligne libre ci-dessous.</string>
+    <string name="create_catalog_open">Ouvrir le catalogue</string>
 
     <!-- Invoice detail -->
     <string name="detail_invoice_n">Facture N° %1$d</string>

@@ -59,6 +59,7 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onOpen = { nav.navigate(Routes.detail(it)) },
                 onSettings = { nav.navigate(Routes.SETTINGS) },
                 onStats = { nav.navigate(Routes.STATS) },
+                onOpenCatalog = { nav.navigate(Routes.CATALOG) },
             )
         }
         composable(Routes.STATS) {
@@ -71,6 +72,7 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                     nav.popBackStack()
                     nav.navigate(Routes.detail(id))
                 },
+                onOpenCatalog = { nav.navigate(Routes.CATALOG) },
             )
         }
         composable(

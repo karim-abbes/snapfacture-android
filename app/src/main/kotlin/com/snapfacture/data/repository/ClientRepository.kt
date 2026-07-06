@@ -12,6 +12,7 @@ class ClientRepository @Inject constructor(private val dao: ClientDao) {
     suspend fun search(query: String): List<ClientEntity> =
         if (query.isBlank()) emptyList() else dao.search(query.trim())
     suspend fun get(id: Long): ClientEntity? = dao.get(id)
+    suspend fun recent(limit: Int = 5): List<ClientEntity> = dao.recent(limit)
     suspend fun insert(client: ClientEntity): Long = dao.insert(client)
     suspend fun update(client: ClientEntity) = dao.update(client)
 

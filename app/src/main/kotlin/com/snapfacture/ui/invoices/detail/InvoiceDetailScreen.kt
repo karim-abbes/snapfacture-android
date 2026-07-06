@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,7 +68,7 @@ fun InvoiceDetailScreen(
     val context = LocalContext.current
     val inv = state.invoice
 
-    var showCreditDialog by remember { mutableStateOf(false) }
+    var showCreditDialog by rememberSaveable { mutableStateOf(false) }
 
     val isCredit = inv?.invoice?.type == InvoiceType.CREDIT_NOTE
     val title = inv?.invoice?.number?.let { n ->
@@ -322,7 +323,7 @@ private fun CreditDialog(
     onDismiss: () -> Unit,
     onConfirm: (String?) -> Unit,
 ) {
-    var reason by remember { mutableStateOf("") }
+    var reason by rememberSaveable { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = { if (!isSaving) onDismiss() },
         title = { Text(stringResource(R.string.credit_dialog_title)) },

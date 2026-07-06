@@ -30,6 +30,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,21 +51,25 @@ fun CompanyInfoScreen(
     val profile = country?.profile
     val isUs = profile?.code == "US"
 
-    var name by remember { mutableStateOf("") }
-    var legalForm by remember { mutableStateOf("") }
-    var siren by remember { mutableStateOf("") }
-    var vatNumber by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var postal by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var website by remember { mutableStateOf("") }
-    var manager by remember { mutableStateOf("") }
-    var nextNumber by remember { mutableStateOf("") }
-    var defaultTaxPct by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var legalForm by rememberSaveable { mutableStateOf("") }
+    var siren by rememberSaveable { mutableStateOf("") }
+    var vatNumber by rememberSaveable { mutableStateOf("") }
+    var address by rememberSaveable { mutableStateOf("") }
+    var postal by rememberSaveable { mutableStateOf("") }
+    var city by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var website by rememberSaveable { mutableStateOf("") }
+    var manager by rememberSaveable { mutableStateOf("") }
+    var nextNumber by rememberSaveable { mutableStateOf("") }
+    var defaultTaxPct by rememberSaveable { mutableStateOf("") }
 
+    // One-shot load: rememberSaveable keeps in-progress edits across rotation,
+    // and the guard stops the DB snapshot from overwriting them on recreation.
+    var loadedFromDb by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(company) {
+        if (loadedFromDb) return@LaunchedEffect
         company?.let {
             name = it.name; siren = it.siren
             legalForm = it.legalForm; vatNumber = it.vatNumber.orEmpty()
@@ -75,6 +80,7 @@ fun CompanyInfoScreen(
             defaultTaxPct = if (it.defaultTaxPermille > 0)
                 "%.2f".format(it.defaultTaxPermille / 10.0).trimEnd('0').trimEnd('.', ',')
             else ""
+            loadedFromDb = true
         }
     }
 
