@@ -45,6 +45,15 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 - `docs/demo/demo-plomberie-saadi.db` : kit prêt à restaurer (7 pièces : 5 B2C + 1 B2B + 1 avoir)
 - `docs/screenshots/` : 3 PDFs (B2C, B2B, avoir) intégrés au README
 
+### Livré le 6 juillet 2026 (post-audit — détail dans docs/AUDIT-2026-07.md et CHANGELOG.md)
+
+- Arrondi TVA exact (niveau ligne, arithmétique entière) ; mentions PDF complétées (TVA intracom, forme juridique, escompte) ; avoirs atomiques ; anti-double-émission
+- Chaîne anti-fraude **vérifiable** + bouton « Vérifier l'intégrité » (Réglages) ; schéma DB v2
+- Sauvegarde/restauration durcies (checkpoint vérifié, validation + rollback, rotation)
+- Releases taguées signées (keystore stable) ; wrapper Gradle commité ; 27 tests automatiques
+- i18n complète (profil US utilisable) ; ligne libre au panier ; clients récents ; états vides guidés ; formulaires résistants à la rotation
+- Métadonnées F-Droid + guides RELEASING/FDROID + CHANGELOG + CONTRIBUTING
+
 ---
 
 ## 🔨 Prévu (par priorité)
