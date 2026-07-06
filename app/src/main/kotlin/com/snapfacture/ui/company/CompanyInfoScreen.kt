@@ -51,7 +51,9 @@ fun CompanyInfoScreen(
     val isUs = profile?.code == "US"
 
     var name by remember { mutableStateOf("") }
+    var legalForm by remember { mutableStateOf("") }
     var siren by remember { mutableStateOf("") }
+    var vatNumber by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var postal by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
@@ -65,6 +67,7 @@ fun CompanyInfoScreen(
     LaunchedEffect(company) {
         company?.let {
             name = it.name; siren = it.siren
+            legalForm = it.legalForm; vatNumber = it.vatNumber.orEmpty()
             address = it.addressLine; postal = it.postalCode; city = it.city
             phone = it.phone; email = it.email; website = it.website
             manager = it.managerName
@@ -102,9 +105,13 @@ fun CompanyInfoScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item { OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text(stringResource(R.string.company_name)) }, modifier = Modifier.fillMaxWidth()) }
+            item { OutlinedTextField(value = legalForm, onValueChange = { legalForm = it }, label = { Text(stringResource(R.string.company_legal_form)) }, modifier = Modifier.fillMaxWidth()) }
             item {
                 val legalIdLabel = profile?.legalIdLabel ?: stringResource(R.string.company_legal_id)
                 OutlinedTextField(value = siren, onValueChange = { siren = it }, label = { Text(legalIdLabel) }, modifier = Modifier.fillMaxWidth())
+            }
+            if (!isUs) {
+                item { OutlinedTextField(value = vatNumber, onValueChange = { vatNumber = it }, label = { Text(stringResource(R.string.company_vat_number)) }, modifier = Modifier.fillMaxWidth()) }
             }
             item { OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text(stringResource(R.string.company_address)) }, modifier = Modifier.fillMaxWidth()) }
             item { OutlinedTextField(value = postal, onValueChange = { postal = it }, label = { Text(stringResource(R.string.company_postal)) }, modifier = Modifier.fillMaxWidth()) }
@@ -173,6 +180,8 @@ fun CompanyInfoScreen(
                         vm.save(
                             current.copy(
                                 name = name, siren = siren,
+                                legalForm = legalForm.trim(),
+                                vatNumber = vatNumber.trim().ifBlank { null },
                                 addressLine = address, postalCode = postal, city = city,
                                 phone = phone, email = email, website = website,
                                 managerName = manager,

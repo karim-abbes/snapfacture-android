@@ -86,6 +86,7 @@
     <string name="credit_dialog_motif_label">Motif (optionnel)</string>
     <string name="credit_dialog_motif_hint">Ex : erreur de saisie, retour produit, prestation annulée…</string>
     <string name="credit_dialog_confirm">Émettre l\'avoir</string>
+    <string name="credit_dialog_error">Une erreur est survenue — l\'avoir n\'a pas été émis. Réessayez.</string>
 
     <!-- Settings -->
     <string name="settings_title">Réglages</string>
@@ -111,7 +112,7 @@
     <string name="security_no_auth_available">Aucune empreinte ni PIN configuré sur ce téléphone. Configurez-en un dans les réglages Android puis revenez ici.</string>
 
     <!-- Lock screen -->
-    <string name="lock_prompt_title">Facturix</string>
+    <string name="lock_prompt_title">Snapfacture</string>
     <string name="lock_prompt_subtitle">Déverrouillez pour accéder à vos factures</string>
     <string name="lock_locked_title">Application verrouillée</string>
     <string name="lock_locked_body">Authentifiez-vous pour accéder à vos données.</string>
@@ -146,7 +147,9 @@
     <string name="share_body">Bonjour,\n\nVeuillez trouver ci-joint votre facture N° %1$d.\n\nCordialement,\n%2$s</string>
     <string name="share_chooser_title">Partager la facture</string>
     <string name="company_name">Raison sociale</string>
+    <string name="company_legal_form">Forme juridique (ex : EI, SASU, SARL)</string>
     <string name="company_legal_id">Identifiant légal</string>
+    <string name="company_vat_number">N° TVA intracommunautaire (FRxx…)</string>
     <string name="company_address">Adresse</string>
     <string name="company_postal">Code postal</string>
     <string name="company_city">Ville</string>
@@ -206,6 +209,7 @@
     <string name="export_done_count_one">%1$d facture exportée</string>
     <string name="export_done_count_many">%1$d factures exportées</string>
     <string name="export_share">Partager / Envoyer par mail</string>
+    <string name="export_email_subject">Export Snapfacture</string>
     <string name="export_new">Nouvel export</string>
     <string name="export_error_title">Export impossible</string>
 
@@ -263,6 +267,8 @@
     <string name="pdf_client_siret">SIRET %1$s</string>
     <string name="pdf_b2b_penalties">Pénalités de retard : taux directeur de la BCE majoré de 10 points (art. L441-10 C. com.).</string>
     <string name="pdf_b2b_recovery">Indemnité forfaitaire pour frais de recouvrement : 40 € (art. D441-5 C. com.).</string>
+    <string name="pdf_escompte">Escompte pour paiement anticipé : néant.</string>
+    <string name="pdf_vat_number">N° TVA : %1$s</string>
 
     <!-- Issue confirmation -->
     <string name="confirm_issue_title">Confirmer la facture</string>

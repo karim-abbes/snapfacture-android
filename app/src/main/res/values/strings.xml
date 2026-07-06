@@ -86,6 +86,7 @@
     <string name="credit_dialog_motif_label">Reason (optional)</string>
     <string name="credit_dialog_motif_hint">e.g. data entry error, returned item...</string>
     <string name="credit_dialog_confirm">Issue credit note</string>
+    <string name="credit_dialog_error">Something went wrong — the credit note was not issued. Try again.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -111,7 +112,7 @@
     <string name="security_no_auth_available">No fingerprint or PIN configured on this phone. Set one up in Android settings, then come back here.</string>
 
     <!-- Lock screen -->
-    <string name="lock_prompt_title">Facturix</string>
+    <string name="lock_prompt_title">Snapfacture</string>
     <string name="lock_prompt_subtitle">Unlock to access your invoices</string>
     <string name="lock_locked_title">Application locked</string>
     <string name="lock_locked_body">Authenticate to access your data.</string>
@@ -165,6 +166,8 @@
     <string name="pdf_client_siret">SIRET %1$s</string>
     <string name="pdf_b2b_penalties">Late-payment penalties: ECB main refinancing rate plus 10 percentage points (Art. L441-10 French Commercial Code).</string>
     <string name="pdf_b2b_recovery">Fixed indemnity for recovery costs: 40 € (Art. D441-5 French Commercial Code).</string>
+    <string name="pdf_escompte">No discount for early payment (escompte: none).</string>
+    <string name="pdf_vat_number">VAT no. %1$s</string>
     <string name="pdf_contact_line">Tel. %1$s  •  %2$s  •  %3$s</string>
 
     <!-- Issue confirmation -->
@@ -193,7 +196,9 @@
     <!-- Company info -->
     <string name="company_title">Business</string>
     <string name="company_name">Business name</string>
+    <string name="company_legal_form">Legal form (e.g. LLC, sole proprietor)</string>
     <string name="company_legal_id">Legal ID</string>
+    <string name="company_vat_number">VAT number (FRxx…)</string>
     <string name="company_address">Address</string>
     <string name="company_postal">Postal code</string>
     <string name="company_city">City</string>
@@ -253,6 +258,7 @@
     <string name="export_done_count_one">%1$d invoice exported</string>
     <string name="export_done_count_many">%1$d invoices exported</string>
     <string name="export_share">Share / Send by email</string>
+    <string name="export_email_subject">Snapfacture export</string>
     <string name="export_new">New export</string>
     <string name="export_error_title">Export failed</string>
 

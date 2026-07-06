@@ -419,15 +419,26 @@ class InvoicePdfGenerator @Inject constructor(
 
     private fun drawB2bMentions(canvas: android.graphics.Canvas, inv: InvoiceWithDetails, country: CountryProfile) {
         if (country !is FranceProfile) return
-        if (inv.invoice.clientSiretAtIssue.isNullOrBlank()) return
         val small = Paint().apply {
             color = MUTED
             textSize = 8.5f
             isAntiAlias = true
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC)
         }
-        canvas.drawText(context.getString(R.string.pdf_b2b_penalties), MARGIN, PAGE_H - 116f, small)
-        canvas.drawText(context.getString(R.string.pdf_b2b_recovery), MARGIN, PAGE_H - 104f, small)
+        // Escompte terms are mandatory on every French invoice (art. L441-9 C. com.);
+        // penalty mentions only apply between businesses.
+        val mentions = buildList {
+            if (!inv.invoice.clientSiretAtIssue.isNullOrBlank()) {
+                add(context.getString(R.string.pdf_b2b_penalties))
+                add(context.getString(R.string.pdf_b2b_recovery))
+            }
+            add(context.getString(R.string.pdf_escompte))
+        }
+        var y = PAGE_H - 104f - 12f * (mentions.size - 1)
+        mentions.forEach { line ->
+            canvas.drawText(line, MARGIN, y, small)
+            y += 12f
+        }
     }
 
     private fun drawFooter(
@@ -448,7 +459,15 @@ class InvoicePdfGenerator @Inject constructor(
         canvas.drawLine(MARGIN, PAGE_H - 90f, PAGE_W - MARGIN, PAGE_H - 90f, divider)
 
         val small = Paint().apply { color = MUTED; textSize = 9f; isAntiAlias = true }
-        canvas.drawText("$legalName — ${country.legalIdLabel} $legalSiren", MARGIN, PAGE_H - 70f, small)
+        val identityLine = buildString {
+            append(legalName)
+            company.legalForm.takeIf { it.isNotBlank() }?.let { append(" ($it)") }
+            append(" — ${country.legalIdLabel} $legalSiren")
+            val vatNumber = (inv.invoice.companyVatNumberAtIssue ?: company.vatNumber)
+                ?.takeIf { it.isNotBlank() }
+            vatNumber?.let { append(" — ").append(context.getString(R.string.pdf_vat_number, it)) }
+        }
+        canvas.drawText(identityLine, MARGIN, PAGE_H - 70f, small)
         canvas.drawText("$legalAddress, $legalPostal $legalCity, ${company.country}", MARGIN, PAGE_H - 58f, small)
         canvas.drawText(context.getString(R.string.pdf_contact_line, company.phone, company.email, company.website), MARGIN, PAGE_H - 46f, small)
         val effectiveTaxOptedOut = inv.invoice.taxOptedOutAtIssue ?: (inv.invoice.totalVatCents == 0L)
