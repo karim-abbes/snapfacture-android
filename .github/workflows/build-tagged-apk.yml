@@ -1,4 +1,4 @@
-name: Build tagged APK
+name: Build tagged release APK
 
 on:
   push:
@@ -28,19 +28,52 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Generate Gradle wrapper
+        if: ${{ hashFiles('gradlew') == '' }}
         run: gradle wrapper --gradle-version=8.10.2 --distribution-type=bin
 
-      - name: Build debug APK
+      # The release keystore is stored as a base64 GitHub secret so every
+      # release is signed with the SAME key — without that, Android refuses
+      # updates and users would have to uninstall (losing their local data).
+      # See docs/RELEASING.md for how to create and register the keystore.
+      - name: Decode release keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::RELEASE_KEYSTORE_BASE64 secret is missing — cannot sign a release. See docs/RELEASING.md."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+
+      - name: Run unit tests
         shell: bash
         run: |
           set -eo pipefail
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew testReleaseUnitTest --no-daemon --stacktrace
+
+      - name: Build signed release APK
+        shell: bash
+        env:
+          RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/release.keystore
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          set -eo pipefail
+          VERSION_NAME="${GITHUB_REF_NAME#v}"
+          ./gradlew assembleRelease --no-daemon --stacktrace \
+            -PversionName="$VERSION_NAME" \
+            -PversionCode="${{ github.run_number }}"
 
       - name: Locate and rename APK
         run: |
           set -e
           mkdir -p artifact
-          APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          APK=$(find app/build/outputs/apk/release -name "*.apk" ! -name "*unsigned*" | head -n 1)
+          if [ -z "$APK" ]; then
+            echo "::error::No signed release APK found"
+            exit 1
+          fi
           cp "$APK" "artifact/snapfacture-${{ github.ref_name }}.apk"
           ls -lh artifact/
 
@@ -50,10 +83,10 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           body: |
-            Build figé du tag ${{ github.ref_name }}.
+            APK release signé, figé au tag ${{ github.ref_name }}.
             Commit: ${{ github.sha }}
 
             Cette release ne sera plus modifiée — l'APK reste téléchargeable à vie via le lien stable ci-dessous.
           files: artifact/*.apk
           prerelease: false
-          make_latest: false
+          make_latest: true

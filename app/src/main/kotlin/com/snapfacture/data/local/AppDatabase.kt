@@ -25,7 +25,7 @@ import com.snapfacture.data.local.entity.ProductEntity
         AuditLogEntity::class,
     ],
     version = 1,
-    exportSchema = false,
+    exportSchema = true,
 )
 @TypeConverters(RoomConverters::class)
 abstract class AppDatabase : RoomDatabase() {
