@@ -52,7 +52,7 @@ class BackupManager @Inject constructor(
             val header = ByteArray(16)
             val read = context.contentResolver.openInputStream(fileUri)?.use { it.read(header) } ?: 0
             if (read < 16 || !String(header, 0, 15, Charsets.US_ASCII).startsWith("SQLite format 3")) {
-                return@withContext RestoreResult.Failure("Le fichier sélectionné n'est pas une sauvegarde Facturix valide.")
+                return@withContext RestoreResult.Failure("Le fichier sélectionné n'est pas une sauvegarde Snapfacture valide.")
             }
 
             runCatching { database.close() }

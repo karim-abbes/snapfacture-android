@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -468,13 +469,15 @@ private fun BottomCashBar(
     val cashLabel = stringResource(R.string.create_payment_cash)
     val cardLabel = stringResource(R.string.create_payment_card)
     val transferLabel = stringResource(R.string.create_payment_transfer)
+    val checkLabel = stringResource(R.string.create_payment_check)
     Surface(tonalElevation = 6.dp) {
-        Column(Modifier.padding(16.dp)) {
+        Column(Modifier.navigationBarsPadding().padding(16.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf(
                     PaymentMethod.CASH to cashLabel,
                     PaymentMethod.CARD to cardLabel,
                     PaymentMethod.TRANSFER to transferLabel,
+                    PaymentMethod.CHECK to checkLabel,
                 )
                     .forEach { (m, label) ->
                         FilterChip(

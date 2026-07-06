@@ -41,13 +41,13 @@ Pas de cloud, pas d'abonnement, pas de compte à créer. Tes données restent su
 
 1. Va sur la page **[Releases](../../releases)** du dépôt
 2. Télécharge le fichier `.apk` le plus récent
-3. Ouvre-le sur ton téléphone Android (≥ Android 10)
+3. Ouvre-le sur ton téléphone Android (≥ Android 8.0)
 4. Si Android refuse l'installation, va dans **Réglages → Sécurité → Autoriser les sources inconnues** pour l'application via laquelle tu as téléchargé (Chrome, par exemple)
 5. Ouvre l'app, remplis le formulaire d'accueil (nom, pays, gérant), c'est parti
 
 ## Données & vie privée
 
-- **Tout est stocké localement** dans la base de données chiffrée du téléphone (Android Keystore)
+- **Tout est stocké localement** sur ton téléphone, dans l'espace privé de l'app (protégé par le chiffrement du disque d'Android et inaccessible aux autres apps). Attention : le fichier de sauvegarde que tu exportes vers Drive/OneDrive n'est pas chiffré par Snapfacture — protège ton compte cloud en conséquence
 - **Aucune donnée n'est envoyée** vers Internet, jamais
 - **Aucun pistage**, aucune analytique, aucune télémétrie
 - Si tu veux sauvegarder, **c'est toi qui choisis où** (Google Drive, stockage local, etc.) via le sélecteur de dossier
@@ -101,13 +101,13 @@ No cloud, no subscription, no account. Your data stays on your phone.
 
 1. Go to the **[Releases](../../releases)** page
 2. Download the latest `.apk`
-3. Open it on your Android phone (Android 10+)
+3. Open it on your Android phone (Android 8.0+)
 4. If Android refuses, enable **Settings → Security → Allow unknown sources** for the app you downloaded it from
 5. Open the app, fill in the welcome form, you are done
 
 ## Data & privacy
 
-- **Everything is stored locally** in the phone's encrypted database (Android Keystore)
+- **Everything is stored locally** on your phone, in the app's private storage (protected by Android's disk encryption and inaccessible to other apps). Note: the backup file you export to Drive/OneDrive is not encrypted by Snapfacture — secure your cloud account accordingly
 - **No data ever leaves the device**
 - **No tracking, no analytics, no telemetry**
 - Backups go where **you** decide (Google Drive folder, local storage, …)

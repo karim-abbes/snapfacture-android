@@ -4,7 +4,7 @@
 
 ## Données stockées sur ton appareil
 
-L'application stocke localement, dans la base de données chiffrée Android de ton téléphone :
+L'application stocke localement, dans son espace privé Android (inaccessible aux autres apps, protégé par le chiffrement du disque de ton téléphone) :
 
 - Les informations de ton entreprise (nom, adresse, SIREN/EIN, etc.)
 - Les informations de tes clients (nom, téléphone, email, adresse, SIRET le cas échéant)
@@ -16,7 +16,7 @@ L'application stocke localement, dans la base de données chiffrée Android de t
 
 - Partager un PDF de facture (par email, message, AirDrop, etc.) — c'est toi qui choisis le destinataire
 - Exporter en CSV vers ton stockage local
-- Activer la sauvegarde vers un dossier de ton choix (Google Drive, OneDrive, stockage local…) — Snapfacture **ne sait pas** ce que devient le fichier après l'avoir déposé dans le dossier, c'est ton fournisseur de stockage qui gère
+- Activer la sauvegarde vers un dossier de ton choix (Google Drive, OneDrive, stockage local…) — Snapfacture **ne sait pas** ce que devient le fichier après l'avoir déposé dans le dossier, c'est ton fournisseur de stockage qui gère. **Ce fichier de sauvegarde n'est pas chiffré** : il contient tes factures et fiches clients en clair, protège donc l'accès à ton compte cloud (mot de passe fort, double authentification)
 
 ## Données collectées par l'application
 
@@ -56,7 +56,7 @@ Pour toute question : ouvre une issue sur le dépôt GitHub.
 
 ## Data stored on your device
 
-The app stores locally, in the phone's encrypted Android database:
+The app stores locally, in its private Android storage (inaccessible to other apps, protected by your phone's disk encryption):
 
 - Your business info (name, address, SIREN / EIN, etc.)
 - Your customer info (name, phone, email, address, business ID when applicable)
@@ -68,7 +68,7 @@ The app stores locally, in the phone's encrypted Android database:
 
 - Share an invoice PDF (email, messaging, AirDrop, etc.) — you pick the recipient
 - Export to CSV on local storage
-- Enable backups to a folder you select (Google Drive, OneDrive, local…) — Snapfacture **does not know** what happens to the file after dropping it in the folder; that's between you and your storage provider
+- Enable backups to a folder you select (Google Drive, OneDrive, local…) — Snapfacture **does not know** what happens to the file after dropping it in the folder; that's between you and your storage provider. **The backup file is not encrypted**: it contains your invoices and customer records in the clear, so secure your cloud account (strong password, two-factor authentication)
 
 ## Data collected by the app
 
