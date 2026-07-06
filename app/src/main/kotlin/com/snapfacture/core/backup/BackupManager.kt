@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
+import com.snapfacture.R
 import com.snapfacture.core.di.ApplicationScope
 import com.snapfacture.data.local.AppDatabase
 import com.snapfacture.data.preferences.BackupPreferences
@@ -55,7 +56,7 @@ class BackupManager @Inject constructor(
         try {
             context.contentResolver.openInputStream(fileUri)?.use { src ->
                 candidate.outputStream().use { dst -> src.copyTo(dst) }
-            } ?: return@withContext RestoreResult.Failure("Impossible de lire le fichier.")
+            } ?: return@withContext RestoreResult.Failure(context.getString(R.string.backup_err_read_file))
 
             validateCandidate(candidate)?.let { return@withContext RestoreResult.Failure(it) }
 
@@ -79,7 +80,7 @@ class BackupManager @Inject constructor(
 
             RestoreResult.Success
         } catch (t: Exception) {
-            RestoreResult.Failure(t.message ?: "Erreur inconnue lors de la restauration")
+            RestoreResult.Failure(t.message ?: context.getString(R.string.backup_err_restore_unknown))
         } finally {
             candidate.delete()
         }
@@ -91,7 +92,7 @@ class BackupManager @Inject constructor(
             val header = ByteArray(16)
             val read = it.read(header)
             if (read < 16 || !String(header, 0, 15, Charsets.US_ASCII).startsWith("SQLite format 3")) {
-                return "Le fichier sélectionné n'est pas une sauvegarde Snapfacture valide."
+                return context.getString(R.string.backup_err_not_valid)
             }
         }
         return runCatching {
@@ -100,24 +101,24 @@ class BackupManager @Inject constructor(
                     if (c.moveToFirst()) c.getString(0) else "corrompu"
                 }
                 if (!integrity.equals("ok", ignoreCase = true)) {
-                    return@runCatching "Fichier corrompu (integrity_check : $integrity)."
+                    return@runCatching context.getString(R.string.backup_err_corrupt, integrity)
                 }
                 val expectedTables = db.rawQuery(
                     "SELECT count(*) FROM sqlite_master WHERE type='table' AND name IN ('invoices','company')",
                     null,
                 ).use { c -> c.moveToFirst() && c.getInt(0) == 2 }
                 if (!expectedTables) {
-                    return@runCatching "Ce fichier SQLite n'est pas une base Snapfacture."
+                    return@runCatching context.getString(R.string.backup_err_wrong_db)
                 }
                 val version = db.rawQuery("PRAGMA user_version", null).use { c ->
                     if (c.moveToFirst()) c.getInt(0) else 0
                 }
                 if (version > AppDatabase.SCHEMA_VERSION) {
-                    return@runCatching "Cette sauvegarde vient d'une version plus récente de Snapfacture — mettez d'abord l'app à jour."
+                    return@runCatching context.getString(R.string.backup_err_newer_version)
                 }
                 null
             }
-        }.getOrElse { "Fichier illisible : ${it.message}" }
+        }.getOrElse { context.getString(R.string.backup_err_unreadable, it.message ?: "?") }
     }
 
     suspend fun runBackup(folderUri: Uri): BackupResult = withContext(Dispatchers.IO) {
@@ -125,27 +126,27 @@ class BackupManager @Inject constructor(
             if (!checkpointWal()) {
                 // Copying the .db while frames sit in the WAL would silently
                 // drop the most recent invoices from the backup.
-                return@withContext BackupResult.Failure("Base occupée, sauvegarde reportée — réessayez dans un instant.")
+                return@withContext BackupResult.Failure(context.getString(R.string.backup_err_busy))
             }
 
             val folder = DocumentFile.fromTreeUri(context, folderUri)
-                ?: return@withContext BackupResult.Failure("Dossier introuvable")
+                ?: return@withContext BackupResult.Failure(context.getString(R.string.backup_err_folder_missing))
             if (!folder.canWrite()) {
-                return@withContext BackupResult.Failure("Permission d'écriture refusée sur le dossier choisi")
+                return@withContext BackupResult.Failure(context.getString(R.string.backup_err_no_write))
             }
 
             val fileName = "snapfacture_${stampFmt.format(Date())}.db"
             val dbFile = context.getDatabasePath(AppDatabase.DB_NAME)
             if (!dbFile.exists()) {
-                return@withContext BackupResult.Failure("Base de données introuvable")
+                return@withContext BackupResult.Failure(context.getString(R.string.backup_err_db_missing))
             }
 
             val backup = folder.createFile("application/octet-stream", fileName)
-                ?: return@withContext BackupResult.Failure("Impossible de créer le fichier de sauvegarde")
+                ?: return@withContext BackupResult.Failure(context.getString(R.string.backup_err_create_file))
 
             context.contentResolver.openOutputStream(backup.uri)?.use { out ->
                 dbFile.inputStream().use { it.copyTo(out) }
-            } ?: return@withContext BackupResult.Failure("Impossible d'écrire dans le dossier")
+            } ?: return@withContext BackupResult.Failure(context.getString(R.string.backup_err_write_folder))
 
             rotateOldBackups(folder)
 
@@ -153,7 +154,7 @@ class BackupManager @Inject constructor(
             prefs.markBackedUp(now)
             BackupResult.Success(fileName, now)
         } catch (t: Exception) {
-            BackupResult.Failure(t.message ?: "Erreur inconnue")
+            BackupResult.Failure(t.message ?: context.getString(R.string.common_unknown_error))
         }
     }
 

@@ -62,8 +62,8 @@
     <string name="create_cash_in">Encaisser • %1$s</string>
 
     <!-- Invoice detail -->
-    <string name="detail_invoice_n">Facture %1$s</string>
-    <string name="detail_credit_n">Avoir %1$s</string>
+    <string name="detail_invoice_n">Facture N° %1$d</string>
+    <string name="detail_credit_n">Avoir N° %1$d</string>
     <string name="detail_credit_for">Avoir sur facture N° %1$d</string>
     <string name="detail_credit_source_date">Émise le %1$s</string>
     <string name="detail_credit_open_source">Voir</string>
@@ -287,4 +287,22 @@
     <string name="confirm_issue_payment">Paiement : %1$s</string>
     <string name="confirm_issue_count">%1$d ligne(s)</string>
     <string name="confirm_issue_confirm">Confirmer • %1$s</string>
+    <string name="common_unknown_error">Erreur inconnue</string>
+    <string name="import_err_open_file">Impossible d\'ouvrir le fichier</string>
+    <string name="stats_quarter_label">T%1$d %2$d</string>
+    <string name="backup_msg_success">Sauvegarde effectuée : %1$s</string>
+    <string name="backup_msg_failure">Échec : %1$s</string>
+    <string name="backup_err_read_file">Impossible de lire le fichier.</string>
+    <string name="backup_err_not_valid">Le fichier sélectionné n\'est pas une sauvegarde Snapfacture valide.</string>
+    <string name="backup_err_corrupt">Fichier corrompu (integrity_check : %1$s).</string>
+    <string name="backup_err_wrong_db">Ce fichier SQLite n\'est pas une base Snapfacture.</string>
+    <string name="backup_err_newer_version">Cette sauvegarde vient d\'une version plus récente de Snapfacture — mettez d\'abord l\'app à jour.</string>
+    <string name="backup_err_unreadable">Fichier illisible : %1$s</string>
+    <string name="backup_err_restore_unknown">Erreur inconnue lors de la restauration</string>
+    <string name="backup_err_busy">Base occupée, sauvegarde reportée — réessayez dans un instant.</string>
+    <string name="backup_err_folder_missing">Dossier introuvable</string>
+    <string name="backup_err_no_write">Permission d\'écriture refusée sur le dossier choisi</string>
+    <string name="backup_err_db_missing">Base de données introuvable</string>
+    <string name="backup_err_create_file">Impossible de créer le fichier de sauvegarde</string>
+    <string name="backup_err_write_folder">Impossible d\'écrire dans le dossier</string>
 </resources>

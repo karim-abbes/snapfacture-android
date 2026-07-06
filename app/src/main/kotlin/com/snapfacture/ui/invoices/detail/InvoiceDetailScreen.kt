@@ -70,9 +70,9 @@ fun InvoiceDetailScreen(
     var showCreditDialog by remember { mutableStateOf(false) }
 
     val isCredit = inv?.invoice?.type == InvoiceType.CREDIT_NOTE
-    val numberStr = inv?.invoice?.number?.let { "N° $it" } ?: ""
-    val title = if (isCredit) stringResource(R.string.detail_credit_n, numberStr)
-    else stringResource(R.string.detail_invoice_n, numberStr)
+    val title = inv?.invoice?.number?.let { n ->
+        stringResource(if (isCredit) R.string.detail_credit_n else R.string.detail_invoice_n, n)
+    } ?: ""
 
     Scaffold(
         topBar = {

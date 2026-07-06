@@ -2,6 +2,8 @@ package com.snapfacture.ui.invoices.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.Context
+import com.snapfacture.R
 import com.snapfacture.core.money.Money
 import com.snapfacture.core.pdf.InvoicePdfGenerator
 import com.snapfacture.data.local.entity.CompanyEntity
@@ -16,6 +18,7 @@ import com.snapfacture.data.repository.DraftLine
 import com.snapfacture.data.repository.InvoiceRepository
 import com.snapfacture.data.repository.IssueInvoiceInput
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +77,7 @@ data class CreateUiState(
 
 @HiltViewModel
 class CreateInvoiceViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val clientRepo: ClientRepository,
     productRepo: ProductRepository,
     private val companyRepo: CompanyRepository,
@@ -201,7 +205,7 @@ class CreateInvoiceViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Exception) {
-                _state.update { it.copy(isSaving = false, error = t.message ?: "Erreur") }
+                _state.update { it.copy(isSaving = false, error = t.message ?: context.getString(R.string.common_unknown_error)) }
                 null
             }
             if (issued == null) return@launch

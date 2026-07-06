@@ -62,8 +62,8 @@
     <string name="create_cash_in">Charge • %1$s</string>
 
     <!-- Invoice detail -->
-    <string name="detail_invoice_n">Invoice %1$s</string>
-    <string name="detail_credit_n">Credit %1$s</string>
+    <string name="detail_invoice_n">Invoice #%1$d</string>
+    <string name="detail_credit_n">Credit note #%1$d</string>
     <string name="detail_credit_for">Credit note on invoice #%1$d</string>
     <string name="detail_credit_source_date">Issued on %1$s</string>
     <string name="detail_credit_open_source">Open</string>
@@ -293,4 +293,22 @@
     <string name="restore_done_title">Restore complete</string>
     <string name="restore_done_body">The app will restart to apply the new database.</string>
     <string name="restore_done_relaunch">Restart now</string>
+    <string name="common_unknown_error">Unknown error</string>
+    <string name="import_err_open_file">Could not open the file</string>
+    <string name="stats_quarter_label">Q%1$d %2$d</string>
+    <string name="backup_msg_success">Backup saved: %1$s</string>
+    <string name="backup_msg_failure">Backup failed: %1$s</string>
+    <string name="backup_err_read_file">Could not read the file.</string>
+    <string name="backup_err_not_valid">The selected file is not a valid Snapfacture backup.</string>
+    <string name="backup_err_corrupt">Corrupted file (integrity check: %1$s).</string>
+    <string name="backup_err_wrong_db">This SQLite file is not a Snapfacture database.</string>
+    <string name="backup_err_newer_version">This backup comes from a newer version of Snapfacture — update the app first.</string>
+    <string name="backup_err_unreadable">Unreadable file: %1$s</string>
+    <string name="backup_err_restore_unknown">Unknown error while restoring</string>
+    <string name="backup_err_busy">Database busy, backup postponed — try again in a moment.</string>
+    <string name="backup_err_folder_missing">Backup folder not found</string>
+    <string name="backup_err_no_write">Write permission denied on the chosen folder</string>
+    <string name="backup_err_db_missing">Database file not found</string>
+    <string name="backup_err_create_file">Could not create the backup file</string>
+    <string name="backup_err_write_folder">Could not write into the folder</string>
 </resources>
