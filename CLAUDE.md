@@ -73,8 +73,23 @@ Rôle de **co-stratège**, pas d'exécutant silencieux. **Avant de coder quoi qu
 
 ## Branche de travail
 
-`claude/android-invoicing-app-KGGzw` — tout commit/push se fait sur cette branche.
+`claude/app-overview-status-qzny2p` — tout commit/push se fait sur cette branche.
 
-## CI
+## CI & releases
 
-`.github/workflows/build-apk.yml` — chaque push déclenche un build qui publie l'APK debug dans la release `latest-debug`. Sur échec, un log est commit sur `.ci-logs/last-failure.md` pour diagnostic à distance.
+- `.github/workflows/build-apk.yml` — chaque push déclenche build + tests unitaires et publie l'APK debug dans la release `latest-debug`.
+- `.github/workflows/build-tagged-apk.yml` — un tag `v*` publie un APK **release signé** (keystore en secrets GitHub, voir `docs/RELEASING.md`) avec version dérivée du tag. Le workflow échoue volontairement tant que les secrets keystore ne sont pas configurés.
+
+## État au 7 juillet 2026 (reprise de session)
+
+Un **audit complet** a été réalisé (`docs/AUDIT-2026-07.md`, ~170 constats) puis 4 lots correctifs livrés et validés par la CI (10 commits) :
+1. Légal/argent : arrondi TVA au niveau ligne (arithmétique entière, `Money.lineAmounts`), mentions PDF ajoutées (TVA intracom, forme juridique, escompte), avoirs transactionnels, anti-double-émission (PDF = best-effort après émission), garde-fou sur « prochain n° ».
+2. Chaîne anti-fraude rendue **vérifiable** (payload en clair en base, schéma Room **v2** + migration, `verifyAuditChain()` + bouton Réglages → « Vérifier l'intégrité »), backup durci (checkpoint WAL vérifié, validation restore + `.bak`, rotation 30 fichiers), **27 tests** (Money, Robolectric sur numérotation/avoirs/falsification, CsvParser).
+3. i18n complète (plus de français en dur dans le code), métadonnées F-Droid (`fastlane/`), `docs/FDROID.md`, `CHANGELOG.md`.
+4. UX premier lancement : états vides guidés, **ligne libre** au panier (produit transient à id négatif, jamais persisté), chips clients récents, `rememberSaveable` sur les formulaires critiques.
+
+**Livré le 7 juillet 2026 (suite)** : **devis** (numérotation propre, PDF validité 30 j, conversion 1 tap en facture — atomique, testée) ; **export FEC** (Réglages, profil FR, écritures 411/706/44571 équilibrées, nom réglementaire) ; **récap TVA/sales tax** (ventilation par taux et par trimestre, avoirs déduits) ; fixes PDF (collision nom/titre via mesure+réduction+troncature, champs vides sans ponctuation orpheline via `joinNonBlank`) ; landing à ~19 Mo réels. Schéma Room **v3** (quotes). **55 tests**. La CI affiche désormais les messages d'assertion complets.
+
+**En attente côté utilisateur** : (1) keystore + 4 secrets GitHub (`docs/RELEASING.md`) puis tag `v1.1.0` ; (2) captures d'écran dans `fastlane/metadata/android/*/images/phoneScreenshots/` puis soumission F-Droid.
+
+**Prochaines étapes recommandées** : acquisition des premiers utilisateurs ; export FEC ; écrans récap TVA ; devis→facture (grosse opportunité, à valider par les retours) ; migration basis points ; **Factur-X avant sept. 2027** (seule échéance ferme). Reporté volontairement : presets de catalogue par métier (prix pré-remplis faux = pire qu'un catalogue vide ; variante « libellés sans prix » discutée).

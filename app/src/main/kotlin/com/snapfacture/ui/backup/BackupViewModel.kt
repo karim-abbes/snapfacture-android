@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snapfacture.R
 import com.snapfacture.core.backup.BackupManager
 import com.snapfacture.core.backup.BackupResult
 import com.snapfacture.core.backup.RestoreResult
@@ -74,8 +75,8 @@ class BackupViewModel @Inject constructor(
             _running.update { false }
             _message.update {
                 when (result) {
-                    is BackupResult.Success -> "Sauvegarde effectuée : ${result.fileName}"
-                    is BackupResult.Failure -> "Échec : ${result.message}"
+                    is BackupResult.Success -> context.getString(R.string.backup_msg_success, result.fileName)
+                    is BackupResult.Failure -> context.getString(R.string.backup_msg_failure, result.message)
                 }
             }
         }

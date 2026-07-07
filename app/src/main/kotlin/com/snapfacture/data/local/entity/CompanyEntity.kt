@@ -1,5 +1,6 @@
 package com.snapfacture.data.local.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -20,5 +21,6 @@ data class CompanyEntity(
     val managerName: String,
     val iban: String?,
     val nextInvoiceNumber: Int,
+    @ColumnInfo(defaultValue = "1") val nextQuoteNumber: Int = 1,
     val defaultTaxPermille: Int = 0,
 )

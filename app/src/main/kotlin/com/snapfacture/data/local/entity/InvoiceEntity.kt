@@ -19,7 +19,12 @@ enum class InvoiceType { INVOICE, CREDIT_NOTE }
             onDelete = ForeignKey.RESTRICT,
         )
     ],
-    indices = [Index("clientId"), Index(value = ["number"], unique = true)]
+    indices = [
+        Index("clientId"),
+        Index(value = ["number"], unique = true),
+        Index("issueDate"),
+        Index("linkedInvoiceId"),
+    ]
 )
 data class InvoiceEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

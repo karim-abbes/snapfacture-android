@@ -18,9 +18,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
@@ -37,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,6 +55,8 @@ fun InvoiceListScreen(
     onOpen: (Long) -> Unit,
     onSettings: () -> Unit,
     onStats: () -> Unit,
+    onOpenCatalog: () -> Unit,
+    onQuotes: () -> Unit,
     vm: InvoiceListViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -60,6 +65,9 @@ fun InvoiceListScreen(
             TopAppBar(
                 title = { Text(state.companyName.ifBlank { stringResource(R.string.app_name) }) },
                 actions = {
+                    IconButton(onClick = onQuotes) {
+                        Icon(Icons.Default.Description, contentDescription = stringResource(R.string.quotes_title))
+                    }
                     IconButton(onClick = onStats) {
                         Icon(Icons.Default.BarChart, contentDescription = stringResource(R.string.stats_title))
                     }
@@ -87,12 +95,35 @@ fun InvoiceListScreen(
             FilterBar(state, vm)
             if (state.invoices.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        if (state.query.isNotBlank()) stringResource(R.string.invoice_list_empty_query, state.query)
-                        else stringResource(R.string.invoice_list_empty_period),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    )
+                    if (state.isFirstRun) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(horizontal = 32.dp),
+                        ) {
+                            Text(
+                                stringResource(R.string.list_first_run_title),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                stringResource(R.string.list_first_run_body),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Button(onClick = onOpenCatalog) {
+                                Text(stringResource(R.string.create_catalog_open))
+                            }
+                        }
+                    } else {
+                        Text(
+                            if (state.query.isNotBlank()) stringResource(R.string.invoice_list_empty_query, state.query)
+                            else stringResource(R.string.invoice_list_empty_period),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        )
+                    }
                 }
             } else {
                 LazyColumn(

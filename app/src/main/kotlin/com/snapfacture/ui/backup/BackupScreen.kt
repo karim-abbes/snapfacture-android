@@ -328,7 +328,11 @@ private fun LastBackupCard(settings: com.snapfacture.data.preferences.BackupSett
             Spacer(Modifier.height(4.dp))
             Text(
                 settings.lastBackupAt?.let {
-                    SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(it))
+                    java.text.DateFormat.getDateTimeInstance(
+                        java.text.DateFormat.SHORT,
+                        java.text.DateFormat.SHORT,
+                        com.snapfacture.core.country.LocalCountryProfile.current.locale,
+                    ).format(Date(it))
                 } ?: stringResource(R.string.backup_last_never),
                 style = MaterialTheme.typography.titleMedium,
             )

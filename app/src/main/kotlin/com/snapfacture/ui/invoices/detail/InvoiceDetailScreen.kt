@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,12 +68,12 @@ fun InvoiceDetailScreen(
     val context = LocalContext.current
     val inv = state.invoice
 
-    var showCreditDialog by remember { mutableStateOf(false) }
+    var showCreditDialog by rememberSaveable { mutableStateOf(false) }
 
     val isCredit = inv?.invoice?.type == InvoiceType.CREDIT_NOTE
-    val numberStr = inv?.invoice?.number?.let { "N° $it" } ?: ""
-    val title = if (isCredit) stringResource(R.string.detail_credit_n, numberStr)
-    else stringResource(R.string.detail_invoice_n, numberStr)
+    val title = inv?.invoice?.number?.let { n ->
+        stringResource(if (isCredit) R.string.detail_credit_n else R.string.detail_invoice_n, n)
+    } ?: ""
 
     Scaffold(
         topBar = {
@@ -303,6 +304,7 @@ fun InvoiceDetailScreen(
     if (showCreditDialog) {
         CreditDialog(
             isSaving = state.isIssuingCredit,
+            failed = state.creditFailed,
             onDismiss = { showCreditDialog = false },
             onConfirm = { reason ->
                 vm.issueCredit(reason) { newId ->
@@ -317,10 +319,11 @@ fun InvoiceDetailScreen(
 @Composable
 private fun CreditDialog(
     isSaving: Boolean,
+    failed: Boolean,
     onDismiss: () -> Unit,
     onConfirm: (String?) -> Unit,
 ) {
-    var reason by remember { mutableStateOf("") }
+    var reason by rememberSaveable { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = { if (!isSaving) onDismiss() },
         title = { Text(stringResource(R.string.credit_dialog_title)) },
@@ -338,6 +341,14 @@ private fun CreditDialog(
                     label = { Text(stringResource(R.string.credit_dialog_motif_label)) },
                     placeholder = { Text(stringResource(R.string.credit_dialog_motif_hint)) },
                 )
+                if (failed) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.credit_dialog_error),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         },
         confirmButton = {

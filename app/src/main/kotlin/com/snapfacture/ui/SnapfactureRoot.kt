@@ -26,7 +26,11 @@ import com.snapfacture.ui.invoices.detail.InvoiceDetailScreen
 import com.snapfacture.ui.invoices.list.InvoiceListScreen
 import com.snapfacture.ui.navigation.Routes
 import com.snapfacture.ui.security.SecurityScreen
+import com.snapfacture.ui.fec.FecScreen
+import com.snapfacture.ui.quotes.QuoteDetailScreen
+import com.snapfacture.ui.quotes.QuoteListScreen
 import com.snapfacture.ui.settings.SettingsScreen
+import com.snapfacture.ui.taxreport.TaxReportScreen
 import com.snapfacture.ui.stats.StatsScreen
 import com.snapfacture.ui.welcome.WelcomeScreen
 
@@ -59,6 +63,8 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onOpen = { nav.navigate(Routes.detail(it)) },
                 onSettings = { nav.navigate(Routes.SETTINGS) },
                 onStats = { nav.navigate(Routes.STATS) },
+                onOpenCatalog = { nav.navigate(Routes.CATALOG) },
+                onQuotes = { nav.navigate(Routes.QUOTES) },
             )
         }
         composable(Routes.STATS) {
@@ -71,6 +77,11 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                     nav.popBackStack()
                     nav.navigate(Routes.detail(id))
                 },
+                onQuoteCreated = { id ->
+                    nav.popBackStack()
+                    nav.navigate(Routes.quoteDetail(id))
+                },
+                onOpenCatalog = { nav.navigate(Routes.CATALOG) },
             )
         }
         composable(
@@ -88,16 +99,43 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 },
             )
         }
+        composable(Routes.QUOTES) {
+            QuoteListScreen(
+                onBack = { nav.popBackStack() },
+                onOpen = { nav.navigate(Routes.quoteDetail(it)) },
+            )
+        }
+        composable(
+            Routes.QUOTE_DETAIL,
+            arguments = listOf(navArgument("quoteId") { type = NavType.LongType }),
+        ) {
+            QuoteDetailScreen(
+                onBack = { nav.popBackStack() },
+                onOpenInvoice = { id ->
+                    nav.navigate(Routes.detail(id)) {
+                        popUpTo(Routes.INVOICES)
+                    }
+                },
+            )
+        }
         composable(Routes.SETTINGS) {
             SettingsScreen(
                 onBack = { nav.popBackStack() },
                 onOpenCatalog = { nav.navigate(Routes.CATALOG) },
                 onOpenImport = { nav.navigate(Routes.IMPORT) },
                 onOpenExport = { nav.navigate(Routes.EXPORT) },
+                onOpenFec = { nav.navigate(Routes.FEC) },
+                onOpenTaxReport = { nav.navigate(Routes.TAX_REPORT) },
                 onOpenBackup = { nav.navigate(Routes.BACKUP) },
                 onOpenCompany = { nav.navigate(Routes.COMPANY) },
                 onOpenSecurity = { nav.navigate(Routes.SECURITY) },
             )
+        }
+        composable(Routes.TAX_REPORT) {
+            TaxReportScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.FEC) {
+            FecScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.BACKUP) {
             BackupScreen(onBack = { nav.popBackStack() })

@@ -13,6 +13,11 @@ object Routes {
     const val COMPANY = "company"
     const val SECURITY = "security"
     const val STATS = "stats"
+    const val QUOTES = "quotes"
+    const val FEC = "fec"
+    const val TAX_REPORT = "taxreport"
+    const val QUOTE_DETAIL = "quotes/{quoteId}"
 
     fun detail(invoiceId: Long) = "invoices/$invoiceId"
+    fun quoteDetail(quoteId: Long) = "quotes/$quoteId"
 }

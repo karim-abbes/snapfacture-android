@@ -14,14 +14,17 @@ object ShareInvoice {
         invoiceNumber: Int,
         companyName: String,
         recipientEmail: String? = null,
+        isQuote: Boolean = false,
     ): Intent {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         val sender = companyName.ifBlank { context.getString(R.string.app_name) }
         val send = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_subject, sender, invoiceNumber))
-            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_body, invoiceNumber, sender))
+            val subjectRes = if (isQuote) R.string.share_subject_quote else R.string.share_subject
+            val bodyRes = if (isQuote) R.string.share_body_quote else R.string.share_body
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(subjectRes, sender, invoiceNumber))
+            putExtra(Intent.EXTRA_TEXT, context.getString(bodyRes, invoiceNumber, sender))
             recipientEmail?.takeIf { it.isNotBlank() }?.let {
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(it))
             }

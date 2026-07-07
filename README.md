@@ -29,25 +29,30 @@ Pas de cloud, pas d'abonnement, pas de compte à créer. Tes données restent su
 - Taux de sales tax par défaut configurable (États-Unis)
 - Mentions B2B (SIRET, pénalités de retard, indemnité 40 €) quand le client est un pro — France uniquement
 - Avoir (note de crédit) en 1 tap depuis une facture
+- **Devis** avec numérotation propre et validité 30 jours, convertibles en facture en 1 tap (lignes et prix figés)
+- Ligne libre au panier pour facturer une prestation hors catalogue
 - Génération PDF locale + partage par email/WhatsApp/AirDrop
 - Verrouillage biométrique optionnel
 - Sauvegarde manuelle ou automatique vers un dossier de ton choix (Drive, local…)
 - Restauration depuis un fichier `.db`
 - Tableau de bord (CA mensuel/annuel, TVA collectée, top produits, top clients)
 - Export CSV pour ton expert-comptable
+- **Export comptable FEC** (Fichier des Écritures Comptables, importable tel quel par un expert-comptable) — France uniquement
+- **Récap TVA / sales tax par taux et par trimestre** : les chiffres à recopier dans la déclaration, avoirs déduits
+- Vérification d'intégrité de la chaîne anti-fraude en 1 tap (Réglages) — France uniquement
 - Disponible en français et en anglais (suit la langue du téléphone)
 
 ## Installation
 
 1. Va sur la page **[Releases](../../releases)** du dépôt
 2. Télécharge le fichier `.apk` le plus récent
-3. Ouvre-le sur ton téléphone Android (≥ Android 10)
+3. Ouvre-le sur ton téléphone Android (≥ Android 8.0)
 4. Si Android refuse l'installation, va dans **Réglages → Sécurité → Autoriser les sources inconnues** pour l'application via laquelle tu as téléchargé (Chrome, par exemple)
 5. Ouvre l'app, remplis le formulaire d'accueil (nom, pays, gérant), c'est parti
 
 ## Données & vie privée
 
-- **Tout est stocké localement** dans la base de données chiffrée du téléphone (Android Keystore)
+- **Tout est stocké localement** sur ton téléphone, dans l'espace privé de l'app (protégé par le chiffrement du disque d'Android et inaccessible aux autres apps). Attention : le fichier de sauvegarde que tu exportes vers Drive/OneDrive n'est pas chiffré par Snapfacture — protège ton compte cloud en conséquence
 - **Aucune donnée n'est envoyée** vers Internet, jamais
 - **Aucun pistage**, aucune analytique, aucune télémétrie
 - Si tu veux sauvegarder, **c'est toi qui choisis où** (Google Drive, stockage local, etc.) via le sélecteur de dossier
@@ -89,25 +94,30 @@ No cloud, no subscription, no account. Your data stays on your phone.
 - Configurable default sales tax rate (United States)
 - B2B mentions (SIRET, late-payment penalties, 40 € recovery indemnity) when the customer is a business — France only
 - 1-tap credit notes
+- **Quotes** with their own numbering and 30-day validity, convertible to an invoice in one tap (frozen lines and prices)
+- Custom cart line to invoice one-off work outside the catalog
 - Local PDF generation + share via email / messaging / AirDrop
 - Optional biometric lock
 - Manual or automatic backup to a folder of your choice (Drive, local…)
 - Restore from a `.db` file
 - Dashboard (monthly/yearly revenue, VAT collected, top products, top customers)
 - CSV export for your accountant
+- **FEC accounting export** (the normalized French statutory file accountants import directly) — France only
+- **Per-rate VAT / sales tax summary by quarter**: the exact figures a filing asks for, credit notes deducted
+- One-tap anti-fraud chain integrity check (Settings) — France only
 - Available in French and English (follows the phone language)
 
 ## Install
 
 1. Go to the **[Releases](../../releases)** page
 2. Download the latest `.apk`
-3. Open it on your Android phone (Android 10+)
+3. Open it on your Android phone (Android 8.0+)
 4. If Android refuses, enable **Settings → Security → Allow unknown sources** for the app you downloaded it from
 5. Open the app, fill in the welcome form, you are done
 
 ## Data & privacy
 
-- **Everything is stored locally** in the phone's encrypted database (Android Keystore)
+- **Everything is stored locally** on your phone, in the app's private storage (protected by Android's disk encryption and inaccessible to other apps). Note: the backup file you export to Drive/OneDrive is not encrypted by Snapfacture — secure your cloud account accordingly
 - **No data ever leaves the device**
 - **No tracking, no analytics, no telemetry**
 - Backups go where **you** decide (Google Drive folder, local storage, …)

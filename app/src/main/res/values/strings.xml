@@ -28,6 +28,8 @@
     <string name="invoice_list_count_year">%1$d invoice(s) this year</string>
     <string name="invoice_list_count_all">%1$d invoice(s) total</string>
     <string name="invoice_list_empty_period">No invoices for this period.</string>
+    <string name="list_first_run_title">Welcome!</string>
+    <string name="list_first_run_body">Start by adding your products and services to the catalog — your first invoice will then take a few taps.</string>
     <string name="invoice_list_empty_query">No results for &quot;%1$s&quot;</string>
     <string name="invoice_list_settings">Settings</string>
     <string name="invoice_list_invoice_n">Invoice #%1$d</string>
@@ -60,10 +62,30 @@
     <string name="create_payment_check">Check</string>
     <string name="create_payment_other">Other</string>
     <string name="create_cash_in">Charge • %1$s</string>
+    <string name="create_free_line">Custom line</string>
+    <string name="free_line_dialog_title">Add a custom line</string>
+    <string name="free_line_label">Description</string>
+    <string name="free_line_price">Price incl. tax</string>
+    <string name="create_catalog_empty_title">Your catalog is empty</string>
+    <string name="create_catalog_empty_body">Add your products and services once — invoicing then takes a few taps. For a one-off, use a custom line below.</string>
+    <string name="create_catalog_open">Open the catalog</string>
+    <string name="create_quote_button">Quote</string>
+    <string name="quotes_title">Quotes</string>
+    <string name="quotes_empty">No quotes yet. Create one from the New invoice screen with the Quote button.</string>
+    <string name="quote_list_n">Quote #%1$d</string>
+    <string name="quote_valid_until">Valid until %1$s</string>
+    <string name="quote_converted_marker">Invoiced</string>
+    <string name="quote_converted_banner">This quote has been invoiced</string>
+    <string name="quote_detail_convert">Invoice this quote</string>
+    <string name="quote_convert_dialog_title">Invoice this quote</string>
+    <string name="quote_convert_dialog_body">An invoice will be issued with this quote\'s lines and prices, at today\'s date. Once issued it cannot be edited.</string>
+    <string name="quote_convert_error">Something went wrong — the invoice was not issued. Try again.</string>
+    <string name="share_subject_quote">%1$s quote no. %2$d</string>
+    <string name="share_body_quote">Hello,\n\nPlease find attached quote no. %1$d.\n\nKind regards,\n%2$s</string>
 
     <!-- Invoice detail -->
-    <string name="detail_invoice_n">Invoice %1$s</string>
-    <string name="detail_credit_n">Credit %1$s</string>
+    <string name="detail_invoice_n">Invoice #%1$d</string>
+    <string name="detail_credit_n">Credit note #%1$d</string>
     <string name="detail_credit_for">Credit note on invoice #%1$d</string>
     <string name="detail_credit_source_date">Issued on %1$s</string>
     <string name="detail_credit_open_source">Open</string>
@@ -86,6 +108,7 @@
     <string name="credit_dialog_motif_label">Reason (optional)</string>
     <string name="credit_dialog_motif_hint">e.g. data entry error, returned item...</string>
     <string name="credit_dialog_confirm">Issue credit note</string>
+    <string name="credit_dialog_error">Something went wrong — the credit note was not issued. Try again.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -95,12 +118,40 @@
     <string name="settings_import_subtitle">Recover invoices from your previous tool</string>
     <string name="settings_export_title">Export to CSV</string>
     <string name="settings_export_subtitle">Send all invoices to your accountant</string>
+    <string name="settings_fec_title">Accounting export (FEC)</string>
+    <string name="settings_fec_subtitle">The normalized file your accountant imports directly</string>
+    <string name="fec_title">FEC export</string>
+    <string name="fec_intro_title">Fichier des Écritures Comptables</string>
+    <string name="fec_intro_body">Generates the normalized accounting file (art. A47 A-1 LPF): one balanced sales entry per issued invoice or credit note (customer 411 / sales 706 / collected VAT 44571). Send it to your accountant as is.</string>
+    <string name="fec_generate">Generate the FEC file</string>
+    <string name="fec_done_entries">%1$d accounting entries exported</string>
+    <string name="fec_email_subject">FEC export — Snapfacture</string>
+    <string name="settings_tax_report_title">%1$s summary</string>
+    <string name="settings_tax_report_subtitle">The figures to copy into your filing, quarter by quarter</string>
+    <string name="tax_report_title">%1$s summary</string>
+    <string name="tax_report_rate">%1$s%% rate</string>
+    <string name="tax_report_ht">Pre-tax base</string>
+    <string name="tax_report_total_tax">%1$s to remit</string>
+    <string name="tax_report_total_ht">Total pre-tax</string>
+    <string name="tax_report_total_ttc">Total incl. tax</string>
+    <string name="tax_report_empty">No invoices in this period.</string>
+    <string name="tax_report_note">Computed from the invoices and credit notes issued in the period (credit notes are deducted).</string>
     <string name="settings_backup_title">Automatic backup</string>
     <string name="settings_backup_subtitle">Database copy after every invoice (Drive, OneDrive...)</string>
     <string name="settings_company_title">Business</string>
     <string name="settings_company_subtitle">Contact details, legal ID, invoice number</string>
     <string name="settings_security_title">Security</string>
     <string name="settings_security_subtitle">Lock the app with fingerprint / phone PIN</string>
+    <string name="settings_verify_title">Verify ledger integrity</string>
+    <string name="settings_verify_subtitle">Recompute the anti-fraud hash chain and check every issued invoice</string>
+    <string name="verify_dialog_title">Ledger integrity</string>
+    <string name="verify_running">Checking every entry…</string>
+    <string name="verify_failed">The check could not be completed. Try again.</string>
+    <string name="verify_ok">All good — %1$d entries verified, every issued invoice matches its fingerprint.</string>
+    <string name="verify_legacy_note">%1$d older entries predate verifiable fingerprints and were skipped.</string>
+    <string name="verify_broken">Anomaly detected: the hash chain is broken at entry #%1$d. The audit log has been modified outside the app.</string>
+    <string name="verify_tampered">Anomaly detected: invoice #%1$d no longer matches its fingerprint. Its content has been modified outside the app.</string>
+    <string name="verify_close">Close</string>
 
     <!-- Security -->
     <string name="security_title">Security</string>
@@ -111,7 +162,7 @@
     <string name="security_no_auth_available">No fingerprint or PIN configured on this phone. Set one up in Android settings, then come back here.</string>
 
     <!-- Lock screen -->
-    <string name="lock_prompt_title">Facturix</string>
+    <string name="lock_prompt_title">Snapfacture</string>
     <string name="lock_prompt_subtitle">Unlock to access your invoices</string>
     <string name="lock_locked_title">Application locked</string>
     <string name="lock_locked_body">Authenticate to access your data.</string>
@@ -137,6 +188,8 @@
     <!-- PDF -->
     <string name="pdf_title_invoice">INVOICE #%1$d</string>
     <string name="pdf_title_credit">CREDIT NOTE #%1$d</string>
+    <string name="pdf_title_quote">QUOTE #%1$d</string>
+    <string name="pdf_meta_valid_until">Valid until</string>
     <string name="pdf_issued_on_f">Issued on %1$s</string>
     <string name="pdf_issued_on_m">Issued on %1$s</string>
     <string name="pdf_billed_to">BILLED TO</string>
@@ -165,7 +218,9 @@
     <string name="pdf_client_siret">SIRET %1$s</string>
     <string name="pdf_b2b_penalties">Late-payment penalties: ECB main refinancing rate plus 10 percentage points (Art. L441-10 French Commercial Code).</string>
     <string name="pdf_b2b_recovery">Fixed indemnity for recovery costs: 40 € (Art. D441-5 French Commercial Code).</string>
-    <string name="pdf_contact_line">Tel. %1$s  •  %2$s  •  %3$s</string>
+    <string name="pdf_escompte">No discount for early payment (escompte: none).</string>
+    <string name="pdf_vat_number">VAT no. %1$s</string>
+    <string name="pdf_contact_phone_prefix">Tel. %1$s</string>
 
     <!-- Issue confirmation -->
     <string name="confirm_issue_title">Confirm the invoice</string>
@@ -193,7 +248,9 @@
     <!-- Company info -->
     <string name="company_title">Business</string>
     <string name="company_name">Business name</string>
+    <string name="company_legal_form">Legal form (e.g. LLC, sole proprietor)</string>
     <string name="company_legal_id">Legal ID</string>
+    <string name="company_vat_number">VAT number (FRxx…)</string>
     <string name="company_address">Address</string>
     <string name="company_postal">Postal code</string>
     <string name="company_city">City</string>
@@ -253,6 +310,7 @@
     <string name="export_done_count_one">%1$d invoice exported</string>
     <string name="export_done_count_many">%1$d invoices exported</string>
     <string name="export_share">Share / Send by email</string>
+    <string name="export_email_subject">Snapfacture export</string>
     <string name="export_new">New export</string>
     <string name="export_error_title">Export failed</string>
 
@@ -277,4 +335,22 @@
     <string name="restore_done_title">Restore complete</string>
     <string name="restore_done_body">The app will restart to apply the new database.</string>
     <string name="restore_done_relaunch">Restart now</string>
+    <string name="common_unknown_error">Unknown error</string>
+    <string name="import_err_open_file">Could not open the file</string>
+    <string name="stats_quarter_label">Q%1$d %2$d</string>
+    <string name="backup_msg_success">Backup saved: %1$s</string>
+    <string name="backup_msg_failure">Backup failed: %1$s</string>
+    <string name="backup_err_read_file">Could not read the file.</string>
+    <string name="backup_err_not_valid">The selected file is not a valid Snapfacture backup.</string>
+    <string name="backup_err_corrupt">Corrupted file (integrity check: %1$s).</string>
+    <string name="backup_err_wrong_db">This SQLite file is not a Snapfacture database.</string>
+    <string name="backup_err_newer_version">This backup comes from a newer version of Snapfacture — update the app first.</string>
+    <string name="backup_err_unreadable">Unreadable file: %1$s</string>
+    <string name="backup_err_restore_unknown">Unknown error while restoring</string>
+    <string name="backup_err_busy">Database busy, backup postponed — try again in a moment.</string>
+    <string name="backup_err_folder_missing">Backup folder not found</string>
+    <string name="backup_err_no_write">Write permission denied on the chosen folder</string>
+    <string name="backup_err_db_missing">Database file not found</string>
+    <string name="backup_err_create_file">Could not create the backup file</string>
+    <string name="backup_err_write_folder">Could not write into the folder</string>
 </resources>

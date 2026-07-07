@@ -117,13 +117,14 @@ fun ExportScreen(
                             )
                             Spacer(Modifier.height(16.dp))
                             val shareTitle = stringResource(R.string.export_share)
+                            val shareSubject = stringResource(R.string.export_email_subject)
                             Button(
                                 onClick = {
                                     val uri = vm.shareUri(phase.file)
                                     val send = Intent(Intent.ACTION_SEND).apply {
                                         type = "text/csv"
                                         putExtra(Intent.EXTRA_STREAM, uri)
-                                        putExtra(Intent.EXTRA_SUBJECT, "Export Facturix")
+                                        putExtra(Intent.EXTRA_SUBJECT, shareSubject)
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                     }
                                     context.startActivity(

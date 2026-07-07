@@ -28,6 +28,8 @@
     <string name="invoice_list_count_year">%1$d facture(s) cette année</string>
     <string name="invoice_list_count_all">%1$d facture(s) au total</string>
     <string name="invoice_list_empty_period">Aucune facture pour cette période.</string>
+    <string name="list_first_run_title">Bienvenue !</string>
+    <string name="list_first_run_body">Commencez par ajouter vos produits et prestations au catalogue — votre première facture ne prendra ensuite que quelques taps.</string>
     <string name="invoice_list_empty_query">Aucun résultat pour « %1$s »</string>
     <string name="invoice_list_settings">Réglages</string>
     <string name="invoice_list_invoice_n">Facture N° %1$d</string>
@@ -60,10 +62,30 @@
     <string name="create_payment_check">Chèque</string>
     <string name="create_payment_other">Autre</string>
     <string name="create_cash_in">Encaisser • %1$s</string>
+    <string name="create_free_line">Ligne libre</string>
+    <string name="free_line_dialog_title">Ajouter une ligne libre</string>
+    <string name="free_line_label">Libellé</string>
+    <string name="free_line_price">Prix TTC</string>
+    <string name="create_catalog_empty_title">Votre catalogue est vide</string>
+    <string name="create_catalog_empty_body">Ajoutez vos produits et prestations une fois — la facturation ne prendra ensuite que quelques taps. Pour un cas ponctuel, utilisez une ligne libre ci-dessous.</string>
+    <string name="create_catalog_open">Ouvrir le catalogue</string>
+    <string name="create_quote_button">Devis</string>
+    <string name="quotes_title">Devis</string>
+    <string name="quotes_empty">Aucun devis pour l\'instant. Créez-en un depuis l\'écran Nouvelle facture avec le bouton Devis.</string>
+    <string name="quote_list_n">Devis N° %1$d</string>
+    <string name="quote_valid_until">Valable jusqu\'au %1$s</string>
+    <string name="quote_converted_marker">Facturé</string>
+    <string name="quote_converted_banner">Ce devis a été facturé</string>
+    <string name="quote_detail_convert">Facturer ce devis</string>
+    <string name="quote_convert_dialog_title">Facturer ce devis</string>
+    <string name="quote_convert_dialog_body">Une facture va être émise avec les lignes et les prix de ce devis, à la date du jour. Une fois émise, elle n\'est plus modifiable.</string>
+    <string name="quote_convert_error">Une erreur est survenue — la facture n\'a pas été émise. Réessayez.</string>
+    <string name="share_subject_quote">Devis %1$s N° %2$d</string>
+    <string name="share_body_quote">Bonjour,\n\nVeuillez trouver ci-joint votre devis N° %1$d.\n\nCordialement,\n%2$s</string>
 
     <!-- Invoice detail -->
-    <string name="detail_invoice_n">Facture %1$s</string>
-    <string name="detail_credit_n">Avoir %1$s</string>
+    <string name="detail_invoice_n">Facture N° %1$d</string>
+    <string name="detail_credit_n">Avoir N° %1$d</string>
     <string name="detail_credit_for">Avoir sur facture N° %1$d</string>
     <string name="detail_credit_source_date">Émise le %1$s</string>
     <string name="detail_credit_open_source">Voir</string>
@@ -86,6 +108,7 @@
     <string name="credit_dialog_motif_label">Motif (optionnel)</string>
     <string name="credit_dialog_motif_hint">Ex : erreur de saisie, retour produit, prestation annulée…</string>
     <string name="credit_dialog_confirm">Émettre l\'avoir</string>
+    <string name="credit_dialog_error">Une erreur est survenue — l\'avoir n\'a pas été émis. Réessayez.</string>
 
     <!-- Settings -->
     <string name="settings_title">Réglages</string>
@@ -95,12 +118,40 @@
     <string name="settings_import_subtitle">Récupérer vos factures depuis votre ancien outil</string>
     <string name="settings_export_title">Exporter en CSV</string>
     <string name="settings_export_subtitle">Envoyer toutes les factures à votre comptable</string>
+    <string name="settings_fec_title">Export comptable (FEC)</string>
+    <string name="settings_fec_subtitle">Le fichier normalisé que votre comptable importe directement</string>
+    <string name="fec_title">Export FEC</string>
+    <string name="fec_intro_title">Fichier des Écritures Comptables</string>
+    <string name="fec_intro_body">Génère le fichier comptable normalisé (art. A47 A-1 du LPF) : une écriture de vente équilibrée par facture ou avoir émis (client 411 / ventes 706 / TVA collectée 44571). À transmettre tel quel à votre comptable.</string>
+    <string name="fec_generate">Générer le fichier FEC</string>
+    <string name="fec_done_entries">%1$d écritures comptables exportées</string>
+    <string name="fec_email_subject">Export FEC — Snapfacture</string>
+    <string name="settings_tax_report_title">Récap %1$s</string>
+    <string name="settings_tax_report_subtitle">Les chiffres à recopier dans votre déclaration, trimestre par trimestre</string>
+    <string name="tax_report_title">Récap %1$s</string>
+    <string name="tax_report_rate">Taux %1$s %%</string>
+    <string name="tax_report_ht">Base HT</string>
+    <string name="tax_report_total_tax">%1$s à reverser</string>
+    <string name="tax_report_total_ht">Total HT</string>
+    <string name="tax_report_total_ttc">Total TTC</string>
+    <string name="tax_report_empty">Aucune facture sur cette période.</string>
+    <string name="tax_report_note">Calculé sur les factures et avoirs émis dans la période (les avoirs sont déduits).</string>
     <string name="settings_backup_title">Sauvegarde automatique</string>
     <string name="settings_backup_subtitle">Copie de la base après chaque facture (Drive, OneDrive...)</string>
     <string name="settings_company_title">Entreprise</string>
     <string name="settings_company_subtitle">Coordonnées, identifiant légal, numéro de facture</string>
     <string name="settings_security_title">Sécurité</string>
     <string name="settings_security_subtitle">Verrouiller l\'app par empreinte / PIN du téléphone</string>
+    <string name="settings_verify_title">Vérifier l\'intégrité</string>
+    <string name="settings_verify_subtitle">Recalcule la chaîne anti-fraude et contrôle chaque facture émise</string>
+    <string name="verify_dialog_title">Intégrité de la comptabilité</string>
+    <string name="verify_running">Vérification de toutes les écritures…</string>
+    <string name="verify_failed">La vérification n\'a pas pu aboutir. Réessayez.</string>
+    <string name="verify_ok">Tout est cohérent — %1$d écritures vérifiées, chaque facture émise correspond à son empreinte.</string>
+    <string name="verify_legacy_note">%1$d écritures plus anciennes sont antérieures aux empreintes vérifiables et ont été ignorées.</string>
+    <string name="verify_broken">Anomalie détectée : la chaîne est rompue à l\'écriture n° %1$d. Le journal d\'audit a été modifié hors de l\'app.</string>
+    <string name="verify_tampered">Anomalie détectée : la facture N° %1$d ne correspond plus à son empreinte. Son contenu a été modifié hors de l\'app.</string>
+    <string name="verify_close">Fermer</string>
 
     <!-- Security -->
     <string name="security_title">Sécurité</string>
@@ -111,7 +162,7 @@
     <string name="security_no_auth_available">Aucune empreinte ni PIN configuré sur ce téléphone. Configurez-en un dans les réglages Android puis revenez ici.</string>
 
     <!-- Lock screen -->
-    <string name="lock_prompt_title">Facturix</string>
+    <string name="lock_prompt_title">Snapfacture</string>
     <string name="lock_prompt_subtitle">Déverrouillez pour accéder à vos factures</string>
     <string name="lock_locked_title">Application verrouillée</string>
     <string name="lock_locked_body">Authentifiez-vous pour accéder à vos données.</string>
@@ -146,7 +197,9 @@
     <string name="share_body">Bonjour,\n\nVeuillez trouver ci-joint votre facture N° %1$d.\n\nCordialement,\n%2$s</string>
     <string name="share_chooser_title">Partager la facture</string>
     <string name="company_name">Raison sociale</string>
+    <string name="company_legal_form">Forme juridique (ex : EI, SASU, SARL)</string>
     <string name="company_legal_id">Identifiant légal</string>
+    <string name="company_vat_number">N° TVA intracommunautaire (FRxx…)</string>
     <string name="company_address">Adresse</string>
     <string name="company_postal">Code postal</string>
     <string name="company_city">Ville</string>
@@ -206,6 +259,7 @@
     <string name="export_done_count_one">%1$d facture exportée</string>
     <string name="export_done_count_many">%1$d factures exportées</string>
     <string name="export_share">Partager / Envoyer par mail</string>
+    <string name="export_email_subject">Export Snapfacture</string>
     <string name="export_new">Nouvel export</string>
     <string name="export_error_title">Export impossible</string>
 
@@ -234,6 +288,8 @@
     <!-- PDF -->
     <string name="pdf_title_invoice">FACTURE N° %1$d</string>
     <string name="pdf_title_credit">AVOIR N° %1$d</string>
+    <string name="pdf_title_quote">DEVIS N° %1$d</string>
+    <string name="pdf_meta_valid_until">Valable jusqu\'au</string>
     <string name="pdf_issued_on_f">Émise le %1$s</string>
     <string name="pdf_issued_on_m">Émis le %1$s</string>
     <string name="pdf_billed_to">FACTURÉ À</string>
@@ -259,10 +315,12 @@
     <string name="pdf_credit_reference">Annule et remplace la facture N° %1$d%2$s</string>
     <string name="pdf_credit_reference_date_suffix">" du %1$s"</string>
     <string name="pdf_footer_manager">%1$s • Gérant</string>
-    <string name="pdf_contact_line">Tél. %1$s  •  %2$s  •  %3$s</string>
+    <string name="pdf_contact_phone_prefix">Tél. %1$s</string>
     <string name="pdf_client_siret">SIRET %1$s</string>
     <string name="pdf_b2b_penalties">Pénalités de retard : taux directeur de la BCE majoré de 10 points (art. L441-10 C. com.).</string>
     <string name="pdf_b2b_recovery">Indemnité forfaitaire pour frais de recouvrement : 40 € (art. D441-5 C. com.).</string>
+    <string name="pdf_escompte">Escompte pour paiement anticipé : néant.</string>
+    <string name="pdf_vat_number">N° TVA : %1$s</string>
 
     <!-- Issue confirmation -->
     <string name="confirm_issue_title">Confirmer la facture</string>
@@ -271,4 +329,22 @@
     <string name="confirm_issue_payment">Paiement : %1$s</string>
     <string name="confirm_issue_count">%1$d ligne(s)</string>
     <string name="confirm_issue_confirm">Confirmer • %1$s</string>
+    <string name="common_unknown_error">Erreur inconnue</string>
+    <string name="import_err_open_file">Impossible d\'ouvrir le fichier</string>
+    <string name="stats_quarter_label">T%1$d %2$d</string>
+    <string name="backup_msg_success">Sauvegarde effectuée : %1$s</string>
+    <string name="backup_msg_failure">Échec : %1$s</string>
+    <string name="backup_err_read_file">Impossible de lire le fichier.</string>
+    <string name="backup_err_not_valid">Le fichier sélectionné n\'est pas une sauvegarde Snapfacture valide.</string>
+    <string name="backup_err_corrupt">Fichier corrompu (integrity_check : %1$s).</string>
+    <string name="backup_err_wrong_db">Ce fichier SQLite n\'est pas une base Snapfacture.</string>
+    <string name="backup_err_newer_version">Cette sauvegarde vient d\'une version plus récente de Snapfacture — mettez d\'abord l\'app à jour.</string>
+    <string name="backup_err_unreadable">Fichier illisible : %1$s</string>
+    <string name="backup_err_restore_unknown">Erreur inconnue lors de la restauration</string>
+    <string name="backup_err_busy">Base occupée, sauvegarde reportée — réessayez dans un instant.</string>
+    <string name="backup_err_folder_missing">Dossier introuvable</string>
+    <string name="backup_err_no_write">Permission d\'écriture refusée sur le dossier choisi</string>
+    <string name="backup_err_db_missing">Base de données introuvable</string>
+    <string name="backup_err_create_file">Impossible de créer le fichier de sauvegarde</string>
+    <string name="backup_err_write_folder">Impossible d\'écrire dans le dossier</string>
 </resources>

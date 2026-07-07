@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snapfacture.R
 import com.snapfacture.core.csv.InvoiceCsvExporter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,7 +57,7 @@ class ExportViewModel @Inject constructor(
                 }
                 _state.update { it.copy(phase = ExportPhase.Done(count, file)) }
             } catch (t: Throwable) {
-                _state.update { it.copy(phase = ExportPhase.Failed(t.message ?: "Erreur inconnue")) }
+                _state.update { it.copy(phase = ExportPhase.Failed(t.message ?: context.getString(R.string.common_unknown_error))) }
             }
         }
     }

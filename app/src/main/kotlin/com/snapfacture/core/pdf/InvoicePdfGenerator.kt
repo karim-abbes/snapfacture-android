@@ -32,30 +32,35 @@ class InvoicePdfGenerator @Inject constructor(
         taxOptedOut: Boolean = false,
         sourceInvoiceNumber: Int? = null,
         sourceInvoiceDateMillis: Long? = null,
+        isQuote: Boolean = false,
     ): File {
         val pdf = PdfDocument()
         val pageInfo = PdfDocument.PageInfo.Builder(PAGE_W, PAGE_H, 1).create()
         val page = pdf.startPage(pageInfo)
         val canvas = page.canvas
 
-        drawHeader(canvas, company, invoice, country)
+        drawHeader(canvas, company, invoice, country, isQuote)
         var cursor = MARGIN + 230f
         if (invoice.invoice.type == InvoiceType.CREDIT_NOTE && sourceInvoiceNumber != null) {
             cursor = drawCreditReference(canvas, sourceInvoiceNumber, sourceInvoiceDateMillis, country, cursor)
         }
         cursor = drawClientBlock(canvas, invoice, cursor)
-        cursor = drawInvoiceMetaBlock(canvas, invoice, country, cursor)
+        cursor = drawInvoiceMetaBlock(canvas, invoice, country, cursor, isQuote)
         cursor = drawLinesTable(canvas, invoice, country, cursor + 24f)
         cursor = drawComment(canvas, invoice, cursor + 8f)
         cursor = drawTotalsCard(canvas, invoice, country, cursor + 16f)
         drawPaidStamp(canvas, invoice, cursor + 18f)
-        drawB2bMentions(canvas, invoice, country)
+        if (!isQuote) drawB2bMentions(canvas, invoice, country)
         drawFooter(canvas, company, invoice, country, taxOptedOut)
 
         pdf.finishPage(page)
 
         val outDir = File(context.filesDir, "invoices").apply { mkdirs() }
-        val prefix = if (invoice.invoice.type == InvoiceType.CREDIT_NOTE) "AV" else "F"
+        val prefix = when {
+            isQuote -> "D"
+            invoice.invoice.type == InvoiceType.CREDIT_NOTE -> "AV"
+            else -> "F"
+        }
         val file = File(outDir, "$prefix-${invoice.invoice.number}.pdf")
         file.outputStream().use { pdf.writeTo(it) }
         pdf.close()
@@ -72,6 +77,7 @@ class InvoicePdfGenerator @Inject constructor(
         company: CompanyEntity,
         inv: InvoiceWithDetails,
         country: CountryProfile,
+        isQuote: Boolean = false,
     ) {
         val isCredit = inv.invoice.type == InvoiceType.CREDIT_NOTE
         val bandColor = if (isCredit) CREDIT_BAND else BRAND
@@ -89,23 +95,9 @@ class InvoicePdfGenerator @Inject constructor(
         val legalCity = inv.invoice.companyCityAtIssue ?: company.city
         val legalSiren = inv.invoice.companySirenAtIssue ?: company.siren
 
-        val title = Paint().apply {
-            color = Color.WHITE
-            textSize = 34f
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-            isAntiAlias = true
-        }
-        canvas.drawText(legalName.uppercase(country.locale), MARGIN, 70f, title)
-
-        val sub = Paint().apply {
-            color = Color.WHITE
-            textSize = 12f
-            isAntiAlias = true
-        }
-        canvas.drawText("$legalAddress, $legalPostal $legalCity", MARGIN, 92f, sub)
-        canvas.drawText(context.getString(R.string.pdf_contact_line, company.phone, company.email, company.website), MARGIN, 110f, sub)
-        canvas.drawText("${country.legalIdLabel} $legalSiren", MARGIN, 128f, sub)
-
+        // The doc title is measured first so the company name knows how much
+        // width it may use: both share the y=70 baseline and a long name used
+        // to run straight into "FACTURE N° X".
         val docLabel = Paint().apply {
             color = Color.WHITE
             textSize = if (isCredit) 22f else 26f
@@ -114,9 +106,45 @@ class InvoicePdfGenerator @Inject constructor(
             isAntiAlias = true
         }
         val docTitle = context.getString(
-            if (isCredit) R.string.pdf_title_credit else R.string.pdf_title_invoice,
+            when {
+                isQuote -> R.string.pdf_title_quote
+                isCredit -> R.string.pdf_title_credit
+                else -> R.string.pdf_title_invoice
+            },
             inv.invoice.number,
         )
+
+        val title = Paint().apply {
+            color = Color.WHITE
+            textSize = 34f
+            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+            isAntiAlias = true
+        }
+        var name = legalName.uppercase(country.locale)
+        val availableNameWidth =
+            PAGE_W - MARGIN - MARGIN - docLabel.measureText(docTitle) - COLLISION_GAP
+        while (title.measureText(name) > availableNameWidth && title.textSize > MIN_TITLE_SIZE) {
+            title.textSize -= 1f
+        }
+        if (title.measureText(name) > availableNameWidth) {
+            while (name.isNotEmpty() && title.measureText(name + "…") > availableNameWidth) {
+                name = name.dropLast(1)
+            }
+            name += "…"
+        }
+        canvas.drawText(name, MARGIN, 70f, title)
+
+        val sub = Paint().apply {
+            color = Color.WHITE
+            textSize = 12f
+            isAntiAlias = true
+        }
+        joinNonBlank(legalAddress, joinNonBlank(legalPostal, legalCity, separator = " "))
+            ?.let { canvas.drawText(it, MARGIN, 92f, sub) }
+        contactLine(company)?.let { canvas.drawText(it, MARGIN, 110f, sub) }
+        legalSiren.takeIf { it.isNotBlank() }
+            ?.let { canvas.drawText("${country.legalIdLabel} $it", MARGIN, 128f, sub) }
+
         canvas.drawText(docTitle, PAGE_W - MARGIN, 70f, docLabel)
 
         val factureDate = Paint().apply {
@@ -126,7 +154,7 @@ class InvoicePdfGenerator @Inject constructor(
             isAntiAlias = true
         }
         val emission = context.getString(
-            if (isCredit) R.string.pdf_issued_on_m else R.string.pdf_issued_on_f,
+            if (isCredit || isQuote) R.string.pdf_issued_on_m else R.string.pdf_issued_on_f,
             country.formatDate(inv.invoice.issueDate),
         )
         canvas.drawText(emission, PAGE_W - MARGIN, 92f, factureDate)
@@ -203,6 +231,7 @@ class InvoicePdfGenerator @Inject constructor(
         inv: InvoiceWithDetails,
         country: CountryProfile,
         top: Float,
+        isQuote: Boolean = false,
     ): Float {
         val xLabel = PAGE_W - MARGIN - 200f
         val xValue = PAGE_W - MARGIN
@@ -216,11 +245,16 @@ class InvoicePdfGenerator @Inject constructor(
 
         val rows = buildList {
             add(context.getString(R.string.pdf_meta_issue_date) to country.formatDate(inv.invoice.issueDate))
-            add(context.getString(R.string.pdf_meta_due_date) to country.formatDate(inv.invoice.dueDate))
-            inv.invoice.deliveryDate?.let {
-                add(context.getString(R.string.pdf_meta_delivery_date) to country.formatDate(it))
+            if (isQuote) {
+                // dueDate carries the quote's validity end when rendering a quote.
+                add(context.getString(R.string.pdf_meta_valid_until) to country.formatDate(inv.invoice.dueDate))
+            } else {
+                add(context.getString(R.string.pdf_meta_due_date) to country.formatDate(inv.invoice.dueDate))
+                inv.invoice.deliveryDate?.let {
+                    add(context.getString(R.string.pdf_meta_delivery_date) to country.formatDate(it))
+                }
+                add(context.getString(R.string.pdf_meta_payment_method) to paymentLabel(inv.invoice.paymentMethod))
             }
-            add(context.getString(R.string.pdf_meta_payment_method) to paymentLabel(inv.invoice.paymentMethod))
         }
 
         var y = top - 20f
@@ -419,15 +453,26 @@ class InvoicePdfGenerator @Inject constructor(
 
     private fun drawB2bMentions(canvas: android.graphics.Canvas, inv: InvoiceWithDetails, country: CountryProfile) {
         if (country !is FranceProfile) return
-        if (inv.invoice.clientSiretAtIssue.isNullOrBlank()) return
         val small = Paint().apply {
             color = MUTED
             textSize = 8.5f
             isAntiAlias = true
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC)
         }
-        canvas.drawText(context.getString(R.string.pdf_b2b_penalties), MARGIN, PAGE_H - 116f, small)
-        canvas.drawText(context.getString(R.string.pdf_b2b_recovery), MARGIN, PAGE_H - 104f, small)
+        // Escompte terms are mandatory on every French invoice (art. L441-9 C. com.);
+        // penalty mentions only apply between businesses.
+        val mentions = buildList {
+            if (!inv.invoice.clientSiretAtIssue.isNullOrBlank()) {
+                add(context.getString(R.string.pdf_b2b_penalties))
+                add(context.getString(R.string.pdf_b2b_recovery))
+            }
+            add(context.getString(R.string.pdf_escompte))
+        }
+        var y = PAGE_H - 104f - 12f * (mentions.size - 1)
+        mentions.forEach { line ->
+            canvas.drawText(line, MARGIN, y, small)
+            y += 12f
+        }
     }
 
     private fun drawFooter(
@@ -448,9 +493,18 @@ class InvoicePdfGenerator @Inject constructor(
         canvas.drawLine(MARGIN, PAGE_H - 90f, PAGE_W - MARGIN, PAGE_H - 90f, divider)
 
         val small = Paint().apply { color = MUTED; textSize = 9f; isAntiAlias = true }
-        canvas.drawText("$legalName — ${country.legalIdLabel} $legalSiren", MARGIN, PAGE_H - 70f, small)
-        canvas.drawText("$legalAddress, $legalPostal $legalCity, ${company.country}", MARGIN, PAGE_H - 58f, small)
-        canvas.drawText(context.getString(R.string.pdf_contact_line, company.phone, company.email, company.website), MARGIN, PAGE_H - 46f, small)
+        val vatNumber = (inv.invoice.companyVatNumberAtIssue ?: company.vatNumber)
+            ?.takeIf { it.isNotBlank() }
+        val identityLine = joinNonBlank(
+            joinNonBlank(legalName, company.legalForm.takeIf { it.isNotBlank() }?.let { "($it)" }, separator = " "),
+            legalSiren.takeIf { it.isNotBlank() }?.let { "${country.legalIdLabel} $it" },
+            vatNumber?.let { context.getString(R.string.pdf_vat_number, it) },
+            separator = " — ",
+        )
+        identityLine?.let { canvas.drawText(it, MARGIN, PAGE_H - 70f, small) }
+        joinNonBlank(legalAddress, joinNonBlank(legalPostal, legalCity, separator = " "), company.country)
+            ?.let { canvas.drawText(it, MARGIN, PAGE_H - 58f, small) }
+        contactLine(company)?.let { canvas.drawText(it, MARGIN, PAGE_H - 46f, small) }
         val effectiveTaxOptedOut = inv.invoice.taxOptedOutAtIssue ?: (inv.invoice.totalVatCents == 0L)
         country.footerMention(effectiveTaxOptedOut)?.let { mention ->
             canvas.drawText(mention, MARGIN, PAGE_H - 32f, small)
@@ -463,6 +517,18 @@ class InvoicePdfGenerator @Inject constructor(
             context.getString(R.string.pdf_footer_manager, legalManager),
             PAGE_W - MARGIN, PAGE_H - 46f, signature,
         )
+    }
+
+    // Empty optional company fields must drop the whole fragment, never leave
+    // an orphan separator behind ("Tel. · ·", a lone comma, "SIREN " with no
+    // value). Same idiom as the client block's listOfNotNull/ifBlank chain.
+    private fun joinNonBlank(vararg parts: String?, separator: String = ", "): String? =
+        parts.filterNot { it.isNullOrBlank() }.joinToString(separator).ifBlank { null }
+
+    private fun contactLine(company: CompanyEntity): String? {
+        val phonePart = company.phone.takeIf { it.isNotBlank() }
+            ?.let { context.getString(R.string.pdf_contact_phone_prefix, it) }
+        return joinNonBlank(phonePart, company.email, company.website, separator = "  •  ")
     }
 
     private fun paymentLabel(method: PaymentMethod): String = context.getString(
@@ -482,6 +548,8 @@ class InvoicePdfGenerator @Inject constructor(
         private const val PAGE_W = 595
         private const val PAGE_H = 842
         private const val MARGIN = 40f
+        private const val COLLISION_GAP = 20f
+        private const val MIN_TITLE_SIZE = 18f
 
         private val BRAND = Color.rgb(0x0D, 0x47, 0xA1)
         private val ACCENT = Color.rgb(0xFF, 0xB3, 0x00)
@@ -495,3 +563,51 @@ class InvoicePdfGenerator @Inject constructor(
         private val DIVIDER = Color.rgb(0xDF, 0xE5, 0xEC)
     }
 }
+
+/**
+ * Renders a quote through the invoice PDF pipeline: same layout, quote
+ * title, validity date in place of the due date, no paid stamp (payment
+ * date is null) and no invoice-only statutory mentions.
+ */
+fun com.snapfacture.data.local.relation.QuoteWithDetails.asInvoiceForPdf(): InvoiceWithDetails =
+    InvoiceWithDetails(
+        invoice = com.snapfacture.data.local.entity.InvoiceEntity(
+            id = quote.id,
+            number = quote.number,
+            clientId = quote.clientId,
+            issueDate = quote.issueDate,
+            dueDate = quote.validUntil,
+            totalHtCents = quote.totalHtCents,
+            totalVatCents = quote.totalVatCents,
+            totalTtcCents = quote.totalTtcCents,
+            currency = quote.currency,
+            paymentDate = null,
+            status = com.snapfacture.data.local.entity.InvoiceStatus.DRAFT,
+            issuerName = quote.companyManagerAtIssue.orEmpty(),
+            comment = quote.comment,
+            companyNameAtIssue = quote.companyNameAtIssue,
+            companySirenAtIssue = quote.companySirenAtIssue,
+            companyAddressAtIssue = quote.companyAddressAtIssue,
+            companyPostalAtIssue = quote.companyPostalAtIssue,
+            companyCityAtIssue = quote.companyCityAtIssue,
+            companyVatNumberAtIssue = quote.companyVatNumberAtIssue,
+            companyManagerAtIssue = quote.companyManagerAtIssue,
+            taxOptedOutAtIssue = quote.taxOptedOutAtIssue,
+            clientSiretAtIssue = quote.clientSiretAtIssue,
+        ),
+        client = client,
+        lines = lines.map { l ->
+            com.snapfacture.data.local.entity.InvoiceLineEntity(
+                invoiceId = quote.id,
+                description = l.description,
+                extraNote = l.extraNote,
+                quantity = l.quantity,
+                unitPriceHtCents = l.unitPriceHtCents,
+                vatRatePermille = l.vatRatePermille,
+                lineHtCents = l.lineHtCents,
+                lineVatCents = l.lineVatCents,
+                lineTtcCents = l.lineTtcCents,
+                position = l.position,
+            )
+        },
+    )

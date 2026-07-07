@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snapfacture.R
 import com.snapfacture.core.csv.ImportReport
 import com.snapfacture.core.csv.InvoiceCsvImporter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +44,7 @@ class ImportViewModel @Inject constructor(
             try {
                 val report = withContext(Dispatchers.IO) {
                     val input = context.contentResolver.openInputStream(uri)
-                        ?: error("Impossible d'ouvrir le fichier")
+                        ?: error(context.getString(R.string.import_err_open_file))
                     input.use { stream ->
                         BufferedReader(InputStreamReader(stream, Charsets.UTF_8)).use { reader ->
                             importer.runImport(reader)
@@ -52,7 +53,7 @@ class ImportViewModel @Inject constructor(
                 }
                 _state.update { it.copy(phase = ImportPhase.Done(report)) }
             } catch (t: Throwable) {
-                _state.update { it.copy(phase = ImportPhase.Error(t.message ?: "Erreur inconnue")) }
+                _state.update { it.copy(phase = ImportPhase.Error(t.message ?: context.getString(R.string.common_unknown_error))) }
             }
         }
     }

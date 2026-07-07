@@ -2,8 +2,11 @@ package com.snapfacture.ui.invoices.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.content.Context
+import com.snapfacture.R
 import com.snapfacture.core.money.Money
 import com.snapfacture.core.pdf.InvoicePdfGenerator
+import com.snapfacture.data.local.entity.CompanyEntity
 import com.snapfacture.data.local.entity.ProductEntity
 import com.snapfacture.data.local.entity.ClientEntity
 import com.snapfacture.data.local.entity.PaymentMethod
@@ -14,7 +17,13 @@ import com.snapfacture.data.repository.CompanyRepository
 import com.snapfacture.data.repository.DraftLine
 import com.snapfacture.data.repository.InvoiceRepository
 import com.snapfacture.data.repository.IssueInvoiceInput
+import com.snapfacture.core.pdf.asInvoiceForPdf
+import com.snapfacture.data.repository.CreateQuoteInput
+import com.snapfacture.data.repository.QuoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class CartLine(
@@ -39,6 +49,7 @@ data class CreateUiState(
     val clientSiret: String = "",
     val comment: String = "",
     val matchingClients: List<ClientEntity> = emptyList(),
+    val recentClients: List<ClientEntity> = emptyList(),
     val selectedClient: ClientEntity? = null,
     val cart: List<CartLine> = emptyList(),
     val paymentMethod: PaymentMethod = PaymentMethod.CASH,
@@ -50,8 +61,7 @@ data class CreateUiState(
     val totalHtCents: Long get() =
         if (taxOptedOut) totalTtcCents
         else cart.sumOf {
-            val ht = Money.htFromTtc(it.product.priceTtcCents, it.product.vatRatePermille)
-            ht * it.quantity
+            Money.lineAmounts(it.product.priceTtcCents, it.quantity, it.product.vatRatePermille).ht
         }
     val totalVatCents: Long get() = if (taxOptedOut) 0L else totalTtcCents - totalHtCents
 
@@ -71,10 +81,12 @@ data class CreateUiState(
 
 @HiltViewModel
 class CreateInvoiceViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val clientRepo: ClientRepository,
     productRepo: ProductRepository,
     private val companyRepo: CompanyRepository,
     private val invoiceRepo: InvoiceRepository,
+    private val quoteRepo: QuoteRepository,
     private val pdfGenerator: InvoicePdfGenerator,
     private val countryPrefs: CountryPreferences,
 ) : ViewModel() {
@@ -90,6 +102,9 @@ class CreateInvoiceViewModel @Inject constructor(
             countryPrefs.flow.collect { settings ->
                 _state.update { it.copy(taxOptedOut = settings.taxOptedOut) }
             }
+        }
+        viewModelScope.launch {
+            _state.update { it.copy(recentClients = clientRepo.recent()) }
         }
     }
 
@@ -153,12 +168,95 @@ class CreateInvoiceViewModel @Inject constructor(
         _state.update { it.copy(paymentMethod = m) }
     }
 
+    // Free lines live only in the cart: a transient ProductEntity with a
+    // negative id keeps the existing cart plumbing working without ever
+    // touching the catalog. DraftLine (what actually gets issued) only
+    // carries the description/price/rate, so nothing fake is persisted.
+    private var nextFreeLineId = -1L
+
+    fun addFreeLine(label: String, priceTtcCents: Long) {
+        if (label.isBlank() || priceTtcCents <= 0) return
+        viewModelScope.launch {
+            val rate = countryPrefs.flow.first().profile.defaultTaxRatePermille
+            val transient = ProductEntity(
+                id = nextFreeLineId--,
+                label = label.trim(),
+                priceTtcCents = priceTtcCents,
+                vatRatePermille = rate,
+                active = false,
+            )
+            _state.update { it.copy(cart = it.cart + CartLine(transient, 1)) }
+        }
+    }
+
+    private fun draftLines(st: CreateUiState): List<DraftLine> = st.cart.map { line ->
+        DraftLine(
+            description = line.product.label,
+            extraNote = if (line.product.withInstall) {
+                line.product.serviceNote?.takeIf { it.isNotBlank() }
+            } else null,
+            quantity = line.quantity,
+            unitPriceTtcCents = line.product.priceTtcCents,
+            vatRatePermille = line.product.vatRatePermille,
+        )
+    }
+
+    fun createQuote(onCreated: (Long) -> Unit) {
+        val st = _state.value
+        if (!st.canIssue) return
+        _state.update { it.copy(isSaving = true, error = null) }
+        viewModelScope.launch {
+            val quoteId = try {
+                val effectiveSiret = if (st.isPro) st.clientSiret else null
+                val clientId = clientRepo.upsertByName(
+                    name = st.selectedClient?.name ?: st.clientName,
+                    phone = st.clientPhone,
+                    email = st.clientEmail,
+                    addressLine = st.clientAddress,
+                    siret = effectiveSiret,
+                )
+                quoteRepo.create(
+                    CreateQuoteInput(
+                        clientId = clientId,
+                        lines = draftLines(st),
+                        issueDateMillis = System.currentTimeMillis(),
+                        comment = st.comment.ifBlank { null },
+                        taxOptedOut = st.taxOptedOut,
+                        clientSiret = effectiveSiret,
+                    )
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Exception) {
+                _state.update { it.copy(isSaving = false, error = t.message ?: context.getString(R.string.common_unknown_error)) }
+                return@launch
+            }
+            runCatching {
+                val details = quoteRepo.get(quoteId) ?: error("Quote missing")
+                val company = companyRepo.get() ?: error("Company missing")
+                val countrySettings = countryPrefs.flow.first()
+                val file = withContext(Dispatchers.IO) {
+                    pdfGenerator.generate(
+                        invoice = details.asInvoiceForPdf(),
+                        company = company,
+                        country = countrySettings.profile,
+                        taxOptedOut = countrySettings.taxOptedOut,
+                        isQuote = true,
+                    )
+                }
+                quoteRepo.attachPdf(quoteId, file.absolutePath)
+            }.onFailure { if (it is CancellationException) throw it }
+            _state.update { it.copy(isSaving = false) }
+            onCreated(quoteId)
+        }
+    }
+
     fun issue(onIssued: (Long) -> Unit) {
         val st = _state.value
         if (!st.canIssue) return
         _state.update { it.copy(isSaving = true, error = null) }
         viewModelScope.launch {
-            try {
+            val issued: Pair<Long, CompanyEntity>? = try {
                 val effectiveSiret = if (st.isPro) st.clientSiret else null
                 val clientId = clientRepo.upsertByName(
                     name = st.selectedClient?.name ?: st.clientName,
@@ -194,20 +292,33 @@ class CreateInvoiceViewModel @Inject constructor(
                         clientSiret = effectiveSiret,
                     )
                 )
+                invoiceId to company
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Exception) {
+                _state.update { it.copy(isSaving = false, error = t.message ?: context.getString(R.string.common_unknown_error)) }
+                null
+            }
+            if (issued == null) return@launch
+            val (invoiceId, company) = issued
+            // The invoice legally exists past this point: a PDF failure must not
+            // leave the cart armed for a duplicate issue. Navigate to the detail
+            // screen anyway — the PDF can be regenerated from there.
+            runCatching {
                 val details = invoiceRepo.get(invoiceId) ?: error("Invoice missing")
                 val countrySettings = countryPrefs.flow.first()
-                val file = pdfGenerator.generate(
-                    invoice = details,
-                    company = company,
-                    country = countrySettings.profile,
-                    taxOptedOut = countrySettings.taxOptedOut,
-                )
+                val file = withContext(Dispatchers.IO) {
+                    pdfGenerator.generate(
+                        invoice = details,
+                        company = company,
+                        country = countrySettings.profile,
+                        taxOptedOut = countrySettings.taxOptedOut,
+                    )
+                }
                 invoiceRepo.attachPdf(invoiceId, file.absolutePath)
-                _state.update { it.copy(isSaving = false) }
-                onIssued(invoiceId)
-            } catch (t: Throwable) {
-                _state.update { it.copy(isSaving = false, error = t.message ?: "Erreur") }
-            }
+            }.onFailure { if (it is CancellationException) throw it }
+            _state.update { it.copy(isSaving = false) }
+            onIssued(invoiceId)
         }
     }
 }

@@ -1,12 +1,15 @@
 package com.snapfacture.ui.stats
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.snapfacture.R
 import androidx.lifecycle.viewModelScope
 import com.snapfacture.data.local.entity.InvoiceType
 import com.snapfacture.data.local.relation.InvoiceWithDetails
 import com.snapfacture.data.preferences.CountryPreferences
 import com.snapfacture.data.repository.InvoiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +38,7 @@ data class StatsUiState(
 
 @HiltViewModel
 class StatsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     repo: InvoiceRepository,
     countryPrefs: CountryPreferences,
 ) : ViewModel() {
@@ -131,6 +135,6 @@ class StatsViewModel @Inject constructor(
 
     private fun quarterLabel(cal: Calendar): String {
         val q = cal.get(Calendar.MONTH) / 3 + 1
-        return "T$q ${cal.get(Calendar.YEAR)}"
+        return context.getString(R.string.stats_quarter_label, q, cal.get(Calendar.YEAR))
     }
 }
