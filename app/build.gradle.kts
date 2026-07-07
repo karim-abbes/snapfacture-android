@@ -74,6 +74,14 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            all { test ->
+                // Print the actual assertion message in CI logs; gradle's
+                // default one-line summary hides it.
+                test.testLogging {
+                    events("failed")
+                    setExceptionFormat("full")
+                }
+            }
         }
     }
 }
