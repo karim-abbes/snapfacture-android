@@ -356,6 +356,7 @@
     <string name="confirm_issue_confirm">Confirmer • %1$s</string>
     <string name="common_unknown_error">Erreur inconnue</string>
     <string name="import_err_open_file">Impossible d\'ouvrir le fichier</string>
+    <string name="detail_share_facturx">E-facture (XML) — pour ta plateforme/comptable</string>
     <string name="import_err_empty">Le fichier est vide ou ne contient aucune ligne de données</string>
     <string name="import_mapping_title">%1$d ligne(s) trouvée(s). Vérifiez la correspondance des colonnes :</string>
     <string name="import_mapping_optional">Champs optionnels</string>

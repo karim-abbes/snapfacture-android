@@ -362,6 +362,7 @@
     <string name="restore_done_relaunch">Restart now</string>
     <string name="common_unknown_error">Unknown error</string>
     <string name="import_err_open_file">Could not open the file</string>
+    <string name="detail_share_facturx">E-invoice (XML) — for your platform/accountant</string>
     <string name="import_err_empty">The file is empty or has no data rows</string>
     <string name="import_mapping_title">%1$d row(s) found. Check the column matching:</string>
     <string name="import_mapping_optional">Optional fields</string>
