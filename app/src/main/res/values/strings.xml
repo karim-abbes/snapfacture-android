@@ -72,6 +72,8 @@
     <string name="create_catalog_open">Open the catalog</string>
     <string name="create_quote_button">Quote</string>
     <string name="create_delivery_date_add">+ Different service date?</string>
+    <string name="create_delivery_address_add">+ Different delivery address?</string>
+    <string name="create_delivery_address_label">Delivery address</string>
     <string name="create_qty_times">%1$s ×</string>
     <string name="quantity_dialog_label">Quantity</string>
     <string name="quantity_dialog_hint">E.g. 1.5 for an hour and a half</string>
@@ -230,6 +232,11 @@
     <string name="pdf_b2b_penalties">Late-payment penalties: ECB main refinancing rate plus 10 percentage points (Art. L441-10 French Commercial Code).</string>
     <string name="pdf_b2b_recovery">Fixed indemnity for recovery costs: 40 € (Art. D441-5 French Commercial Code).</string>
     <string name="pdf_escompte">No discount for early payment (escompte: none).</string>
+    <string name="pdf_category_goods">Transaction type: supply of goods.</string>
+    <string name="pdf_category_services">Transaction type: supply of services.</string>
+    <string name="pdf_category_mixed">Transaction type: supply of goods and services.</string>
+    <string name="pdf_vat_on_debits">VAT payable on a debit basis (option pour le paiement de la TVA d\'après les débits).</string>
+    <string name="pdf_delivery_address">DELIVERY ADDRESS</string>
     <string name="pdf_vat_number">VAT no. %1$s</string>
     <string name="pdf_contact_phone_prefix">Tel. %1$s</string>
 
@@ -275,6 +282,13 @@
     <string name="company_tax_regime_section">%1$s regime</string>
     <string name="company_franchise_label">No %1$s</string>
     <string name="company_franchise_subtitle_fr">From now on, new invoices will be issued without VAT (mention &quot;art. 293 B CGI&quot;). Already issued invoices stay unchanged.</string>
+    <string name="company_activity_label">Billed activity</string>
+    <string name="company_activity_subtitle">Printed on every invoice (mandatory from Sept. 2026).</string>
+    <string name="company_activity_goods">Goods</string>
+    <string name="company_activity_services">Services</string>
+    <string name="company_activity_mixed">Both</string>
+    <string name="company_vat_on_debits_label">VAT on debits</string>
+    <string name="company_vat_on_debits_subtitle">Only if you opted for VAT on debits with the tax office (services). Adds the mandatory mention on invoices.</string>
 
     <!-- Catalog -->
     <string name="catalog_title">Product catalog</string>

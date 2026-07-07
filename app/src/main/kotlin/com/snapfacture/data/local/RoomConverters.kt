@@ -3,6 +3,7 @@ package com.snapfacture.data.local
 import androidx.room.TypeConverter
 import com.snapfacture.data.local.entity.InvoiceStatus
 import com.snapfacture.data.local.entity.InvoiceType
+import com.snapfacture.data.local.entity.OperationCategory
 import com.snapfacture.data.local.entity.PaymentMethod
 
 class RoomConverters {
@@ -14,4 +15,8 @@ class RoomConverters {
 
     @TypeConverter fun typeToString(t: InvoiceType): String = t.name
     @TypeConverter fun typeFromString(s: String): InvoiceType = InvoiceType.valueOf(s)
+
+    // Nullable: operationCategoryAtIssue is null on invoices issued before v5.
+    @TypeConverter fun opCategoryToString(c: OperationCategory?): String? = c?.name
+    @TypeConverter fun opCategoryFromString(s: String?): OperationCategory? = s?.let { OperationCategory.valueOf(it) }
 }

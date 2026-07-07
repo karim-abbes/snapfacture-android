@@ -103,6 +103,19 @@ object DatabaseModule {
         }
     }
 
+    // v5: mentions of the 2026-09-01 e-invoicing reform. Two company
+    // settings (operation category, VAT-on-debits option) plus their
+    // per-invoice snapshots and the optional delivery address.
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE `company` ADD COLUMN `operationCategory` TEXT NOT NULL DEFAULT 'MIXED'")
+            db.execSQL("ALTER TABLE `company` ADD COLUMN `vatOnDebits` INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("ALTER TABLE `invoices` ADD COLUMN `deliveryAddress` TEXT")
+            db.execSQL("ALTER TABLE `invoices` ADD COLUMN `operationCategoryAtIssue` TEXT")
+            db.execSQL("ALTER TABLE `invoices` ADD COLUMN `vatOnDebitsAtIssue` INTEGER")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(
@@ -123,7 +136,7 @@ object DatabaseModule {
                     }
                 }
             })
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .build()
     }
 

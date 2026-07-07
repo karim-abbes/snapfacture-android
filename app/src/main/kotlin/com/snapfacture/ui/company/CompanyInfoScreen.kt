@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snapfacture.R
+import com.snapfacture.data.local.entity.OperationCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +66,8 @@ fun CompanyInfoScreen(
     var manager by rememberSaveable { mutableStateOf("") }
     var nextNumber by rememberSaveable { mutableStateOf("") }
     var defaultTaxPct by rememberSaveable { mutableStateOf("") }
+    var opCategory by rememberSaveable { mutableStateOf(OperationCategory.MIXED.name) }
+    var vatOnDebits by rememberSaveable { mutableStateOf(false) }
 
     // One-shot load: rememberSaveable keeps in-progress edits across rotation,
     // and the guard stops the DB snapshot from overwriting them on recreation.
@@ -77,6 +81,8 @@ fun CompanyInfoScreen(
             phone = it.phone; email = it.email; website = it.website
             manager = it.managerName
             nextNumber = it.nextInvoiceNumber.toString()
+            opCategory = it.operationCategory.name
+            vatOnDebits = it.vatOnDebits
             defaultTaxPct = if (it.defaultTaxPermille > 0)
                 "%.2f".format(it.defaultTaxPermille / 10.0).trimEnd('0').trimEnd('.', ',')
             else ""
@@ -172,6 +178,66 @@ fun CompanyInfoScreen(
                         }
                     }
                 }
+                // Mention obligatoire au 2026-09-01 : catégorie d'opération,
+                // imprimée sur chaque facture. Un réglage entreprise suffit
+                // pour la cible (une seule activité), pas de choix par facture.
+                item {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(
+                                stringResource(R.string.company_activity_label),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                stringResource(R.string.company_activity_subtitle),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                listOf(
+                                    OperationCategory.GOODS to stringResource(R.string.company_activity_goods),
+                                    OperationCategory.SERVICES to stringResource(R.string.company_activity_services),
+                                    OperationCategory.MIXED to stringResource(R.string.company_activity_mixed),
+                                ).forEach { (cat, catLabel) ->
+                                    FilterChip(
+                                        selected = opCategory == cat.name,
+                                        onClick = { opCategory = cat.name },
+                                        label = { Text(catLabel) },
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                // L'option "TVA sur les débits" n'a aucun sens en franchise :
+                // masquée dans ce cas (et neutralisée à l'émission).
+                if (!settings.taxOptedOut) {
+                    item {
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        stringResource(R.string.company_vat_on_debits_label),
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    Text(
+                                        stringResource(R.string.company_vat_on_debits_subtitle),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                Switch(
+                                    checked = vatOnDebits,
+                                    onCheckedChange = { vatOnDebits = it },
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             item {
@@ -193,6 +259,8 @@ fun CompanyInfoScreen(
                                 managerName = manager,
                                 nextInvoiceNumber = nextNumber.toIntOrNull() ?: current.nextInvoiceNumber,
                                 defaultTaxPermille = if (isUs) parsedPermille else current.defaultTaxPermille,
+                                operationCategory = OperationCategory.valueOf(opCategory),
+                                vatOnDebits = vatOnDebits,
                             )
                         )
                         onBack()

@@ -55,6 +55,13 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 - Métadonnées F-Droid + guides RELEASING/FDROID + CHANGELOG + CONTRIBUTING
 - **Devis → facture** (numérotation propre, PDF avec validité, conversion 1 tap atomique) ; **export comptable FEC** ; **récap TVA / sales tax** par taux et par trimestre
 
+### Livré le 7 juillet 2026 (suite — inspiré de l'analyse UX VTCFact)
+
+- **Navigation basse persistante** (Factures / Devis / Stats), FAB "Nouveau devis" (manquant jusqu'ici), pastille de statut sur les devis, carte CA compactée sur la liste des factures (redondance avec l'écran Stats retirée)
+- **Date d'intervention optionnelle** sur la facture, repliée par défaut (lien à ouvrir), distincte de la date d'émission — mention légale quand les deux diffèrent
+- **Quantités décimales** (`quantityMilliUnits`, Long en millièmes d'unité — même logique que les montants en cents) : facturer 1,5 h ou 12,5 m² devient possible ; schéma Room v4 avec migration ×1000 sur les quantités existantes
+- **Inscription email optionnelle** sur la landing page (via Formspree) pour être prévenu des mises à jour — jamais bloquante avant le téléchargement, mention vie privée reformulée en conséquence dans `PRIVACY.md`
+
 ---
 
 ## 🔨 Prévu (par priorité)
@@ -62,13 +69,17 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 0. **Trouver les premiers utilisateurs**
    Le produit est prêt : c'est le sujet n°1 maintenant. Le reste de cette liste attend des retours réels (forums d'artisans, groupes Facebook BTP, bouche-à-oreille comptables) plutôt que d'être développé à l'aveugle.
 
-1. **Import CSV interactif**
+1. **4 mentions obligatoires sur la facture (échéance légale 1er septembre 2026)**
+   La réforme facturation électronique impose, dès le 1er septembre 2026, à **toutes** les factures (électroniques ou non, France) : la catégorie de l'opération (vente / prestation de services / mixte vente + prestation), la mention de l'option TVA sur les débits le cas échéant, l'adresse complète de livraison si elle diffère de l'adresse de facturation du client. Aucun rapport avec Factur-X — juste du texte à ajouter sur le PDF actuel. Effort : ~1 h. **Échéance légale ferme, à traiter avant l'été 2026.**
+   (À la même date, réception obligatoire des factures électroniques pour toutes les entreprises françaises — mais c'est une démarche administrative de l'utilisateur, pas une fonctionnalité Snapfacture : il suffit de choisir une plateforme agréée (PDP) qui reçoit à sa place.)
+
+2. **Import CSV interactif**
    Sélecteur de colonnes pour absorber le format de n'importe quel outil tiers (pas seulement le format figé actuel). Effort : ~3 h. Utile dès qu'un utilisateur migre depuis Pennylane / Sellsy / Excel ou QuickBooks / Wave côté US. Une fois fait, l'import / export redeviennent visibles côté US dans le menu Réglages.
 
-2. **Précision taxe en basis points**
+3. **Précision taxe en basis points**
    Passer du stockage `permille` (1/1000) au `basisPoints` (1/10000) pour exactement représenter 6,25 % / 7,25 % / etc. Effort : ~30 min, à faire dès qu'un utilisateur US se plaint.
 
-3. **Factur-X / PDP**
+4. **Factur-X / PDP**
    Émission de factures électroniques B2B au format Factur-X (PDF + XML CII intégré) et connexion à au moins une Plateforme de Dématérialisation Partenaire. Obligatoire pour les TPE françaises à compter du **1er septembre 2027**. Effort : 1-2 semaines. À planifier au printemps 2027.
 
 ---
@@ -101,13 +112,14 @@ Refus par design, alignés avec la doctrine **minimalisme + cible TPE solo payé
 Status: ✅ shipped · 🔨 planned · 🔮 considered · ❌ out of scope
 
 ### ✅ Shipped
-Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only, now independently verifiable via an in-app integrity check), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog with a free-text line, recent clients, local PDF + share, hardened SAF backup/restore (verified checkpoint, validated + rollback restore, rotation), biometric lock, stats dashboard, blocking onboarding, full FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, `snapfacture-android` repo), signed tagged releases, 27+ automated tests, F-Droid metadata, sample `Plomberie Saadi` database + PDF screenshots in the README, **quotes with one-tap conversion to invoice**, **FEC accounting export**, **per-rate/quarterly VAT & sales-tax summary**.
+Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only, now independently verifiable via an in-app integrity check), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog with a free-text line, recent clients, local PDF + share, hardened SAF backup/restore (verified checkpoint, validated + rollback restore, rotation), biometric lock, stats dashboard, blocking onboarding, full FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, `snapfacture-android` repo), signed tagged releases, 27+ automated tests, F-Droid metadata, sample `Plomberie Saadi` database + PDF screenshots in the README, **quotes with one-tap conversion to invoice**, **FEC accounting export**, **per-rate/quarterly VAT & sales-tax summary**, **persistent bottom navigation** (Invoices/Quotes/Stats) with a quote FAB and status pill (VTCFact-inspired UX pass), **optional service/intervention date** on invoices, **decimal quantities** (milli-units, Room v4) for fractional hours/m², **optional email signup** on the landing page for update notifications (Formspree, never blocking the download).
 
 ### 🔨 Planned (priority order)
 0. **Find the first users** — the product is ready; everything below waits on real feedback rather than being built blind.
-1. **Interactive CSV import** — column mapper for any third-party format (FR + US). ~3 h.
-2. **Tax precision in basis points** — replace permille (1/1000) with basis points (1/10000) to represent 6.25 %, 7.25 % exactly. ~30 min.
-3. **Factur-X / PDP integration** — mandatory for B2B in France from September 2027. ~1-2 weeks, plan for spring 2027.
+1. **4 mandatory invoice mentions (firm legal deadline: September 1, 2026)** — operation category (sale / service / mixed), cash-basis VAT option mention, delivery address if different from billing address. Applies to **all** French invoices, unrelated to Factur-X — just PDF text. ~1 h. (Same date: all French businesses must be able to *receive* e-invoices — an administrative step, registering with an accredited platform, not a Snapfacture feature.)
+2. **Interactive CSV import** — column mapper for any third-party format (FR + US). ~3 h.
+3. **Tax precision in basis points** — replace permille (1/1000) with basis points (1/10000) to represent 6.25 %, 7.25 % exactly. ~30 min.
+4. **Factur-X / PDP integration** — mandatory emission for TPE/B2B in France from September 2027. ~1-2 weeks, plan for spring 2027.
 
 ### 🔮 Considered (conditional)
 - **iOS version** via Kotlin Multiplatform once Android reaches ≥ 50 active users.

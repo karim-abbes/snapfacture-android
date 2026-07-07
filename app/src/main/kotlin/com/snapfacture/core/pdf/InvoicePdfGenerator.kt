@@ -223,7 +223,32 @@ class InvoicePdfGenerator @Inject constructor(
             canvas.drawText(line, MARGIN, y, sub)
             y += 14f
         }
+
+        // Delivery address (réforme 2026-09-01): only when it genuinely
+        // differs from the billing address printed just above.
+        val billing = joinNonBlank(
+            inv.client.addressLine,
+            joinNonBlank(inv.client.postalCode, inv.client.city, separator = " "),
+        )
+        inv.invoice.deliveryAddress
+            ?.takeIf { it.isNotBlank() && !sameAddress(it, billing) && !sameAddress(it, inv.client.addressLine) }
+            ?.let { delivery ->
+                y += 4f
+                canvas.drawText(context.getString(R.string.pdf_delivery_address), MARGIN, y, label)
+                y += 14f
+                wrapText(delivery, sub, 300).take(2).forEach { line ->
+                    canvas.drawText(line, MARGIN, y, sub)
+                    y += 14f
+                }
+            }
         return y
+    }
+
+    private fun sameAddress(a: String, b: String?): Boolean {
+        if (b.isNullOrBlank()) return false
+        fun norm(s: String) = s.lowercase().replace(',', ' ').split(Regex("\\s+"))
+            .filter { it.isNotBlank() }.joinToString(" ")
+        return norm(a) == norm(b)
     }
 
     private fun drawInvoiceMetaBlock(
@@ -463,13 +488,29 @@ class InvoicePdfGenerator @Inject constructor(
             typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC)
         }
         // Escompte terms are mandatory on every French invoice (art. L441-9 C. com.);
-        // penalty mentions only apply between businesses.
+        // penalty mentions only apply between businesses. Operation category and
+        // VAT-on-debits come from the réforme e-facturation (2026-09-01) — both
+        // read the snapshot frozen at issue, so pre-v5 invoices print nothing new.
         val mentions = buildList {
             if (!inv.invoice.clientSiretAtIssue.isNullOrBlank()) {
                 add(context.getString(R.string.pdf_b2b_penalties))
                 add(context.getString(R.string.pdf_b2b_recovery))
             }
             add(context.getString(R.string.pdf_escompte))
+            inv.invoice.operationCategoryAtIssue?.let { category ->
+                add(
+                    context.getString(
+                        when (category) {
+                            com.snapfacture.data.local.entity.OperationCategory.GOODS -> R.string.pdf_category_goods
+                            com.snapfacture.data.local.entity.OperationCategory.SERVICES -> R.string.pdf_category_services
+                            com.snapfacture.data.local.entity.OperationCategory.MIXED -> R.string.pdf_category_mixed
+                        },
+                    )
+                )
+            }
+            if (inv.invoice.vatOnDebitsAtIssue == true) {
+                add(context.getString(R.string.pdf_vat_on_debits))
+            }
         }
         var y = PAGE_H - 104f - 12f * (mentions.size - 1)
         mentions.forEach { line ->

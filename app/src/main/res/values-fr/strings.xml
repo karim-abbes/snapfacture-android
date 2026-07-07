@@ -72,6 +72,8 @@
     <string name="create_catalog_open">Ouvrir le catalogue</string>
     <string name="create_quote_button">Devis</string>
     <string name="create_delivery_date_add">+ Date d\'intervention différente ?</string>
+    <string name="create_delivery_address_add">+ Adresse de livraison différente ?</string>
+    <string name="create_delivery_address_label">Adresse de livraison</string>
     <string name="create_qty_times">%1$s ×</string>
     <string name="quantity_dialog_label">Quantité</string>
     <string name="quantity_dialog_hint">Ex. : 1,5 pour une heure et demie</string>
@@ -224,6 +226,13 @@
     <string name="company_tax_regime_section">Régime de %1$s</string>
     <string name="company_franchise_label">Franchise de %1$s</string>
     <string name="company_franchise_subtitle_fr">À partir de maintenant, les nouvelles factures seront émises sans TVA (mention « art. 293 B du CGI »). Les factures déjà émises restent inchangées.</string>
+    <string name="company_activity_label">Activité facturée</string>
+    <string name="company_activity_subtitle">Imprimée sur chaque facture (obligatoire à partir de sept. 2026).</string>
+    <string name="company_activity_goods">Vente de biens</string>
+    <string name="company_activity_services">Prestations</string>
+    <string name="company_activity_mixed">Les deux</string>
+    <string name="company_vat_on_debits_label">TVA sur les débits</string>
+    <string name="company_vat_on_debits_subtitle">Uniquement si tu as opté pour la TVA d\'après les débits auprès des impôts (prestations de services). Ajoute la mention obligatoire sur les factures.</string>
 
     <!-- Catalog -->
     <string name="catalog_title">Catalogue produits</string>
@@ -331,6 +340,11 @@
     <string name="pdf_b2b_penalties">Pénalités de retard : taux directeur de la BCE majoré de 10 points (art. L441-10 C. com.).</string>
     <string name="pdf_b2b_recovery">Indemnité forfaitaire pour frais de recouvrement : 40 € (art. D441-5 C. com.).</string>
     <string name="pdf_escompte">Escompte pour paiement anticipé : néant.</string>
+    <string name="pdf_category_goods">Catégorie d\'opération : livraison de biens.</string>
+    <string name="pdf_category_services">Catégorie d\'opération : prestation de services.</string>
+    <string name="pdf_category_mixed">Catégorie d\'opération : livraison de biens et prestation de services.</string>
+    <string name="pdf_vat_on_debits">Option pour le paiement de la TVA d\'après les débits.</string>
+    <string name="pdf_delivery_address">ADRESSE DE LIVRAISON</string>
     <string name="pdf_vat_number">N° TVA : %1$s</string>
 
     <!-- Issue confirmation -->
