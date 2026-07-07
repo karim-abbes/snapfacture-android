@@ -91,6 +91,18 @@ object DatabaseModule {
         }
     }
 
+    // v4: line quantities become milli-units (1500 = 1.5) so decimal
+    // quantities keep exact integer arithmetic. Existing rows are
+    // reinterpreted, not just retyped: 2 units → 2000 milli-units,
+    // otherwise every past invoice would display its amounts divided
+    // by 1000.
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("UPDATE `invoice_lines` SET `quantity` = `quantity` * 1000")
+            db.execSQL("UPDATE `quote_lines` SET `quantity` = `quantity` * 1000")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(
@@ -111,7 +123,7 @@ object DatabaseModule {
                     }
                 }
             })
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .build()
     }
 

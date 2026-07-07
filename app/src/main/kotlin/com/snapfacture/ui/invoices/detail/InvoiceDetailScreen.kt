@@ -193,7 +193,7 @@ fun InvoiceDetailScreen(
                         inv.lines.sortedBy { it.position }.forEach { l ->
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Column(Modifier.weight(1f)) {
-                                    Text("${l.quantity} × ${l.description}")
+                                    Text("${com.snapfacture.core.money.Quantity.format(l.quantityMilliUnits, profile.locale)} × ${l.description}")
                                     l.extraNote?.takeIf { it.isNotBlank() }?.let {
                                         Text(
                                             it,

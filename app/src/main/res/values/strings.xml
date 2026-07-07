@@ -72,6 +72,9 @@
     <string name="create_catalog_open">Open the catalog</string>
     <string name="create_quote_button">Quote</string>
     <string name="create_delivery_date_add">+ Different service date?</string>
+    <string name="create_qty_times">%1$s ×</string>
+    <string name="quantity_dialog_label">Quantity</string>
+    <string name="quantity_dialog_hint">E.g. 1.5 for an hour and a half</string>
     <string name="create_delivery_date_label">Service date: %1$s</string>
     <string name="quotes_title">Quotes</string>
     <string name="quotes_empty">No quotes yet. Tap + to create your first quote.</string>
@@ -190,7 +193,7 @@
     <string name="stats_tax_subtitle">Amount to remit at next filing</string>
     <string name="stats_top_products">Top products</string>
     <string name="stats_top_clients">Top customers</string>
-    <string name="stats_count_units">%1$d unit(s) sold</string>
+    <string name="stats_count_units">%1$s unit(s) sold</string>
     <string name="stats_no_data">No data for this period</string>
 
     <!-- PDF -->

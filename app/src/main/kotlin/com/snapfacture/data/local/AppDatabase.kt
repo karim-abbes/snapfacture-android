@@ -29,7 +29,7 @@ import com.snapfacture.data.local.entity.QuoteLineEntity
         QuoteEntity::class,
         QuoteLineEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(RoomConverters::class)
@@ -46,6 +46,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         // Keep in sync with @Database(version = ...) above. Used by restore
         // to refuse backups produced by a newer version of the app.
-        const val SCHEMA_VERSION = 3
+        const val SCHEMA_VERSION = 4
     }
 }

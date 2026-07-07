@@ -19,10 +19,16 @@ object Money {
      * Rounding happens once, on the line total — never per unit — so the
      * rounding error stays under half a cent regardless of the quantity.
      */
-    fun lineAmounts(unitPriceTtcCents: Long, quantity: Int, vatRatePermille: Int): LineAmounts {
-        val ttc = unitPriceTtcCents * quantity
+    fun lineAmounts(unitPriceTtcCents: Long, quantityMilliUnits: Long, vatRatePermille: Int): LineAmounts {
+        val ttc = lineTtc(unitPriceTtcCents, quantityMilliUnits)
         val ht = if (vatRatePermille == 0) ttc else htFromTtc(ttc, vatRatePermille)
         return LineAmounts(ht = ht, vat = ttc - ht, ttc = ttc)
+    }
+
+    /** Line total in cents: unit price × quantity in milli-units, half-up. */
+    fun lineTtc(unitPriceTtcCents: Long, quantityMilliUnits: Long): Long {
+        val numerator = unitPriceTtcCents * quantityMilliUnits
+        return Math.floorDiv(2L * numerator + 1000L, 2_000L)
     }
 
     data class LineAmounts(val ht: Long, val vat: Long, val ttc: Long)

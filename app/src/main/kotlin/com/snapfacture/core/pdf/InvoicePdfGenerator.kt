@@ -311,7 +311,10 @@ class InvoicePdfGenerator @Inject constructor(
             l.extraNote?.takeIf { it.isNotBlank() }?.let {
                 canvas.drawText(it, MARGIN + 8f, y + 33f, rowNote)
             }
-            canvas.drawText(l.quantity.toString(), MARGIN + 320f, y + 18f, rowNum)
+            canvas.drawText(
+                com.snapfacture.core.money.Quantity.format(l.quantityMilliUnits, country.locale),
+                MARGIN + 320f, y + 18f, rowNum,
+            )
             canvas.drawText(country.formatMoney(l.unitPriceHtCents), MARGIN + 400f, y + 18f, rowNum)
             if (showVat) {
                 canvas.drawText(country.formatMoney(l.lineVatCents), MARGIN + 460f, y + 18f, rowNum)
@@ -601,7 +604,7 @@ fun com.snapfacture.data.local.relation.QuoteWithDetails.asInvoiceForPdf(): Invo
                 invoiceId = quote.id,
                 description = l.description,
                 extraNote = l.extraNote,
-                quantity = l.quantity,
+                quantityMilliUnits = l.quantityMilliUnits,
                 unitPriceHtCents = l.unitPriceHtCents,
                 vatRatePermille = l.vatRatePermille,
                 lineHtCents = l.lineHtCents,

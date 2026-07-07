@@ -72,6 +72,9 @@
     <string name="create_catalog_open">Ouvrir le catalogue</string>
     <string name="create_quote_button">Devis</string>
     <string name="create_delivery_date_add">+ Date d\'intervention différente ?</string>
+    <string name="create_qty_times">%1$s ×</string>
+    <string name="quantity_dialog_label">Quantité</string>
+    <string name="quantity_dialog_hint">Ex. : 1,5 pour une heure et demie</string>
     <string name="create_delivery_date_label">Date d\'intervention : %1$s</string>
     <string name="quotes_title">Devis</string>
     <string name="quotes_empty">Aucun devis pour l\'instant. Touchez + pour créer votre premier devis.</string>
@@ -190,7 +193,7 @@
     <string name="stats_tax_subtitle">Montant à reverser lors de la prochaine déclaration</string>
     <string name="stats_top_products">Top produits</string>
     <string name="stats_top_clients">Top clients</string>
-    <string name="stats_count_units">%1$d unité(s) vendue(s)</string>
+    <string name="stats_count_units">%1$s unité(s) vendue(s)</string>
     <string name="stats_no_data">Aucune donnée pour cette période</string>
 
     <!-- Company info -->

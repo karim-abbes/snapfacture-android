@@ -66,6 +66,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snapfacture.R
 import com.snapfacture.core.country.LocalCountryProfile
+import com.snapfacture.core.money.Money
+import com.snapfacture.core.money.Quantity
 import com.snapfacture.data.local.entity.PaymentMethod
 import com.snapfacture.data.local.entity.ProductEntity
 import java.util.Calendar
@@ -85,6 +87,7 @@ fun CreateInvoiceScreen(
     var showConfirm by rememberSaveable { mutableStateOf(false) }
     var showFreeLine by rememberSaveable { mutableStateOf(false) }
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
+    var editQtyProductId by rememberSaveable { mutableStateOf<Long?>(null) }
 
     Scaffold(
         topBar = {
@@ -129,7 +132,9 @@ fun CreateInvoiceScreen(
             }
             item { CatalogGrid(catalog, state, vm::addProduct, vm::decrement, onOpenCatalog, onFreeLine = { showFreeLine = true }) }
             if (state.hasInstallLine) item { DeliveryCard(state, vm) }
-            if (state.cart.isNotEmpty()) item { CartSummary(state, onRemove = vm::decrement) }
+            if (state.cart.isNotEmpty()) item {
+                CartSummary(state, onRemove = vm::decrement, onEditQuantity = { editQtyProductId = it })
+            }
             if (state.cart.isNotEmpty()) item { CommentCard(state, vm) }
             state.error?.let { item { ErrorBanner(it) } }
         }
@@ -152,6 +157,18 @@ fun CreateInvoiceScreen(
             onConfirm = {
                 showConfirm = false
                 vm.issue(onIssued)
+            },
+        )
+    }
+
+    val editQtyLine = state.cart.firstOrNull { it.product.id == editQtyProductId }
+    if (editQtyLine != null) {
+        QuantityDialog(
+            line = editQtyLine,
+            onDismiss = { editQtyProductId = null },
+            onConfirm = { milli ->
+                vm.setQuantity(editQtyLine.product, milli)
+                editQtyProductId = null
             },
         )
     }
@@ -242,7 +259,7 @@ private fun ConfirmIssueDialog(
         PaymentMethod.CHECK -> stringResource(R.string.create_payment_check)
         PaymentMethod.OTHER -> stringResource(R.string.create_payment_other)
     }
-    val lineCount = state.cart.sumOf { it.quantity }
+    val lineCount = state.cart.size
     val totalLabel = LocalCountryProfile.current.formatMoney(state.totalTtcCents)
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -423,7 +440,7 @@ private fun CatalogGrid(
             userScrollEnabled = false,
         ) {
             items(catalog, key = { it.id }) { b ->
-                val qty = state.cart.firstOrNull { it.product.id == b.id }?.quantity ?: 0
+                val qty = state.cart.firstOrNull { it.product.id == b.id }?.quantityMilliUnits ?: 0L
                 ProductTile(b, qty, onAdd, onRemove)
             }
         }
@@ -483,7 +500,7 @@ private fun FreeLineDialog(
 @Composable
 private fun ProductTile(
     b: ProductEntity,
-    qty: Int,
+    qty: Long,
     onAdd: (ProductEntity) -> Unit,
     onRemove: (ProductEntity) -> Unit,
 ) {
@@ -542,7 +559,7 @@ private fun ProductTile(
                             Text("−", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleLarge)
                         }
                         Text(
-                            "$qty",
+                            Quantity.format(qty, profile.locale),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
@@ -558,7 +575,11 @@ private fun ProductTile(
 }
 
 @Composable
-private fun CartSummary(state: CreateUiState, onRemove: (ProductEntity) -> Unit) {
+private fun CartSummary(
+    state: CreateUiState,
+    onRemove: (ProductEntity) -> Unit,
+    onEditQuantity: (Long) -> Unit,
+) {
     val profile = LocalCountryProfile.current
     Card {
         Column(Modifier.padding(16.dp)) {
@@ -570,8 +591,17 @@ private fun CartSummary(state: CreateUiState, onRemove: (ProductEntity) -> Unit)
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text("${line.quantity} × ${line.product.label}", Modifier.weight(1f))
-                    Text(profile.formatMoney(line.product.priceTtcCents * line.quantity))
+                    TextButton(onClick = { onEditQuantity(line.product.id) }) {
+                        Text(
+                            stringResource(
+                                R.string.create_qty_times,
+                                Quantity.format(line.quantityMilliUnits, profile.locale),
+                            ),
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                    Text(line.product.label, Modifier.weight(1f))
+                    Text(profile.formatMoney(Money.lineTtc(line.product.priceTtcCents, line.quantityMilliUnits)))
                     // Free lines have no catalog tile to decrement from, so they
                     // get their remove affordance here.
                     if (line.product.id < 0) {
@@ -593,6 +623,43 @@ private fun CartSummary(state: CreateUiState, onRemove: (ProductEntity) -> Unit)
             }
         }
     }
+}
+
+@Composable
+private fun QuantityDialog(
+    line: CartLine,
+    onDismiss: () -> Unit,
+    onConfirm: (Long) -> Unit,
+) {
+    val profile = LocalCountryProfile.current
+    var text by rememberSaveable {
+        mutableStateOf(Quantity.format(line.quantityMilliUnits, profile.locale))
+    }
+    val parsed = Quantity.parse(text)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(line.product.label, maxLines = 2) },
+        text = {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.quantity_dialog_label)) },
+                supportingText = { Text(stringResource(R.string.quantity_dialog_hint)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = { parsed?.let(onConfirm) },
+                enabled = parsed != null,
+            ) { Text(stringResource(R.string.action_ok)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
+        },
+    )
 }
 
 @Composable

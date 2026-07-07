@@ -201,7 +201,10 @@ private fun LeadersCard(title: String, items: List<StatsLeader>) {
                         Column(Modifier.weight(1f)) {
                             Text(leader.name, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
                             Text(
-                                stringResource(R.string.stats_count_units, leader.count),
+                                stringResource(
+                                    R.string.stats_count_units,
+                                    com.snapfacture.core.money.Quantity.format(leader.count, LocalCountryProfile.current.locale),
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

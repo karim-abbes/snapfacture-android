@@ -41,7 +41,7 @@ class QuoteRepository @Inject constructor(
 
         val computed = input.lines.map { l ->
             val effectiveRate = if (input.taxOptedOut) 0 else l.vatRatePermille
-            val amounts = Money.lineAmounts(l.unitPriceTtcCents, l.quantity, effectiveRate)
+            val amounts = Money.lineAmounts(l.unitPriceTtcCents, l.quantityMilliUnits, effectiveRate)
             Triple(l, effectiveRate, amounts)
         }
 
@@ -78,7 +78,7 @@ class QuoteRepository @Inject constructor(
                     quoteId = quoteId,
                     description = l.description,
                     extraNote = l.extraNote,
-                    quantity = l.quantity,
+                    quantityMilliUnits = l.quantityMilliUnits,
                     unitPriceHtCents = if (rate == 0) l.unitPriceTtcCents
                     else Money.htFromTtc(l.unitPriceTtcCents, rate),
                     vatRatePermille = rate,
@@ -105,7 +105,12 @@ class QuoteRepository @Inject constructor(
         require(quote.quote.convertedInvoiceId == null) { "Quote already invoiced" }
 
         val unitTtc = { line: QuoteLineEntity ->
-            if (line.quantity == 0) 0L else line.lineTtcCents / line.quantity
+            // Half-up round of lineTtc / (milli / 1000); pure integer.
+            if (line.quantityMilliUnits == 0L) 0L
+            else Math.floorDiv(
+                2_000L * line.lineTtcCents + line.quantityMilliUnits,
+                2L * line.quantityMilliUnits,
+            )
         }
         val invoiceId = invoiceRepo.issue(
             IssueInvoiceInput(
@@ -114,7 +119,7 @@ class QuoteRepository @Inject constructor(
                     DraftLine(
                         description = l.description,
                         extraNote = l.extraNote,
-                        quantity = l.quantity,
+                        quantityMilliUnits = l.quantityMilliUnits,
                         unitPriceTtcCents = unitTtc(l),
                         vatRatePermille = l.vatRatePermille,
                     )
