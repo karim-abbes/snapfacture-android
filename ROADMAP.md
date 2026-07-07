@@ -59,6 +59,9 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 
 ## 🔨 Prévu (par priorité)
 
+0. **Trouver les premiers utilisateurs**
+   Le produit est prêt : c'est le sujet n°1 maintenant. Le reste de cette liste attend des retours réels (forums d'artisans, groupes Facebook BTP, bouche-à-oreille comptables) plutôt que d'être développé à l'aveugle.
+
 1. **Import CSV interactif**
    Sélecteur de colonnes pour absorber le format de n'importe quel outil tiers (pas seulement le format figé actuel). Effort : ~3 h. Utile dès qu'un utilisateur migre depuis Pennylane / Sellsy / Excel ou QuickBooks / Wave côté US. Une fois fait, l'import / export redeviennent visibles côté US dans le menu Réglages.
 
@@ -98,14 +101,13 @@ Refus par design, alignés avec la doctrine **minimalisme + cible TPE solo payé
 Status: ✅ shipped · 🔨 planned · 🔮 considered · ❌ out of scope
 
 ### ✅ Shipped
-Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog, FR-only CSV import/export, local PDF + share, SAF backup/restore, biometric lock, stats dashboard, blocking onboarding, FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, clean v1 schema, `snapfacture-android` repo), JUnit tests for CountryProfile, CI APK release, sample `Plomberie Saadi` database + three PDF screenshots in the README.
+Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only, now independently verifiable via an in-app integrity check), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog with a free-text line, recent clients, local PDF + share, hardened SAF backup/restore (verified checkpoint, validated + rollback restore, rotation), biometric lock, stats dashboard, blocking onboarding, full FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, `snapfacture-android` repo), signed tagged releases, 27+ automated tests, F-Droid metadata, sample `Plomberie Saadi` database + PDF screenshots in the README, **quotes with one-tap conversion to invoice**, **FEC accounting export**, **per-rate/quarterly VAT & sales-tax summary**.
 
 ### 🔨 Planned (priority order)
-1. **FEC accounting export** — French statutory accounting CSV. ~1 h.
-2. **Interactive CSV import** — column mapper for any third-party format (FR + US). ~3 h.
-3. **Tax filing screens** — quarterly VAT (FR) / state sales tax (US) summaries. ~2 h.
-4. **Tax precision in basis points** — replace permille (1/1000) with basis points (1/10000) to represent 6.25 %, 7.25 % exactly. ~30 min.
-5. **Factur-X / PDP integration** — mandatory for B2B in France from September 2027. ~1-2 weeks, plan for spring 2027.
+0. **Find the first users** — the product is ready; everything below waits on real feedback rather than being built blind.
+1. **Interactive CSV import** — column mapper for any third-party format (FR + US). ~3 h.
+2. **Tax precision in basis points** — replace permille (1/1000) with basis points (1/10000) to represent 6.25 %, 7.25 % exactly. ~30 min.
+3. **Factur-X / PDP integration** — mandatory for B2B in France from September 2027. ~1-2 weeks, plan for spring 2027.
 
 ### 🔮 Considered (conditional)
 - **iOS version** via Kotlin Multiplatform once Android reaches ≥ 50 active users.
