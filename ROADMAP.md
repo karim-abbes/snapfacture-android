@@ -55,6 +55,13 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 - Métadonnées F-Droid + guides RELEASING/FDROID + CHANGELOG + CONTRIBUTING
 - **Devis → facture** (numérotation propre, PDF avec validité, conversion 1 tap atomique) ; **export comptable FEC** ; **récap TVA / sales tax** par taux et par trimestre
 
+### Livré le 7 juillet 2026 (suite — inspiré de l'analyse UX VTCFact)
+
+- **Navigation basse persistante** (Factures / Devis / Stats), FAB "Nouveau devis" (manquant jusqu'ici), pastille de statut sur les devis, carte CA compactée sur la liste des factures (redondance avec l'écran Stats retirée)
+- **Date d'intervention optionnelle** sur la facture, repliée par défaut (lien à ouvrir), distincte de la date d'émission — mention légale quand les deux diffèrent
+- **Quantités décimales** (`quantityMilliUnits`, Long en millièmes d'unité — même logique que les montants en cents) : facturer 1,5 h ou 12,5 m² devient possible ; schéma Room v4 avec migration ×1000 sur les quantités existantes
+- **Inscription email optionnelle** sur la landing page (via Formspree) pour être prévenu des mises à jour — jamais bloquante avant le téléchargement, mention vie privée reformulée en conséquence dans `PRIVACY.md`
+
 ---
 
 ## 🔨 Prévu (par priorité)
@@ -101,7 +108,7 @@ Refus par design, alignés avec la doctrine **minimalisme + cible TPE solo payé
 Status: ✅ shipped · 🔨 planned · 🔮 considered · ❌ out of scope
 
 ### ✅ Shipped
-Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only, now independently verifiable via an in-app integrity check), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog with a free-text line, recent clients, local PDF + share, hardened SAF backup/restore (verified checkpoint, validated + rollback restore, rotation), biometric lock, stats dashboard, blocking onboarding, full FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, `snapfacture-android` repo), signed tagged releases, 27+ automated tests, F-Droid metadata, sample `Plomberie Saadi` database + PDF screenshots in the README, **quotes with one-tap conversion to invoice**, **FEC accounting export**, **per-rate/quarterly VAT & sales-tax summary**.
+Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only, now independently verifiable via an in-app integrity check), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog with a free-text line, recent clients, local PDF + share, hardened SAF backup/restore (verified checkpoint, validated + rollback restore, rotation), biometric lock, stats dashboard, blocking onboarding, full FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, `snapfacture-android` repo), signed tagged releases, 27+ automated tests, F-Droid metadata, sample `Plomberie Saadi` database + PDF screenshots in the README, **quotes with one-tap conversion to invoice**, **FEC accounting export**, **per-rate/quarterly VAT & sales-tax summary**, **persistent bottom navigation** (Invoices/Quotes/Stats) with a quote FAB and status pill (VTCFact-inspired UX pass), **optional service/intervention date** on invoices, **decimal quantities** (milli-units, Room v4) for fractional hours/m², **optional email signup** on the landing page for update notifications (Formspree, never blocking the download).
 
 ### 🔨 Planned (priority order)
 0. **Find the first users** — the product is ready; everything below waits on real feedback rather than being built blind.
