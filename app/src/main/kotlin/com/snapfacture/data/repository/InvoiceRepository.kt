@@ -3,6 +3,7 @@ package com.snapfacture.data.repository
 import androidx.room.withTransaction
 import com.snapfacture.core.backup.BackupManager
 import com.snapfacture.core.money.Money
+import com.snapfacture.core.money.Quantity
 import com.snapfacture.data.local.AppDatabase
 import com.snapfacture.data.local.dao.AuditDao
 import com.snapfacture.data.local.dao.CompanyDao
@@ -23,7 +24,7 @@ import javax.inject.Singleton
 data class DraftLine(
     val description: String,
     val extraNote: String?,
-    val quantity: Int,
+    val quantityMilliUnits: Long,
     val unitPriceTtcCents: Long,
     val vatRatePermille: Int = 200,
 )
@@ -67,11 +68,11 @@ class InvoiceRepository @Inject constructor(
             val ttcUnit = l.unitPriceTtcCents
             val effectiveRate = if (input.taxOptedOut) 0 else l.vatRatePermille
             val htUnit = if (input.taxOptedOut) ttcUnit else Money.htFromTtc(ttcUnit, effectiveRate)
-            val (lineHt, lineVat, lineTtc) = Money.lineAmounts(ttcUnit, l.quantity, effectiveRate)
+            val (lineHt, lineVat, lineTtc) = Money.lineAmounts(ttcUnit, l.quantityMilliUnits, effectiveRate)
             ComputedLine(
                 description = l.description,
                 extraNote = l.extraNote,
-                quantity = l.quantity,
+                quantityMilliUnits = l.quantityMilliUnits,
                 unitHtCents = htUnit,
                 vatRatePermille = effectiveRate,
                 lineHt = lineHt,
@@ -121,7 +122,7 @@ class InvoiceRepository @Inject constructor(
                 invoiceId = invoiceId,
                 description = c.description,
                 extraNote = c.extraNote,
-                quantity = c.quantity,
+                quantityMilliUnits = c.quantityMilliUnits,
                 unitPriceHtCents = c.unitHtCents,
                 vatRatePermille = c.vatRatePermille,
                 lineHtCents = c.lineHt,
@@ -191,7 +192,7 @@ class InvoiceRepository @Inject constructor(
                 invoiceId = newId,
                 description = l.description,
                 extraNote = l.extraNote,
-                quantity = l.quantity,
+                quantityMilliUnits = l.quantityMilliUnits,
                 unitPriceHtCents = -l.unitPriceHtCents,
                 vatRatePermille = l.vatRatePermille,
                 lineHtCents = -l.lineHtCents,
@@ -273,7 +274,7 @@ class InvoiceRepository @Inject constructor(
     private data class ComputedLine(
         val description: String,
         val extraNote: String?,
-        val quantity: Int,
+        val quantityMilliUnits: Long,
         val unitHtCents: Long,
         val vatRatePermille: Int,
         val lineHt: Long,
@@ -313,7 +314,10 @@ class InvoiceRepository @Inject constructor(
             lines.sortedBy { it.position }.forEach { l ->
                 append("|L").append(l.position)
                     .append(":").append(l.description.replace('|', '/'))
-                    .append(",").append(l.quantity)
+                    // Canonical form ("2", not "2000"): pre-v4 payloads wrote the
+                    // quantity as a plain Int, and they must still verify after
+                    // the ×1000 milli-unit migration.
+                    .append(",").append(Quantity.canonical(l.quantityMilliUnits))
                     .append(",").append(l.vatRatePermille)
                     .append(",").append(l.lineHtCents)
                     .append(",").append(l.lineVatCents)

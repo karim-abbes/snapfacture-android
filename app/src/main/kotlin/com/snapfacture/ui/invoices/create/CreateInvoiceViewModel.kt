@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import android.content.Context
 import com.snapfacture.R
 import com.snapfacture.core.money.Money
+import com.snapfacture.core.money.Quantity
 import com.snapfacture.core.pdf.InvoicePdfGenerator
 import com.snapfacture.data.local.entity.CompanyEntity
 import com.snapfacture.data.local.entity.ProductEntity
@@ -37,7 +38,7 @@ import javax.inject.Inject
 
 data class CartLine(
     val product: ProductEntity,
-    val quantity: Int,
+    val quantityMilliUnits: Long,
 )
 
 data class CreateUiState(
@@ -53,15 +54,16 @@ data class CreateUiState(
     val selectedClient: ClientEntity? = null,
     val cart: List<CartLine> = emptyList(),
     val paymentMethod: PaymentMethod = PaymentMethod.CASH,
+    val deliveryDateMillis: Long? = null,
     val taxOptedOut: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
 ) {
-    val totalTtcCents: Long get() = cart.sumOf { it.product.priceTtcCents * it.quantity }
+    val totalTtcCents: Long get() = cart.sumOf { Money.lineTtc(it.product.priceTtcCents, it.quantityMilliUnits) }
     val totalHtCents: Long get() =
         if (taxOptedOut) totalTtcCents
         else cart.sumOf {
-            Money.lineAmounts(it.product.priceTtcCents, it.quantity, it.product.vatRatePermille).ht
+            Money.lineAmounts(it.product.priceTtcCents, it.quantityMilliUnits, it.product.vatRatePermille).ht
         }
     val totalVatCents: Long get() = if (taxOptedOut) 0L else totalTtcCents - totalHtCents
 
@@ -144,8 +146,10 @@ class CreateInvoiceViewModel @Inject constructor(
         _state.update { st ->
             val idx = st.cart.indexOfFirst { it.product.id == b.id }
             val newCart = if (idx >= 0) {
-                st.cart.toMutableList().also { it[idx] = it[idx].copy(quantity = it[idx].quantity + 1) }
-            } else st.cart + CartLine(b, 1)
+                st.cart.toMutableList().also {
+                    it[idx] = it[idx].copy(quantityMilliUnits = it[idx].quantityMilliUnits + Quantity.ONE)
+                }
+            } else st.cart + CartLine(b, Quantity.ONE)
             st.copy(cart = newCart)
         }
     }
@@ -155,10 +159,25 @@ class CreateInvoiceViewModel @Inject constructor(
             val idx = st.cart.indexOfFirst { it.product.id == b.id }
             if (idx < 0) return@update st
             val current = st.cart[idx]
-            val newCart = if (current.quantity <= 1) {
+            val newCart = if (current.quantityMilliUnits <= Quantity.ONE) {
                 st.cart.toMutableList().also { it.removeAt(idx) }
             } else {
-                st.cart.toMutableList().also { it[idx] = current.copy(quantity = current.quantity - 1) }
+                st.cart.toMutableList().also {
+                    it[idx] = current.copy(quantityMilliUnits = current.quantityMilliUnits - Quantity.ONE)
+                }
+            }
+            st.copy(cart = newCart)
+        }
+    }
+
+    fun setQuantity(b: ProductEntity, quantityMilliUnits: Long) {
+        _state.update { st ->
+            val idx = st.cart.indexOfFirst { it.product.id == b.id }
+            if (idx < 0) return@update st
+            val newCart = if (quantityMilliUnits <= 0) {
+                st.cart.toMutableList().also { it.removeAt(idx) }
+            } else {
+                st.cart.toMutableList().also { it[idx] = it[idx].copy(quantityMilliUnits = quantityMilliUnits) }
             }
             st.copy(cart = newCart)
         }
@@ -166,6 +185,10 @@ class CreateInvoiceViewModel @Inject constructor(
 
     fun setPaymentMethod(m: PaymentMethod) {
         _state.update { it.copy(paymentMethod = m) }
+    }
+
+    fun setDeliveryDate(millis: Long?) {
+        _state.update { it.copy(deliveryDateMillis = millis) }
     }
 
     // Free lines live only in the cart: a transient ProductEntity with a
@@ -185,7 +208,7 @@ class CreateInvoiceViewModel @Inject constructor(
                 vatRatePermille = rate,
                 active = false,
             )
-            _state.update { it.copy(cart = it.cart + CartLine(transient, 1)) }
+            _state.update { it.copy(cart = it.cart + CartLine(transient, Quantity.ONE)) }
         }
     }
 
@@ -195,7 +218,7 @@ class CreateInvoiceViewModel @Inject constructor(
             extraNote = if (line.product.withInstall) {
                 line.product.serviceNote?.takeIf { it.isNotBlank() }
             } else null,
-            quantity = line.quantity,
+            quantityMilliUnits = line.quantityMilliUnits,
             unitPriceTtcCents = line.product.priceTtcCents,
             vatRatePermille = line.product.vatRatePermille,
         )
@@ -273,7 +296,7 @@ class CreateInvoiceViewModel @Inject constructor(
                         extraNote = if (line.product.withInstall) {
                             line.product.serviceNote?.takeIf { it.isNotBlank() }
                         } else null,
-                        quantity = line.quantity,
+                        quantityMilliUnits = line.quantityMilliUnits,
                         unitPriceTtcCents = line.product.priceTtcCents,
                         vatRatePermille = line.product.vatRatePermille,
                     )
@@ -285,7 +308,7 @@ class CreateInvoiceViewModel @Inject constructor(
                         lines = lines,
                         paymentMethod = st.paymentMethod,
                         issueDateMillis = now,
-                        deliveryDateMillis = if (lines.any { it.extraNote != null }) now else null,
+                        deliveryDateMillis = st.deliveryDateMillis,
                         issuerName = company.managerName.ifBlank { company.name },
                         comment = st.comment.ifBlank { null },
                         taxOptedOut = st.taxOptedOut,

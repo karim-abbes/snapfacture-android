@@ -21,7 +21,8 @@ import javax.inject.Inject
 
 enum class StatsPeriod { Month, Quarter, Year }
 
-data class StatsLeader(val name: String, val totalCents: Long, val count: Int)
+// count is in quantity milli-units (1500 = 1.5 units sold).
+data class StatsLeader(val name: String, val totalCents: Long, val count: Long)
 
 data class StatsUiState(
     val period: StatsPeriod = StatsPeriod.Quarter,
@@ -76,13 +77,13 @@ class StatsViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StatsUiState())
 
     private fun topProducts(invoices: List<InvoiceWithDetails>): List<StatsLeader> {
-        data class Acc(var total: Long = 0, var count: Int = 0)
+        data class Acc(var total: Long = 0, var count: Long = 0)
         val map = HashMap<String, Acc>()
         invoices.forEach { inv ->
             inv.lines.forEach { line ->
                 val acc = map.getOrPut(line.description) { Acc() }
                 acc.total += line.lineTtcCents
-                acc.count += line.quantity
+                acc.count += line.quantityMilliUnits
             }
         }
         return map.entries
@@ -92,12 +93,14 @@ class StatsViewModel @Inject constructor(
     }
 
     private fun topClients(invoices: List<InvoiceWithDetails>): List<StatsLeader> {
-        data class Acc(var total: Long = 0, var count: Int = 0)
+        data class Acc(var total: Long = 0, var count: Long = 0)
         val map = LinkedHashMap<String, Acc>()
         invoices.forEach { inv ->
             val acc = map.getOrPut(inv.client.name) { Acc() }
             acc.total += inv.invoice.totalTtcCents
-            if (inv.invoice.type == InvoiceType.INVOICE) acc.count += 1
+            // Invoice counts share StatsLeader.count with product quantities,
+            // so they use the same milli-unit scale.
+            if (inv.invoice.type == InvoiceType.INVOICE) acc.count += 1_000L
         }
         return map.entries
             .map { StatsLeader(it.key, it.value.total, it.value.count) }

@@ -1,5 +1,6 @@
 package com.snapfacture.data.local.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -61,7 +62,8 @@ data class QuoteLineEntity(
     val quoteId: Long,
     val description: String,
     val extraNote: String? = null,
-    val quantity: Int,
+    // Milli-units (1500 = 1.5), same convention and migration as invoice_lines.
+    @ColumnInfo(name = "quantity") val quantityMilliUnits: Long,
     val unitPriceHtCents: Long,
     val vatRatePermille: Int,
     val lineHtCents: Long,

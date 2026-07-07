@@ -65,6 +65,14 @@ nav.top a.gh { color: var(--text-muted); font-size: 0.9rem; }
 .btn-primary { background: var(--accent); color: #1A0F00; box-shadow: 0 8px 24px rgba(255, 179, 0, 0.3); }
 .btn-primary:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 179, 0, 0.45); }
 .hero .fine { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+.notify { margin-top: 20px; }
+.notify form { display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.notify input[type="email"] { background: var(--bg-card); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); padding: 10px 14px; font-size: 0.9rem; min-width: 230px; font-family: inherit; }
+.notify input[type="email"]::placeholder { color: var(--text-muted); }
+.notify input[type="email"]:focus { outline: none; border-color: var(--accent); }
+.notify button { background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 10px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s; }
+.notify button:hover { border-color: var(--accent); color: var(--accent); }
+.notify .notify-hint { margin: 8px 0 0; font-size: 0.8rem; color: var(--text-muted); }
 .trust { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-elevated); }
 .trust .row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; padding: 24px 20px; }
 .trust .badge { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
@@ -143,6 +151,15 @@ footer .links a:hover { color: var(--accent); }
       </a>
     </div>
     <p class="fine">Android 8.0+ · ~19 Mo · aucun compte, aucune permission réseau</p>
+    <div class="notify" id="notify-form">
+      <form action="https://formspree.io/f/mrewddgl" method="POST" aria-label="Être prévenu des mises à jour">
+        <input type="hidden" name="_subject" value="Snapfacture — nouvel abonné aux mises à jour">
+        <input type="hidden" name="_next" value="https://karim-abbes.github.io/snapfacture-android/#notify-form">
+        <input type="email" name="email" required placeholder="ton@email.fr" aria-label="Adresse email">
+        <button type="submit">Me prévenir</button>
+      </form>
+      <p class="notify-hint">Être prévenu des mises à jour (optionnel) — rien d'obligatoire pour télécharger, pas de spam.</p>
+    </div>
   </div>
 </header>
 <section class="trust" aria-label="Promesses Snapfacture">
@@ -262,7 +279,7 @@ footer .links a:hover { color: var(--accent); }
   <div class="container">
     <div class="left">
       <p><strong>Snapfacture</strong> · Construit par Karim Abbes</p>
-      <p style="margin-top:6px;font-size:0.85rem;">Aucun tracking sur cette page. Aucune donnée collectée. Aucun cookie.</p>
+      <p style="margin-top:6px;font-size:0.85rem;">Aucun tracking sur cette page, aucun cookie. La seule donnée qui peut partir d'ici : l'email que tu laisses volontairement pour être prévenu des mises à jour (géré par Formspree). Rien d'autre n'est collecté.</p>
     </div>
     <nav class="links" aria-label="Liens utiles">
       <a href="#faq-title">FAQ</a>

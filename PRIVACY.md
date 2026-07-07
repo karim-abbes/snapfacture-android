@@ -44,6 +44,10 @@ C'est tout. Aucune permission réseau, GPS, contacts, appareil photo, micro, etc
 
 Désinstalle l'app depuis Android → toutes les données sont effacées. Si tu avais activé une sauvegarde, le fichier `.db` que tu as déposé dans ton dossier reste là-bas — supprime-le manuellement si tu le souhaites.
 
+## Le site vitrine (à ne pas confondre avec l'app)
+
+Tout ce qui précède concerne **l'application**, qui est 100 % locale et le reste. Le **site de présentation** (la landing page) est un site statique sans tracking ni cookie, avec une seule exception : un champ email **optionnel** pour être prévenu des mises à jour. Si tu le remplis, ton email est transmis à [Formspree](https://formspree.io) (le service qui reçoit le formulaire) et ne sert qu'à t'annoncer les nouvelles versions. Ce champ n'a **aucun lien avec l'app** : télécharger et utiliser Snapfacture ne demande jamais d'email. Pour te désinscrire : réponds à n'importe quel email d'annonce ou écris via le contact ci-dessous.
+
 ## Contact
 
 Pour toute question : ouvre une issue sur le dépôt GitHub.
@@ -95,6 +99,10 @@ That is all. No network, GPS, contacts, camera, microphone, etc.
 ## Deleting your data
 
 Uninstall the app from Android → all data is wiped. If you had enabled backups, the `.db` file you dropped in your folder stays there — delete it manually if needed.
+
+## The showcase website (not to be confused with the app)
+
+Everything above is about **the app**, which is 100 % local and stays that way. The **landing page** is a static site with no tracking and no cookies, with one exception: an **optional** email field to get notified about updates. If you fill it in, your email goes to [Formspree](https://formspree.io) (the service receiving the form) and is only used to announce new releases. This field has **no link to the app**: downloading and using Snapfacture never requires an email. To unsubscribe: reply to any announcement email or use the contact below.
 
 ## Contact
 

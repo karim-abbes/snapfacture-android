@@ -147,7 +147,7 @@ fun QuoteDetailScreen(
                         Spacer(Modifier.height(8.dp))
                         q.lines.sortedBy { it.position }.forEach { l ->
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("${l.quantity} × ${l.description}", Modifier.weight(1f))
+                                Text("${com.snapfacture.core.money.Quantity.format(l.quantityMilliUnits, profile.locale)} × ${l.description}", Modifier.weight(1f))
                                 Text(profile.formatMoney(l.lineTtcCents))
                             }
                             Spacer(Modifier.height(4.dp))

@@ -12,6 +12,7 @@
     <string name="action_remove">Remove</string>
     <string name="action_edit">Edit</string>
     <string name="action_add">Add</string>
+    <string name="action_ok">OK</string>
 
     <!-- Invoice list -->
     <string name="invoice_list_new">New invoice</string>
@@ -70,11 +71,21 @@
     <string name="create_catalog_empty_body">Add your products and services once — invoicing then takes a few taps. For a one-off, use a custom line below.</string>
     <string name="create_catalog_open">Open the catalog</string>
     <string name="create_quote_button">Quote</string>
+    <string name="create_delivery_date_add">+ Different service date?</string>
+    <string name="create_qty_times">%1$s ×</string>
+    <string name="quantity_dialog_label">Quantity</string>
+    <string name="quantity_dialog_hint">E.g. 1.5 for an hour and a half</string>
+    <string name="create_delivery_date_label">Service date: %1$s</string>
     <string name="quotes_title">Quotes</string>
-    <string name="quotes_empty">No quotes yet. Create one from the New invoice screen with the Quote button.</string>
+    <string name="quotes_empty">No quotes yet. Tap + to create your first quote.</string>
     <string name="quote_list_n">Quote #%1$d</string>
     <string name="quote_valid_until">Valid until %1$s</string>
     <string name="quote_converted_marker">Invoiced</string>
+    <string name="quote_status_expired">Expired</string>
+    <string name="quote_list_new">New quote</string>
+    <string name="nav_invoices">Invoices</string>
+    <string name="nav_quotes">Quotes</string>
+    <string name="nav_stats">Stats</string>
     <string name="quote_converted_banner">This quote has been invoiced</string>
     <string name="quote_detail_convert">Invoice this quote</string>
     <string name="quote_convert_dialog_title">Invoice this quote</string>
@@ -182,7 +193,7 @@
     <string name="stats_tax_subtitle">Amount to remit at next filing</string>
     <string name="stats_top_products">Top products</string>
     <string name="stats_top_clients">Top customers</string>
-    <string name="stats_count_units">%1$d unit(s) sold</string>
+    <string name="stats_count_units">%1$s unit(s) sold</string>
     <string name="stats_no_data">No data for this period</string>
 
     <!-- PDF -->

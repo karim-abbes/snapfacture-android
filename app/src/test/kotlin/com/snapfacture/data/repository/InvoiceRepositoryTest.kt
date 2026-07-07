@@ -84,7 +84,7 @@ class InvoiceRepositoryTest {
     private val simpleLine = DraftLine(
         description = "Depannage",
         extraNote = null,
-        quantity = 1,
+        quantityMilliUnits = 1_000L,
         unitPriceTtcCents = 12_000L,
         vatRatePermille = 200,
     )
@@ -103,9 +103,9 @@ class InvoiceRepositoryTest {
             input(
                 listOf(
                     // 0.99 x 100 at 20%: line HT must be 82.50, not 83.00
-                    DraftLine("Joint", null, 100, 99L, 200),
+                    DraftLine("Joint", null, 100_000L, 99L, 200),
                     // 45.00 x 1 at 10%: HT = round(4500000/1100) = 4091
-                    DraftLine("Main d'oeuvre", null, 1, 4_500L, 100),
+                    DraftLine("Main d'oeuvre", null, 1_000L, 4_500L, 100),
                 )
             )
         )
@@ -117,6 +117,34 @@ class InvoiceRepositoryTest {
         assertEquals("Test SARL", inv.companyNameAtIssue)
         assertEquals("123456789", inv.companySirenAtIssue)
         assertEquals("Testeur", inv.companyManagerAtIssue)
+    }
+
+    @Test
+    fun `decimal quantities give exact totals and a verifiable audit chain`() = runBlocking {
+        val id = repo.issue(
+            input(
+                listOf(
+                    // 45,00 € × 1,5 h at 10%: TTC 67,50 €
+                    DraftLine("Main d'oeuvre", null, 1_500L, 4_500L, 100),
+                    // 12,00 € × 2 at 20%: TTC 24,00 €
+                    DraftLine("Fourniture", null, 2_000L, 1_200L, 200),
+                )
+            )
+        )
+        val inv = repo.get(id)!!.invoice
+        assertEquals(6_750L + 2_400L, inv.totalTtcCents)
+        assertEquals(inv.totalTtcCents, inv.totalHtCents + inv.totalVatCents)
+
+        // The payload serializes quantities canonically: "1.5" for fractions,
+        // and "2" (not "2000") for whole values — byte-identical to what
+        // pre-migration payloads contained, so they keep verifying.
+        val payload = db.auditDao().all()
+            .first { it.event == InvoiceRepository.EVENT_INVOICE_ISSUED }
+            .payload
+        assertTrue(payload.contains(",1.5,"))
+        assertTrue(payload.contains(",2,"))
+
+        assertTrue(repo.verifyAuditChain().ok)
     }
 
     @Test
@@ -180,12 +208,12 @@ class InvoiceRepositoryTest {
         val firstId = repo.issue(
             input(
                 listOf(
-                    DraftLine("Fourniture", null, 1, 12_000L, 200),
-                    DraftLine("Renovation", null, 1, 11_000L, 100),
+                    DraftLine("Fourniture", null, 1_000L, 12_000L, 200),
+                    DraftLine("Renovation", null, 1_000L, 11_000L, 100),
                 )
             )
         )
-        repo.issue(input(listOf(DraftLine("Depannage", null, 1, 12_000L, 200))))
+        repo.issue(input(listOf(DraftLine("Depannage", null, 1_000L, 12_000L, 200))))
         repo.issueCredit(firstId, null)
 
         val rows = db.invoiceDao().vatBreakdown(0, Long.MAX_VALUE).first()

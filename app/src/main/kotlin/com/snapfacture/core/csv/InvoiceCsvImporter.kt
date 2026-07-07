@@ -145,7 +145,7 @@ class InvoiceCsvImporter @Inject constructor(
                             invoiceId = invoiceId,
                             description = "Facture importée (archive)",
                             extraNote = null,
-                            quantity = 1,
+                            quantityMilliUnits = 1_000L,
                             unitPriceHtCents = htCents,
                             vatRatePermille = vatRatePermille,
                             lineHtCents = htCents,
