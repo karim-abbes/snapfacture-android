@@ -79,7 +79,9 @@ class FecExporterTest {
         val count = exporter.exportAll(out)
         assertEquals(2, count)
 
-        val rows = out.toString().trim().split("\r\n")
+        // No trim(): the last row legitimately ends with two empty fields
+        // (Montantdevise, Idevise) whose tabs a trim() would eat.
+        val rows = out.toString().split("\r\n").filter { it.isNotEmpty() }
         assertEquals("JournalCode", rows.first().split("\t").first())
         assertEquals(18, rows.first().split("\t").size)
         val data = rows.drop(1).map { it.split("\t") }
