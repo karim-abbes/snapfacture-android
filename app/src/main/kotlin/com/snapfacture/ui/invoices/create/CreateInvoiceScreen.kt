@@ -70,6 +70,7 @@ import com.snapfacture.data.local.entity.ProductEntity
 fun CreateInvoiceScreen(
     onBack: () -> Unit,
     onIssued: (Long) -> Unit,
+    onQuoteCreated: (Long) -> Unit,
     onOpenCatalog: () -> Unit,
     vm: CreateInvoiceViewModel = hiltViewModel(),
 ) {
@@ -102,6 +103,7 @@ fun CreateInvoiceScreen(
                 enabled = state.canIssue,
                 isSaving = state.isSaving,
                 onIssue = { showConfirm = true },
+                onQuote = { vm.createQuote(onQuoteCreated) },
             )
         },
     ) { pad ->
@@ -567,6 +569,7 @@ private fun BottomCashBar(
     enabled: Boolean,
     isSaving: Boolean,
     onIssue: () -> Unit,
+    onQuote: () -> Unit,
 ) {
     val cashLabel = stringResource(R.string.create_payment_cash)
     val cardLabel = stringResource(R.string.create_payment_card)
@@ -590,10 +593,18 @@ private fun BottomCashBar(
                     }
             }
             Spacer(Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedButton(
+                    onClick = onQuote,
+                    enabled = enabled,
+                    modifier = Modifier.weight(0.36f).height(56.dp),
+                ) {
+                    Text(stringResource(R.string.create_quote_button))
+                }
             Button(
                 onClick = onIssue,
                 enabled = enabled,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
+                modifier = Modifier.weight(0.64f).height(56.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 ),
@@ -610,6 +621,7 @@ private fun BottomCashBar(
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
+            }
             }
         }
     }

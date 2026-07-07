@@ -27,4 +27,10 @@ interface CompanyDao {
 
     @Query("SELECT nextInvoiceNumber FROM company WHERE id = 1")
     suspend fun peekNextInvoiceNumber(): Int
+
+    @Query("UPDATE company SET nextQuoteNumber = nextQuoteNumber + 1 WHERE id = 1")
+    suspend fun bumpQuoteNumber()
+
+    @Query("SELECT nextQuoteNumber FROM company WHERE id = 1")
+    suspend fun peekNextQuoteNumber(): Int
 }

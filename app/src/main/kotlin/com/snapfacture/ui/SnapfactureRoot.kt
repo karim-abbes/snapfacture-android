@@ -26,6 +26,8 @@ import com.snapfacture.ui.invoices.detail.InvoiceDetailScreen
 import com.snapfacture.ui.invoices.list.InvoiceListScreen
 import com.snapfacture.ui.navigation.Routes
 import com.snapfacture.ui.security.SecurityScreen
+import com.snapfacture.ui.quotes.QuoteDetailScreen
+import com.snapfacture.ui.quotes.QuoteListScreen
 import com.snapfacture.ui.settings.SettingsScreen
 import com.snapfacture.ui.stats.StatsScreen
 import com.snapfacture.ui.welcome.WelcomeScreen
@@ -60,6 +62,7 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onSettings = { nav.navigate(Routes.SETTINGS) },
                 onStats = { nav.navigate(Routes.STATS) },
                 onOpenCatalog = { nav.navigate(Routes.CATALOG) },
+                onQuotes = { nav.navigate(Routes.QUOTES) },
             )
         }
         composable(Routes.STATS) {
@@ -71,6 +74,10 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onIssued = { id ->
                     nav.popBackStack()
                     nav.navigate(Routes.detail(id))
+                },
+                onQuoteCreated = { id ->
+                    nav.popBackStack()
+                    nav.navigate(Routes.quoteDetail(id))
                 },
                 onOpenCatalog = { nav.navigate(Routes.CATALOG) },
             )
@@ -85,6 +92,25 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onBack = { nav.popBackStack() },
                 onOpenInvoice = { other ->
                     nav.navigate(Routes.detail(other)) {
+                        popUpTo(Routes.INVOICES)
+                    }
+                },
+            )
+        }
+        composable(Routes.QUOTES) {
+            QuoteListScreen(
+                onBack = { nav.popBackStack() },
+                onOpen = { nav.navigate(Routes.quoteDetail(it)) },
+            )
+        }
+        composable(
+            Routes.QUOTE_DETAIL,
+            arguments = listOf(navArgument("quoteId") { type = NavType.LongType }),
+        ) {
+            QuoteDetailScreen(
+                onBack = { nav.popBackStack() },
+                onOpenInvoice = { id ->
+                    nav.navigate(Routes.detail(id)) {
                         popUpTo(Routes.INVOICES)
                     }
                 },

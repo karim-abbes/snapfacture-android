@@ -32,30 +32,35 @@ class InvoicePdfGenerator @Inject constructor(
         taxOptedOut: Boolean = false,
         sourceInvoiceNumber: Int? = null,
         sourceInvoiceDateMillis: Long? = null,
+        isQuote: Boolean = false,
     ): File {
         val pdf = PdfDocument()
         val pageInfo = PdfDocument.PageInfo.Builder(PAGE_W, PAGE_H, 1).create()
         val page = pdf.startPage(pageInfo)
         val canvas = page.canvas
 
-        drawHeader(canvas, company, invoice, country)
+        drawHeader(canvas, company, invoice, country, isQuote)
         var cursor = MARGIN + 230f
         if (invoice.invoice.type == InvoiceType.CREDIT_NOTE && sourceInvoiceNumber != null) {
             cursor = drawCreditReference(canvas, sourceInvoiceNumber, sourceInvoiceDateMillis, country, cursor)
         }
         cursor = drawClientBlock(canvas, invoice, cursor)
-        cursor = drawInvoiceMetaBlock(canvas, invoice, country, cursor)
+        cursor = drawInvoiceMetaBlock(canvas, invoice, country, cursor, isQuote)
         cursor = drawLinesTable(canvas, invoice, country, cursor + 24f)
         cursor = drawComment(canvas, invoice, cursor + 8f)
         cursor = drawTotalsCard(canvas, invoice, country, cursor + 16f)
         drawPaidStamp(canvas, invoice, cursor + 18f)
-        drawB2bMentions(canvas, invoice, country)
+        if (!isQuote) drawB2bMentions(canvas, invoice, country)
         drawFooter(canvas, company, invoice, country, taxOptedOut)
 
         pdf.finishPage(page)
 
         val outDir = File(context.filesDir, "invoices").apply { mkdirs() }
-        val prefix = if (invoice.invoice.type == InvoiceType.CREDIT_NOTE) "AV" else "F"
+        val prefix = when {
+            isQuote -> "D"
+            invoice.invoice.type == InvoiceType.CREDIT_NOTE -> "AV"
+            else -> "F"
+        }
         val file = File(outDir, "$prefix-${invoice.invoice.number}.pdf")
         file.outputStream().use { pdf.writeTo(it) }
         pdf.close()
@@ -72,6 +77,7 @@ class InvoicePdfGenerator @Inject constructor(
         company: CompanyEntity,
         inv: InvoiceWithDetails,
         country: CountryProfile,
+        isQuote: Boolean = false,
     ) {
         val isCredit = inv.invoice.type == InvoiceType.CREDIT_NOTE
         val bandColor = if (isCredit) CREDIT_BAND else BRAND
@@ -114,7 +120,11 @@ class InvoicePdfGenerator @Inject constructor(
             isAntiAlias = true
         }
         val docTitle = context.getString(
-            if (isCredit) R.string.pdf_title_credit else R.string.pdf_title_invoice,
+            when {
+                isQuote -> R.string.pdf_title_quote
+                isCredit -> R.string.pdf_title_credit
+                else -> R.string.pdf_title_invoice
+            },
             inv.invoice.number,
         )
         canvas.drawText(docTitle, PAGE_W - MARGIN, 70f, docLabel)
@@ -126,7 +136,7 @@ class InvoicePdfGenerator @Inject constructor(
             isAntiAlias = true
         }
         val emission = context.getString(
-            if (isCredit) R.string.pdf_issued_on_m else R.string.pdf_issued_on_f,
+            if (isCredit || isQuote) R.string.pdf_issued_on_m else R.string.pdf_issued_on_f,
             country.formatDate(inv.invoice.issueDate),
         )
         canvas.drawText(emission, PAGE_W - MARGIN, 92f, factureDate)
@@ -203,6 +213,7 @@ class InvoicePdfGenerator @Inject constructor(
         inv: InvoiceWithDetails,
         country: CountryProfile,
         top: Float,
+        isQuote: Boolean = false,
     ): Float {
         val xLabel = PAGE_W - MARGIN - 200f
         val xValue = PAGE_W - MARGIN
@@ -216,11 +227,16 @@ class InvoicePdfGenerator @Inject constructor(
 
         val rows = buildList {
             add(context.getString(R.string.pdf_meta_issue_date) to country.formatDate(inv.invoice.issueDate))
-            add(context.getString(R.string.pdf_meta_due_date) to country.formatDate(inv.invoice.dueDate))
-            inv.invoice.deliveryDate?.let {
-                add(context.getString(R.string.pdf_meta_delivery_date) to country.formatDate(it))
+            if (isQuote) {
+                // dueDate carries the quote's validity end when rendering a quote.
+                add(context.getString(R.string.pdf_meta_valid_until) to country.formatDate(inv.invoice.dueDate))
+            } else {
+                add(context.getString(R.string.pdf_meta_due_date) to country.formatDate(inv.invoice.dueDate))
+                inv.invoice.deliveryDate?.let {
+                    add(context.getString(R.string.pdf_meta_delivery_date) to country.formatDate(it))
+                }
+                add(context.getString(R.string.pdf_meta_payment_method) to paymentLabel(inv.invoice.paymentMethod))
             }
-            add(context.getString(R.string.pdf_meta_payment_method) to paymentLabel(inv.invoice.paymentMethod))
         }
 
         var y = top - 20f
@@ -514,3 +530,51 @@ class InvoicePdfGenerator @Inject constructor(
         private val DIVIDER = Color.rgb(0xDF, 0xE5, 0xEC)
     }
 }
+
+/**
+ * Renders a quote through the invoice PDF pipeline: same layout, quote
+ * title, validity date in place of the due date, no paid stamp (payment
+ * date is null) and no invoice-only statutory mentions.
+ */
+fun com.snapfacture.data.local.relation.QuoteWithDetails.asInvoiceForPdf(): InvoiceWithDetails =
+    InvoiceWithDetails(
+        invoice = com.snapfacture.data.local.entity.InvoiceEntity(
+            id = quote.id,
+            number = quote.number,
+            clientId = quote.clientId,
+            issueDate = quote.issueDate,
+            dueDate = quote.validUntil,
+            totalHtCents = quote.totalHtCents,
+            totalVatCents = quote.totalVatCents,
+            totalTtcCents = quote.totalTtcCents,
+            currency = quote.currency,
+            paymentDate = null,
+            status = com.snapfacture.data.local.entity.InvoiceStatus.DRAFT,
+            issuerName = quote.companyManagerAtIssue.orEmpty(),
+            comment = quote.comment,
+            companyNameAtIssue = quote.companyNameAtIssue,
+            companySirenAtIssue = quote.companySirenAtIssue,
+            companyAddressAtIssue = quote.companyAddressAtIssue,
+            companyPostalAtIssue = quote.companyPostalAtIssue,
+            companyCityAtIssue = quote.companyCityAtIssue,
+            companyVatNumberAtIssue = quote.companyVatNumberAtIssue,
+            companyManagerAtIssue = quote.companyManagerAtIssue,
+            taxOptedOutAtIssue = quote.taxOptedOutAtIssue,
+            clientSiretAtIssue = quote.clientSiretAtIssue,
+        ),
+        client = client,
+        lines = lines.map { l ->
+            com.snapfacture.data.local.entity.InvoiceLineEntity(
+                invoiceId = quote.id,
+                description = l.description,
+                extraNote = l.extraNote,
+                quantity = l.quantity,
+                unitPriceHtCents = l.unitPriceHtCents,
+                vatRatePermille = l.vatRatePermille,
+                lineHtCents = l.lineHtCents,
+                lineVatCents = l.lineVatCents,
+                lineTtcCents = l.lineTtcCents,
+                position = l.position,
+            )
+        },
+    )

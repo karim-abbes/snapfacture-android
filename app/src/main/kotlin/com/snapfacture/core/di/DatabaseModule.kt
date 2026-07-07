@@ -11,6 +11,7 @@ import com.snapfacture.data.local.dao.ClientDao
 import com.snapfacture.data.local.dao.CompanyDao
 import com.snapfacture.data.local.dao.InvoiceDao
 import com.snapfacture.data.local.dao.ProductDao
+import com.snapfacture.data.local.dao.QuoteDao
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -37,6 +38,59 @@ object DatabaseModule {
         }
     }
 
+    // v3: quotes. The DDL must match exactly what Room generates for the
+    // entities (see app/schemas once exported).
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE `company` ADD COLUMN `nextQuoteNumber` INTEGER NOT NULL DEFAULT 1")
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `quotes` (" +
+                    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`number` INTEGER NOT NULL, " +
+                    "`clientId` INTEGER NOT NULL, " +
+                    "`issueDate` INTEGER NOT NULL, " +
+                    "`validUntil` INTEGER NOT NULL, " +
+                    "`totalHtCents` INTEGER NOT NULL, " +
+                    "`totalVatCents` INTEGER NOT NULL, " +
+                    "`totalTtcCents` INTEGER NOT NULL, " +
+                    "`currency` TEXT NOT NULL, " +
+                    "`comment` TEXT, " +
+                    "`taxOptedOutAtIssue` INTEGER NOT NULL, " +
+                    "`clientSiretAtIssue` TEXT, " +
+                    "`companyNameAtIssue` TEXT, " +
+                    "`companySirenAtIssue` TEXT, " +
+                    "`companyAddressAtIssue` TEXT, " +
+                    "`companyPostalAtIssue` TEXT, " +
+                    "`companyCityAtIssue` TEXT, " +
+                    "`companyVatNumberAtIssue` TEXT, " +
+                    "`companyManagerAtIssue` TEXT, " +
+                    "`convertedInvoiceId` INTEGER, " +
+                    "`pdfPath` TEXT, " +
+                    "`createdAt` INTEGER NOT NULL, " +
+                    "FOREIGN KEY(`clientId`) REFERENCES `clients`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT)"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_quotes_clientId` ON `quotes` (`clientId`)")
+            db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_quotes_number` ON `quotes` (`number`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_quotes_issueDate` ON `quotes` (`issueDate`)")
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `quote_lines` (" +
+                    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`quoteId` INTEGER NOT NULL, " +
+                    "`description` TEXT NOT NULL, " +
+                    "`extraNote` TEXT, " +
+                    "`quantity` INTEGER NOT NULL, " +
+                    "`unitPriceHtCents` INTEGER NOT NULL, " +
+                    "`vatRatePermille` INTEGER NOT NULL, " +
+                    "`lineHtCents` INTEGER NOT NULL, " +
+                    "`lineVatCents` INTEGER NOT NULL, " +
+                    "`lineTtcCents` INTEGER NOT NULL, " +
+                    "`position` INTEGER NOT NULL, " +
+                    "FOREIGN KEY(`quoteId`) REFERENCES `quotes`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_quote_lines_quoteId` ON `quote_lines` (`quoteId`)")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(
@@ -57,7 +111,7 @@ object DatabaseModule {
                     }
                 }
             })
-            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 
@@ -66,4 +120,5 @@ object DatabaseModule {
     @Provides fun productDao(db: AppDatabase): ProductDao = db.productDao()
     @Provides fun invoiceDao(db: AppDatabase): InvoiceDao = db.invoiceDao()
     @Provides fun auditDao(db: AppDatabase): AuditDao = db.auditDao()
+    @Provides fun quoteDao(db: AppDatabase): QuoteDao = db.quoteDao()
 }

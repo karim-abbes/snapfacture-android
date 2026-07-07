@@ -17,6 +17,9 @@ import com.snapfacture.data.repository.CompanyRepository
 import com.snapfacture.data.repository.DraftLine
 import com.snapfacture.data.repository.InvoiceRepository
 import com.snapfacture.data.repository.IssueInvoiceInput
+import com.snapfacture.core.pdf.asInvoiceForPdf
+import com.snapfacture.data.repository.CreateQuoteInput
+import com.snapfacture.data.repository.QuoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
@@ -83,6 +86,7 @@ class CreateInvoiceViewModel @Inject constructor(
     productRepo: ProductRepository,
     private val companyRepo: CompanyRepository,
     private val invoiceRepo: InvoiceRepository,
+    private val quoteRepo: QuoteRepository,
     private val pdfGenerator: InvoicePdfGenerator,
     private val countryPrefs: CountryPreferences,
 ) : ViewModel() {
@@ -182,6 +186,68 @@ class CreateInvoiceViewModel @Inject constructor(
                 active = false,
             )
             _state.update { it.copy(cart = it.cart + CartLine(transient, 1)) }
+        }
+    }
+
+    private fun draftLines(st: CreateUiState): List<DraftLine> = st.cart.map { line ->
+        DraftLine(
+            description = line.product.label,
+            extraNote = if (line.product.withInstall) {
+                line.product.serviceNote?.takeIf { it.isNotBlank() }
+            } else null,
+            quantity = line.quantity,
+            unitPriceTtcCents = line.product.priceTtcCents,
+            vatRatePermille = line.product.vatRatePermille,
+        )
+    }
+
+    fun createQuote(onCreated: (Long) -> Unit) {
+        val st = _state.value
+        if (!st.canIssue) return
+        _state.update { it.copy(isSaving = true, error = null) }
+        viewModelScope.launch {
+            val quoteId = try {
+                val effectiveSiret = if (st.isPro) st.clientSiret else null
+                val clientId = clientRepo.upsertByName(
+                    name = st.selectedClient?.name ?: st.clientName,
+                    phone = st.clientPhone,
+                    email = st.clientEmail,
+                    addressLine = st.clientAddress,
+                    siret = effectiveSiret,
+                )
+                quoteRepo.create(
+                    CreateQuoteInput(
+                        clientId = clientId,
+                        lines = draftLines(st),
+                        issueDateMillis = System.currentTimeMillis(),
+                        comment = st.comment.ifBlank { null },
+                        taxOptedOut = st.taxOptedOut,
+                        clientSiret = effectiveSiret,
+                    )
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Exception) {
+                _state.update { it.copy(isSaving = false, error = t.message ?: context.getString(R.string.common_unknown_error)) }
+                return@launch
+            }
+            runCatching {
+                val details = quoteRepo.get(quoteId) ?: error("Quote missing")
+                val company = companyRepo.get() ?: error("Company missing")
+                val countrySettings = countryPrefs.flow.first()
+                val file = withContext(Dispatchers.IO) {
+                    pdfGenerator.generate(
+                        invoice = details.asInvoiceForPdf(),
+                        company = company,
+                        country = countrySettings.profile,
+                        taxOptedOut = countrySettings.taxOptedOut,
+                        isQuote = true,
+                    )
+                }
+                quoteRepo.attachPdf(quoteId, file.absolutePath)
+            }.onFailure { if (it is CancellationException) throw it }
+            _state.update { it.copy(isSaving = false) }
+            onCreated(quoteId)
         }
     }
 

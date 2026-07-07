@@ -69,6 +69,19 @@
     <string name="create_catalog_empty_title">Votre catalogue est vide</string>
     <string name="create_catalog_empty_body">Ajoutez vos produits et prestations une fois — la facturation ne prendra ensuite que quelques taps. Pour un cas ponctuel, utilisez une ligne libre ci-dessous.</string>
     <string name="create_catalog_open">Ouvrir le catalogue</string>
+    <string name="create_quote_button">Devis</string>
+    <string name="quotes_title">Devis</string>
+    <string name="quotes_empty">Aucun devis pour l\'instant. Créez-en un depuis l\'écran Nouvelle facture avec le bouton Devis.</string>
+    <string name="quote_list_n">Devis N° %1$d</string>
+    <string name="quote_valid_until">Valable jusqu\'au %1$s</string>
+    <string name="quote_converted_marker">Facturé</string>
+    <string name="quote_converted_banner">Ce devis a été facturé</string>
+    <string name="quote_detail_convert">Facturer ce devis</string>
+    <string name="quote_convert_dialog_title">Facturer ce devis</string>
+    <string name="quote_convert_dialog_body">Une facture va être émise avec les lignes et les prix de ce devis, à la date du jour. Une fois émise, elle n\'est plus modifiable.</string>
+    <string name="quote_convert_error">Une erreur est survenue — la facture n\'a pas été émise. Réessayez.</string>
+    <string name="share_subject_quote">Devis %1$s N° %2$d</string>
+    <string name="share_body_quote">Bonjour,\n\nVeuillez trouver ci-joint votre devis N° %1$d.\n\nCordialement,\n%2$s</string>
 
     <!-- Invoice detail -->
     <string name="detail_invoice_n">Facture N° %1$d</string>
@@ -257,6 +270,8 @@
     <!-- PDF -->
     <string name="pdf_title_invoice">FACTURE N° %1$d</string>
     <string name="pdf_title_credit">AVOIR N° %1$d</string>
+    <string name="pdf_title_quote">DEVIS N° %1$d</string>
+    <string name="pdf_meta_valid_until">Valable jusqu\'au</string>
     <string name="pdf_issued_on_f">Émise le %1$s</string>
     <string name="pdf_issued_on_m">Émis le %1$s</string>
     <string name="pdf_billed_to">FACTURÉ À</string>

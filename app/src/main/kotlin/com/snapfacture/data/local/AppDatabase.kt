@@ -8,12 +8,15 @@ import com.snapfacture.data.local.dao.ClientDao
 import com.snapfacture.data.local.dao.CompanyDao
 import com.snapfacture.data.local.dao.InvoiceDao
 import com.snapfacture.data.local.dao.ProductDao
+import com.snapfacture.data.local.dao.QuoteDao
 import com.snapfacture.data.local.entity.AuditLogEntity
 import com.snapfacture.data.local.entity.ClientEntity
 import com.snapfacture.data.local.entity.CompanyEntity
 import com.snapfacture.data.local.entity.InvoiceEntity
 import com.snapfacture.data.local.entity.InvoiceLineEntity
 import com.snapfacture.data.local.entity.ProductEntity
+import com.snapfacture.data.local.entity.QuoteEntity
+import com.snapfacture.data.local.entity.QuoteLineEntity
 
 @Database(
     entities = [
@@ -23,8 +26,10 @@ import com.snapfacture.data.local.entity.ProductEntity
         InvoiceEntity::class,
         InvoiceLineEntity::class,
         AuditLogEntity::class,
+        QuoteEntity::class,
+        QuoteLineEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(RoomConverters::class)
@@ -34,12 +39,13 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
     abstract fun invoiceDao(): InvoiceDao
     abstract fun auditDao(): AuditDao
+    abstract fun quoteDao(): QuoteDao
 
     companion object {
         const val DB_NAME = "snapfacture.db"
 
         // Keep in sync with @Database(version = ...) above. Used by restore
         // to refuse backups produced by a newer version of the app.
-        const val SCHEMA_VERSION = 2
+        const val SCHEMA_VERSION = 3
     }
 }

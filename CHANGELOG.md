@@ -17,6 +17,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/). Les versi
 - Restauration : validation complète du fichier (intégrité SQLite, tables attendues, version de schéma) **avant** tout écrasement, avec copie de secours automatique de la base actuelle.
 
 ### Ajouté
+- **Devis** : création depuis le même écran que les factures (bouton « Devis »), numérotation propre (indépendante de la séquence légale des factures), PDF avec validité 30 jours, liste et détail dédiés, et conversion en facture en 1 tap avec les lignes et prix figés. Un devis facturé ne peut pas l'être deux fois.
 - **Mentions légales complètes sur le PDF** : n° de TVA intracommunautaire, forme juridique, conditions d'escompte (« néant »). Champs correspondants dans Réglages → Entreprise.
 - **Chaîne anti-fraude vérifiable** : le journal d'audit couvre désormais tout le contenu légal de chaque facture et peut être recalculé ; bouton « Vérifier l'intégrité » dans Réglages (profil France) qui détecte toute modification des factures ou du journal hors de l'app.
 - Chèque proposé comme mode de paiement à l'encaissement.
