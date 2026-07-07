@@ -53,24 +53,19 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 - Releases taguées signées (keystore stable) ; wrapper Gradle commité ; 27 tests automatiques
 - i18n complète (profil US utilisable) ; ligne libre au panier ; clients récents ; états vides guidés ; formulaires résistants à la rotation
 - Métadonnées F-Droid + guides RELEASING/FDROID + CHANGELOG + CONTRIBUTING
+- **Devis → facture** (numérotation propre, PDF avec validité, conversion 1 tap atomique) ; **export comptable FEC** ; **récap TVA / sales tax** par taux et par trimestre
 
 ---
 
 ## 🔨 Prévu (par priorité)
 
-1. **Export comptable FEC**
-   CSV au format Fichier des Écritures Comptables, importable directement par un expert-comptable français. Effort : ~1 h. Gain : utile à chaque bilan trimestriel.
-
-2. **Import CSV interactif**
+1. **Import CSV interactif**
    Sélecteur de colonnes pour absorber le format de n'importe quel outil tiers (pas seulement le format figé actuel). Effort : ~3 h. Utile dès qu'un utilisateur migre depuis Pennylane / Sellsy / Excel ou QuickBooks / Wave côté US. Une fois fait, l'import / export redeviennent visibles côté US dans le menu Réglages.
 
-3. **Écrans de déclaration fiscale**
-   Rapport trimestriel TVA (France) et déclaration sales tax par état (US), au format prêt à recopier dans le portail des impôts. Effort : ~2 h.
-
-4. **Précision taxe en basis points**
+2. **Précision taxe en basis points**
    Passer du stockage `permille` (1/1000) au `basisPoints` (1/10000) pour exactement représenter 6,25 % / 7,25 % / etc. Effort : ~30 min, à faire dès qu'un utilisateur US se plaint.
 
-5. **Factur-X / PDP**
+3. **Factur-X / PDP**
    Émission de factures électroniques B2B au format Factur-X (PDF + XML CII intégré) et connexion à au moins une Plateforme de Dématérialisation Partenaire. Obligatoire pour les TPE françaises à compter du **1er septembre 2027**. Effort : 1-2 semaines. À planifier au printemps 2027.
 
 ---
