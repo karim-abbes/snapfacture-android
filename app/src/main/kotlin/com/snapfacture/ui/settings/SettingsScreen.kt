@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.ChevronRight
@@ -51,6 +52,7 @@ fun SettingsScreen(
     onOpenCatalog: () -> Unit,
     onOpenImport: () -> Unit,
     onOpenExport: () -> Unit,
+    onOpenFec: () -> Unit,
     onOpenBackup: () -> Unit,
     onOpenCompany: () -> Unit,
     onOpenSecurity: () -> Unit,
@@ -108,6 +110,17 @@ fun SettingsScreen(
                     subtitle = stringResource(R.string.settings_export_subtitle),
                     onClick = onOpenExport,
                 )
+            }
+            // The FEC is a French statutory accounting file — FR profile only.
+            if (isFr) {
+                item {
+                    SettingsCard(
+                        icon = Icons.Default.AccountBalance,
+                        title = stringResource(R.string.settings_fec_title),
+                        subtitle = stringResource(R.string.settings_fec_subtitle),
+                        onClick = onOpenFec,
+                    )
+                }
             }
             item {
                 SettingsCard(

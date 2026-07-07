@@ -26,6 +26,7 @@ import com.snapfacture.ui.invoices.detail.InvoiceDetailScreen
 import com.snapfacture.ui.invoices.list.InvoiceListScreen
 import com.snapfacture.ui.navigation.Routes
 import com.snapfacture.ui.security.SecurityScreen
+import com.snapfacture.ui.fec.FecScreen
 import com.snapfacture.ui.quotes.QuoteDetailScreen
 import com.snapfacture.ui.quotes.QuoteListScreen
 import com.snapfacture.ui.settings.SettingsScreen
@@ -122,10 +123,14 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onOpenCatalog = { nav.navigate(Routes.CATALOG) },
                 onOpenImport = { nav.navigate(Routes.IMPORT) },
                 onOpenExport = { nav.navigate(Routes.EXPORT) },
+                onOpenFec = { nav.navigate(Routes.FEC) },
                 onOpenBackup = { nav.navigate(Routes.BACKUP) },
                 onOpenCompany = { nav.navigate(Routes.COMPANY) },
                 onOpenSecurity = { nav.navigate(Routes.SECURITY) },
             )
+        }
+        composable(Routes.FEC) {
+            FecScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.BACKUP) {
             BackupScreen(onBack = { nav.popBackStack() })

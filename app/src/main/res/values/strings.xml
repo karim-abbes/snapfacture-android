@@ -118,6 +118,14 @@
     <string name="settings_import_subtitle">Recover invoices from your previous tool</string>
     <string name="settings_export_title">Export to CSV</string>
     <string name="settings_export_subtitle">Send all invoices to your accountant</string>
+    <string name="settings_fec_title">Accounting export (FEC)</string>
+    <string name="settings_fec_subtitle">The normalized file your accountant imports directly</string>
+    <string name="fec_title">FEC export</string>
+    <string name="fec_intro_title">Fichier des Écritures Comptables</string>
+    <string name="fec_intro_body">Generates the normalized accounting file (art. A47 A-1 LPF): one balanced sales entry per issued invoice or credit note (customer 411 / sales 706 / collected VAT 44571). Send it to your accountant as is.</string>
+    <string name="fec_generate">Generate the FEC file</string>
+    <string name="fec_done_entries">%1$d accounting entries exported</string>
+    <string name="fec_email_subject">FEC export — Snapfacture</string>
     <string name="settings_backup_title">Automatic backup</string>
     <string name="settings_backup_subtitle">Database copy after every invoice (Drive, OneDrive...)</string>
     <string name="settings_company_title">Business</string>

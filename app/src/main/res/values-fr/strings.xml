@@ -118,6 +118,14 @@
     <string name="settings_import_subtitle">Récupérer vos factures depuis votre ancien outil</string>
     <string name="settings_export_title">Exporter en CSV</string>
     <string name="settings_export_subtitle">Envoyer toutes les factures à votre comptable</string>
+    <string name="settings_fec_title">Export comptable (FEC)</string>
+    <string name="settings_fec_subtitle">Le fichier normalisé que votre comptable importe directement</string>
+    <string name="fec_title">Export FEC</string>
+    <string name="fec_intro_title">Fichier des Écritures Comptables</string>
+    <string name="fec_intro_body">Génère le fichier comptable normalisé (art. A47 A-1 du LPF) : une écriture de vente équilibrée par facture ou avoir émis (client 411 / ventes 706 / TVA collectée 44571). À transmettre tel quel à votre comptable.</string>
+    <string name="fec_generate">Générer le fichier FEC</string>
+    <string name="fec_done_entries">%1$d écritures comptables exportées</string>
+    <string name="fec_email_subject">Export FEC — Snapfacture</string>
     <string name="settings_backup_title">Sauvegarde automatique</string>
     <string name="settings_backup_subtitle">Copie de la base après chaque facture (Drive, OneDrive...)</string>
     <string name="settings_company_title">Entreprise</string>
