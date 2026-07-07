@@ -17,13 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.Button
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -54,9 +51,7 @@ fun InvoiceListScreen(
     onCreate: () -> Unit,
     onOpen: (Long) -> Unit,
     onSettings: () -> Unit,
-    onStats: () -> Unit,
     onOpenCatalog: () -> Unit,
-    onQuotes: () -> Unit,
     vm: InvoiceListViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -65,12 +60,6 @@ fun InvoiceListScreen(
             TopAppBar(
                 title = { Text(state.companyName.ifBlank { stringResource(R.string.app_name) }) },
                 actions = {
-                    IconButton(onClick = onQuotes) {
-                        Icon(Icons.Default.Description, contentDescription = stringResource(R.string.quotes_title))
-                    }
-                    IconButton(onClick = onStats) {
-                        Icon(Icons.Default.BarChart, contentDescription = stringResource(R.string.stats_title))
-                    }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.invoice_list_settings))
                     }
@@ -143,6 +132,9 @@ fun InvoiceListScreen(
     }
 }
 
+// Compact one-row summary: the CA is the shop owner's pulse, but a full-width
+// hero card duplicated the Stats tab and pushed invoices off-screen. The detail
+// (per-rate, top products/clients…) lives in the Stats tab.
 @Composable
 private fun PeriodSummary(period: Period, revenue: Long, count: Int) {
     val title = when (period) {
@@ -155,24 +147,21 @@ private fun PeriodSummary(period: Period, revenue: Long, count: Int) {
         Period.Year -> stringResource(R.string.invoice_list_count_year, count)
         Period.All -> stringResource(R.string.invoice_list_count_all, count)
     }
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(Modifier.padding(20.dp)) {
-            Text(title, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelLarge)
-            Spacer(Modifier.height(4.dp))
-            Text(
-                LocalCountryProfile.current.formatMoney(revenue),
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.displayLarge,
-            )
-            Text(
-                countLabel,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(countLabel, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        Text(
+            LocalCountryProfile.current.formatMoney(revenue),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+        )
     }
 }
 

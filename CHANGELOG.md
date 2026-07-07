@@ -18,8 +18,12 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/). Les versi
 - PDF : un nom d'entreprise long ne chevauche plus le titre « FACTURE N° X » (réduction de taille puis troncature avec « … »).
 - PDF : les champs entreprise vides n'affichent plus de ponctuation résiduelle (virgule seule, puces orphelines, « SIREN » sans valeur) — les fragments vides disparaissent, la ligne entière est sautée si rien ne reste.
 - Landing : taille réelle de l'APK affichée (~19 Mo).
+- Liste des factures : carte CA compacte (une ligne) au lieu d'une carte pleine hauteur — plus de factures visibles sans défiler.
 
 ### Ajouté
+- **Barre de navigation basse** persistante (Factures / Devis / Stats) avec icône + libellé, accessible au pouce — remplace les icônes sans texte tassées dans la barre du haut. Les Réglages restent une icône (destination secondaire).
+- **Bouton « Nouveau devis »** sur l'écran Devis : créer un devis sans passer par l'écran Facture.
+- **Pastille de statut** sur les devis (« Facturé » / « Expiré »), au même niveau visuel que le titre.
 - **Récap TVA / sales tax** (Réglages) : base HT et taxe ventilées par taux, trimestre par trimestre, avoirs déduits — les chiffres exacts à recopier dans la déclaration.
 - **Export comptable FEC** (Réglages, profil France) : génère le Fichier des Écritures Comptables normalisé (art. A47 A-1 du LPF) — une écriture de vente équilibrée par facture ou avoir (client 411 / ventes 706 / TVA collectée 44571), nom de fichier réglementaire SIRENFECdate.txt, partage direct au comptable.
 - **Devis** : création depuis le même écran que les factures (bouton « Devis »), numérotation propre (indépendante de la séquence légale des factures), PDF avec validité 30 jours, liste et détail dédiés, et conversion en facture en 1 tap avec les lignes et prix figés. Un devis facturé ne peut pas l'être deux fois.

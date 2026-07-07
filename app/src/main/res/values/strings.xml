@@ -71,10 +71,15 @@
     <string name="create_catalog_open">Open the catalog</string>
     <string name="create_quote_button">Quote</string>
     <string name="quotes_title">Quotes</string>
-    <string name="quotes_empty">No quotes yet. Create one from the New invoice screen with the Quote button.</string>
+    <string name="quotes_empty">No quotes yet. Tap + to create your first quote.</string>
     <string name="quote_list_n">Quote #%1$d</string>
     <string name="quote_valid_until">Valid until %1$s</string>
     <string name="quote_converted_marker">Invoiced</string>
+    <string name="quote_status_expired">Expired</string>
+    <string name="quote_list_new">New quote</string>
+    <string name="nav_invoices">Invoices</string>
+    <string name="nav_quotes">Quotes</string>
+    <string name="nav_stats">Stats</string>
     <string name="quote_converted_banner">This quote has been invoiced</string>
     <string name="quote_detail_convert">Invoice this quote</string>
     <string name="quote_convert_dialog_title">Invoice this quote</string>

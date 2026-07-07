@@ -71,10 +71,15 @@
     <string name="create_catalog_open">Ouvrir le catalogue</string>
     <string name="create_quote_button">Devis</string>
     <string name="quotes_title">Devis</string>
-    <string name="quotes_empty">Aucun devis pour l\'instant. Créez-en un depuis l\'écran Nouvelle facture avec le bouton Devis.</string>
+    <string name="quotes_empty">Aucun devis pour l\'instant. Touchez + pour créer votre premier devis.</string>
     <string name="quote_list_n">Devis N° %1$d</string>
     <string name="quote_valid_until">Valable jusqu\'au %1$s</string>
     <string name="quote_converted_marker">Facturé</string>
+    <string name="quote_status_expired">Expiré</string>
+    <string name="quote_list_new">Nouveau devis</string>
+    <string name="nav_invoices">Factures</string>
+    <string name="nav_quotes">Devis</string>
+    <string name="nav_stats">Stats</string>
     <string name="quote_converted_banner">Ce devis a été facturé</string>
     <string name="quote_detail_convert">Facturer ce devis</string>
     <string name="quote_convert_dialog_title">Facturer ce devis</string>
