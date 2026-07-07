@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.snapfacture.R
+import com.snapfacture.core.money.TaxRate
 import com.snapfacture.data.local.entity.OperationCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,8 +84,8 @@ fun CompanyInfoScreen(
             nextNumber = it.nextInvoiceNumber.toString()
             opCategory = it.operationCategory.name
             vatOnDebits = it.vatOnDebits
-            defaultTaxPct = if (it.defaultTaxPermille > 0)
-                "%.2f".format(it.defaultTaxPermille / 10.0).trimEnd('0').trimEnd('.', ',')
+            defaultTaxPct = if (it.defaultTaxBp > 0)
+                TaxRate.formatPercent(it.defaultTaxBp, java.util.Locale.US)
             else ""
             loadedFromDb = true
         }
@@ -244,11 +245,7 @@ fun CompanyInfoScreen(
                 Button(
                     onClick = {
                         val current = company ?: return@Button
-                        val parsedPermille = defaultTaxPct
-                            .replace(',', '.')
-                            .toDoubleOrNull()
-                            ?.let { Math.round(it * 10.0).toInt() }
-                            ?: 0
+                        val parsedBp = TaxRate.parsePercentToBp(defaultTaxPct) ?: 0
                         vm.save(
                             current.copy(
                                 name = name, siren = siren,
@@ -258,7 +255,7 @@ fun CompanyInfoScreen(
                                 phone = phone, email = email, website = website,
                                 managerName = manager,
                                 nextInvoiceNumber = nextNumber.toIntOrNull() ?: current.nextInvoiceNumber,
-                                defaultTaxPermille = if (isUs) parsedPermille else current.defaultTaxPermille,
+                                defaultTaxBp = if (isUs) parsedBp else current.defaultTaxBp,
                                 operationCategory = OperationCategory.valueOf(opCategory),
                                 vatOnDebits = vatOnDebits,
                             )

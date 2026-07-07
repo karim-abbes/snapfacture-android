@@ -5,7 +5,7 @@ import java.util.Locale
 
 /**
  * Quantities are stored as Long milli-units (1500 = 1.5, 12500 = 12.5) —
- * the same integer pattern as vatRatePermille, so line math stays exact.
+ * the same integer pattern as vatRateBp, so line math stays exact.
  */
 object Quantity {
     const val ONE = 1_000L

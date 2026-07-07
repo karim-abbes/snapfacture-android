@@ -62,7 +62,7 @@ class FecExporterTest {
     private suspend fun issue(): Long = repo.issue(
         IssueInvoiceInput(
             clientId = clientId,
-            lines = listOf(DraftLine("Depannage", null, 1_000L, 12_000L, 200)),
+            lines = listOf(DraftLine("Depannage", null, 1_000L, 12_000L, 2_000)),
             paymentMethod = PaymentMethod.CASH,
             issueDateMillis = 1_750_000_000_000L,
             deliveryDateMillis = null,

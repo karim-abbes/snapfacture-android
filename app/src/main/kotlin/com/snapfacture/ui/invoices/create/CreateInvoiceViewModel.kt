@@ -64,7 +64,7 @@ data class CreateUiState(
     val totalHtCents: Long get() =
         if (taxOptedOut) totalTtcCents
         else cart.sumOf {
-            Money.lineAmounts(it.product.priceTtcCents, it.quantityMilliUnits, it.product.vatRatePermille).ht
+            Money.lineAmounts(it.product.priceTtcCents, it.quantityMilliUnits, it.product.vatRateBp).ht
         }
     val totalVatCents: Long get() = if (taxOptedOut) 0L else totalTtcCents - totalHtCents
 
@@ -205,12 +205,12 @@ class CreateInvoiceViewModel @Inject constructor(
     fun addFreeLine(label: String, priceTtcCents: Long) {
         if (label.isBlank() || priceTtcCents <= 0) return
         viewModelScope.launch {
-            val rate = countryPrefs.flow.first().profile.defaultTaxRatePermille
+            val rate = countryPrefs.flow.first().profile.defaultTaxRateBp
             val transient = ProductEntity(
                 id = nextFreeLineId--,
                 label = label.trim(),
                 priceTtcCents = priceTtcCents,
-                vatRatePermille = rate,
+                vatRateBp = rate,
                 active = false,
             )
             _state.update { it.copy(cart = it.cart + CartLine(transient, Quantity.ONE)) }
@@ -225,7 +225,7 @@ class CreateInvoiceViewModel @Inject constructor(
             } else null,
             quantityMilliUnits = line.quantityMilliUnits,
             unitPriceTtcCents = line.product.priceTtcCents,
-            vatRatePermille = line.product.vatRatePermille,
+            vatRateBp = line.product.vatRateBp,
         )
     }
 
@@ -303,7 +303,7 @@ class CreateInvoiceViewModel @Inject constructor(
                         } else null,
                         quantityMilliUnits = line.quantityMilliUnits,
                         unitPriceTtcCents = line.product.priceTtcCents,
-                        vatRatePermille = line.product.vatRatePermille,
+                        vatRateBp = line.product.vatRateBp,
                     )
                 }
                 val company = companyRepo.get() ?: error("Company missing")

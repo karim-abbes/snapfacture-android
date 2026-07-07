@@ -70,7 +70,7 @@ class QuoteRepositoryTest {
         db.close()
     }
 
-    private val line = DraftLine("Pose chaudiere", null, 2_000L, 45_000L, 100)
+    private val line = DraftLine("Pose chaudiere", null, 2_000L, 45_000L, 1_000)
 
     private fun quoteInput() = CreateQuoteInput(
         clientId = clientId,

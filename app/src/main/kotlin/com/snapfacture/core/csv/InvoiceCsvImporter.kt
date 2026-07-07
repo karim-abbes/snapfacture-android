@@ -111,8 +111,8 @@ class InvoiceCsvImporter @Inject constructor(
                     vatRaw != null -> (totalCents - vatRaw) to vatRaw
                     else -> totalCents to 0L
                 }
-                val vatRatePermille =
-                    if (htCents > 0) Math.round((vatCents * 1000.0) / htCents).toInt() else 200
+                val vatRateBp =
+                    if (htCents > 0) Math.round((vatCents * 10_000.0) / htCents).toInt() else 2_000
 
                 val paymentMethod = mapPayment(get(row, ImportField.PAYMENT_METHOD).lowercase(Locale.FRANCE))
                 val paymentDate = parseDate(get(row, ImportField.PAYMENT_DATE)) ?: issueDate
@@ -166,7 +166,7 @@ class InvoiceCsvImporter @Inject constructor(
                             extraNote = null,
                             quantityMilliUnits = 1_000L,
                             unitPriceHtCents = htCents,
-                            vatRatePermille = vatRatePermille,
+                            vatRateBp = vatRateBp,
                             lineHtCents = htCents,
                             lineVatCents = vatCents,
                             lineTtcCents = totalCents,

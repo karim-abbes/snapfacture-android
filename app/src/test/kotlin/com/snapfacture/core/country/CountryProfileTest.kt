@@ -142,13 +142,13 @@ class CountryProfileTest {
 
     @Test
     fun `france default vat rate is 20 percent`() {
-        assertEquals(200, FranceProfile.defaultTaxRatePermille)
+        assertEquals(2_000, FranceProfile.defaultTaxRateBp)
     }
 
     @Test
     fun `usa default tax rate is zero`() {
         // No federal sales tax; user must configure their state rate.
-        assertEquals(0, UsaProfile.defaultTaxRatePermille)
+        assertEquals(0, UsaProfile.defaultTaxRateBp)
     }
 
     @Test

@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import com.snapfacture.core.backup.BackupManager
 import com.snapfacture.core.money.Money
 import com.snapfacture.core.money.Quantity
+import com.snapfacture.core.money.TaxRate
 import com.snapfacture.data.local.AppDatabase
 import com.snapfacture.data.local.dao.AuditDao
 import com.snapfacture.data.local.dao.CompanyDao
@@ -26,7 +27,7 @@ data class DraftLine(
     val extraNote: String?,
     val quantityMilliUnits: Long,
     val unitPriceTtcCents: Long,
-    val vatRatePermille: Int = 200,
+    val vatRateBp: Int = 2_000,
 )
 
 data class IssueInvoiceInput(
@@ -67,7 +68,7 @@ class InvoiceRepository @Inject constructor(
 
         val computedLines = input.lines.map { l ->
             val ttcUnit = l.unitPriceTtcCents
-            val effectiveRate = if (input.taxOptedOut) 0 else l.vatRatePermille
+            val effectiveRate = if (input.taxOptedOut) 0 else l.vatRateBp
             val htUnit = if (input.taxOptedOut) ttcUnit else Money.htFromTtc(ttcUnit, effectiveRate)
             val (lineHt, lineVat, lineTtc) = Money.lineAmounts(ttcUnit, l.quantityMilliUnits, effectiveRate)
             ComputedLine(
@@ -75,7 +76,7 @@ class InvoiceRepository @Inject constructor(
                 extraNote = l.extraNote,
                 quantityMilliUnits = l.quantityMilliUnits,
                 unitHtCents = htUnit,
-                vatRatePermille = effectiveRate,
+                vatRateBp = effectiveRate,
                 lineHt = lineHt,
                 lineVat = lineVat,
                 lineTtc = lineTtc,
@@ -129,7 +130,7 @@ class InvoiceRepository @Inject constructor(
                 extraNote = c.extraNote,
                 quantityMilliUnits = c.quantityMilliUnits,
                 unitPriceHtCents = c.unitHtCents,
-                vatRatePermille = c.vatRatePermille,
+                vatRateBp = c.vatRateBp,
                 lineHtCents = c.lineHt,
                 lineVatCents = c.lineVat,
                 lineTtcCents = c.lineTtc,
@@ -201,7 +202,7 @@ class InvoiceRepository @Inject constructor(
                 extraNote = l.extraNote,
                 quantityMilliUnits = l.quantityMilliUnits,
                 unitPriceHtCents = -l.unitPriceHtCents,
-                vatRatePermille = l.vatRatePermille,
+                vatRateBp = l.vatRateBp,
                 lineHtCents = -l.lineHtCents,
                 lineVatCents = -l.lineVatCents,
                 lineTtcCents = -l.lineTtcCents,
@@ -283,7 +284,7 @@ class InvoiceRepository @Inject constructor(
         val extraNote: String?,
         val quantityMilliUnits: Long,
         val unitHtCents: Long,
-        val vatRatePermille: Int,
+        val vatRateBp: Int,
         val lineHt: Long,
         val lineVat: Long,
         val lineTtc: Long,
@@ -325,7 +326,10 @@ class InvoiceRepository @Inject constructor(
                     // quantity as a plain Int, and they must still verify after
                     // the ×1000 milli-unit migration.
                     .append(",").append(Quantity.canonical(l.quantityMilliUnits))
-                    .append(",").append(l.vatRatePermille)
+                    // Canonical permille form ("200", not "2000"): pre-v6
+                    // payloads wrote the rate in permille, and they must
+                    // still verify after the ×10 basis-point migration.
+                    .append(",").append(TaxRate.canonicalPermille(l.vatRateBp))
                     .append(",").append(l.lineHtCents)
                     .append(",").append(l.lineVatCents)
                     .append(",").append(l.lineTtcCents)

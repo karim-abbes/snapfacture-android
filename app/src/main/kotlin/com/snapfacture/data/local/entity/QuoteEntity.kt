@@ -65,7 +65,8 @@ data class QuoteLineEntity(
     // Milli-units (1500 = 1.5), same convention and migration as invoice_lines.
     @ColumnInfo(name = "quantity") val quantityMilliUnits: Long,
     val unitPriceHtCents: Long,
-    val vatRatePermille: Int,
+    // Basis points, same convention and migration as invoice_lines.
+    @ColumnInfo(name = "vatRatePermille") val vatRateBp: Int,
     val lineHtCents: Long,
     val lineVatCents: Long,
     val lineTtcCents: Long,

@@ -40,7 +40,7 @@ class QuoteRepository @Inject constructor(
         require(input.lines.isNotEmpty()) { "Empty quote" }
 
         val computed = input.lines.map { l ->
-            val effectiveRate = if (input.taxOptedOut) 0 else l.vatRatePermille
+            val effectiveRate = if (input.taxOptedOut) 0 else l.vatRateBp
             val amounts = Money.lineAmounts(l.unitPriceTtcCents, l.quantityMilliUnits, effectiveRate)
             Triple(l, effectiveRate, amounts)
         }
@@ -81,7 +81,7 @@ class QuoteRepository @Inject constructor(
                     quantityMilliUnits = l.quantityMilliUnits,
                     unitPriceHtCents = if (rate == 0) l.unitPriceTtcCents
                     else Money.htFromTtc(l.unitPriceTtcCents, rate),
-                    vatRatePermille = rate,
+                    vatRateBp = rate,
                     lineHtCents = amounts.ht,
                     lineVatCents = amounts.vat,
                     lineTtcCents = amounts.ttc,
@@ -121,7 +121,7 @@ class QuoteRepository @Inject constructor(
                         extraNote = l.extraNote,
                         quantityMilliUnits = l.quantityMilliUnits,
                         unitPriceTtcCents = unitTtc(l),
-                        vatRatePermille = l.vatRatePermille,
+                        vatRateBp = l.vatRateBp,
                     )
                 },
                 paymentMethod = paymentMethod,

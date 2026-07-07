@@ -87,7 +87,7 @@ class InvoiceRepositoryTest {
         extraNote = null,
         quantityMilliUnits = 1_000L,
         unitPriceTtcCents = 12_000L,
-        vatRatePermille = 200,
+        vatRateBp = 2_000,
     )
 
     @Test
@@ -104,9 +104,9 @@ class InvoiceRepositoryTest {
             input(
                 listOf(
                     // 0.99 x 100 at 20%: line HT must be 82.50, not 83.00
-                    DraftLine("Joint", null, 100_000L, 99L, 200),
+                    DraftLine("Joint", null, 100_000L, 99L, 2_000),
                     // 45.00 x 1 at 10%: HT = round(4500000/1100) = 4091
-                    DraftLine("Main d'oeuvre", null, 1_000L, 4_500L, 100),
+                    DraftLine("Main d'oeuvre", null, 1_000L, 4_500L, 1_000),
                 )
             )
         )
@@ -126,9 +126,9 @@ class InvoiceRepositoryTest {
             input(
                 listOf(
                     // 45,00 € × 1,5 h at 10%: TTC 67,50 €
-                    DraftLine("Main d'oeuvre", null, 1_500L, 4_500L, 100),
+                    DraftLine("Main d'oeuvre", null, 1_500L, 4_500L, 1_000),
                     // 12,00 € × 2 at 20%: TTC 24,00 €
-                    DraftLine("Fourniture", null, 2_000L, 1_200L, 200),
+                    DraftLine("Fourniture", null, 2_000L, 1_200L, 2_000),
                 )
             )
         )
@@ -144,7 +144,25 @@ class InvoiceRepositoryTest {
             .payload
         assertTrue(payload.contains(",1.5,"))
         assertTrue(payload.contains(",2,"))
+        // Rates serialize in canonical permille ("200" for 2000 bp), the
+        // exact format pre-basis-point payloads were hashed with.
+        assertTrue(payload.contains(",200,"))
+        assertTrue(payload.contains(",100,"))
 
+        assertTrue(repo.verifyAuditChain().ok)
+    }
+
+    @Test
+    fun `us style 6_25 percent rate is exact end to end`() = runBlocking {
+        // $100.00 at 6.25 %: TTC 106.25, tax 6.25 — impossible in permille.
+        val id = repo.issue(input(listOf(DraftLine("Consulting", null, 1_000L, 10_625L, 625))))
+        val inv = repo.get(id)!!.invoice
+        assertEquals(10_625L, inv.totalTtcCents)
+        assertEquals(10_000L, inv.totalHtCents)
+        assertEquals(625L, inv.totalVatCents)
+        // Fractional rate serializes as "62.5" permille in the payload.
+        val payload = db.auditDao().all().last().payload
+        assertTrue(payload, payload.contains(",62.5,"))
         assertTrue(repo.verifyAuditChain().ok)
     }
 
@@ -248,21 +266,21 @@ class InvoiceRepositoryTest {
         val firstId = repo.issue(
             input(
                 listOf(
-                    DraftLine("Fourniture", null, 1_000L, 12_000L, 200),
-                    DraftLine("Renovation", null, 1_000L, 11_000L, 100),
+                    DraftLine("Fourniture", null, 1_000L, 12_000L, 2_000),
+                    DraftLine("Renovation", null, 1_000L, 11_000L, 1_000),
                 )
             )
         )
-        repo.issue(input(listOf(DraftLine("Depannage", null, 1_000L, 12_000L, 200))))
+        repo.issue(input(listOf(DraftLine("Depannage", null, 1_000L, 12_000L, 2_000))))
         repo.issueCredit(firstId, null)
 
         val rows = db.invoiceDao().vatBreakdown(0, Long.MAX_VALUE).first()
-        val r20 = rows.first { it.ratePermille == 200 }
+        val r20 = rows.first { it.rateBp == 2_000 }
         assertEquals(10_000L, r20.htCents)
         assertEquals(2_000L, r20.vatCents)
         assertEquals(12_000L, r20.ttcCents)
         // The credited invoice's 10% line nets to zero.
-        val r10 = rows.first { it.ratePermille == 100 }
+        val r10 = rows.first { it.rateBp == 1_000 }
         assertEquals(0L, r10.htCents)
         assertEquals(0L, r10.vatCents)
     }
