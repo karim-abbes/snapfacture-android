@@ -30,6 +30,7 @@ import com.snapfacture.ui.fec.FecScreen
 import com.snapfacture.ui.quotes.QuoteDetailScreen
 import com.snapfacture.ui.quotes.QuoteListScreen
 import com.snapfacture.ui.settings.SettingsScreen
+import com.snapfacture.ui.taxreport.TaxReportScreen
 import com.snapfacture.ui.stats.StatsScreen
 import com.snapfacture.ui.welcome.WelcomeScreen
 
@@ -124,10 +125,14 @@ fun SnapfactureRoot(vm: StartupViewModel = hiltViewModel()) {
                 onOpenImport = { nav.navigate(Routes.IMPORT) },
                 onOpenExport = { nav.navigate(Routes.EXPORT) },
                 onOpenFec = { nav.navigate(Routes.FEC) },
+                onOpenTaxReport = { nav.navigate(Routes.TAX_REPORT) },
                 onOpenBackup = { nav.navigate(Routes.BACKUP) },
                 onOpenCompany = { nav.navigate(Routes.COMPANY) },
                 onOpenSecurity = { nav.navigate(Routes.SECURITY) },
             )
+        }
+        composable(Routes.TAX_REPORT) {
+            TaxReportScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.FEC) {
             FecScreen(onBack = { nav.popBackStack() })

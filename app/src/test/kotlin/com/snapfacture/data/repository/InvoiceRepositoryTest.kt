@@ -14,6 +14,7 @@ import com.snapfacture.data.preferences.CountryPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -172,6 +173,30 @@ class InvoiceRepositoryTest {
         val result = repo.verifyAuditChain()
         assertTrue(!result.ok)
         assertEquals(1, result.tamperedInvoiceNumber)
+    }
+
+    @Test
+    fun `vat breakdown groups by rate and nets out credit notes`() = runBlocking {
+        val firstId = repo.issue(
+            input(
+                listOf(
+                    DraftLine("Fourniture", null, 1, 12_000L, 200),
+                    DraftLine("Renovation", null, 1, 11_000L, 100),
+                )
+            )
+        )
+        repo.issue(input(listOf(DraftLine("Depannage", null, 1, 12_000L, 200))))
+        repo.issueCredit(firstId, null)
+
+        val rows = db.invoiceDao().vatBreakdown(0, Long.MAX_VALUE).first()
+        val r20 = rows.first { it.ratePermille == 200 }
+        assertEquals(10_000L, r20.htCents)
+        assertEquals(2_000L, r20.vatCents)
+        assertEquals(12_000L, r20.ttcCents)
+        // The credited invoice's 10% line nets to zero.
+        val r10 = rows.first { it.ratePermille == 100 }
+        assertEquals(0L, r10.htCents)
+        assertEquals(0L, r10.vatCents)
     }
 
     @Test

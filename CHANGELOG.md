@@ -17,6 +17,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/). Les versi
 - Restauration : validation complète du fichier (intégrité SQLite, tables attendues, version de schéma) **avant** tout écrasement, avec copie de secours automatique de la base actuelle.
 
 ### Ajouté
+- **Récap TVA / sales tax** (Réglages) : base HT et taxe ventilées par taux, trimestre par trimestre, avoirs déduits — les chiffres exacts à recopier dans la déclaration.
 - **Export comptable FEC** (Réglages, profil France) : génère le Fichier des Écritures Comptables normalisé (art. A47 A-1 du LPF) — une écriture de vente équilibrée par facture ou avoir (client 411 / ventes 706 / TVA collectée 44571), nom de fichier réglementaire SIRENFECdate.txt, partage direct au comptable.
 - **Devis** : création depuis le même écran que les factures (bouton « Devis »), numérotation propre (indépendante de la séquence légale des factures), PDF avec validité 30 jours, liste et détail dédiés, et conversion en facture en 1 tap avec les lignes et prix figés. Un devis facturé ne peut pas l'être deux fois.
 - **Mentions légales complètes sur le PDF** : n° de TVA intracommunautaire, forme juridique, conditions d'escompte (« néant »). Champs correspondants dans Réglages → Entreprise.

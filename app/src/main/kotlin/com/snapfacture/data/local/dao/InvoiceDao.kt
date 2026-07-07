@@ -47,4 +47,26 @@ interface InvoiceDao {
 
     @Query("SELECT COUNT(*) FROM invoices WHERE status != 'CANCELLED' AND issueDate >= :since")
     fun observeCountSince(since: Long): Flow<Int>
+
+    // Per-rate VAT breakdown over a period: the exact figures a French
+    // quarterly VAT filing (or a US sales-tax filing) asks for. Credit
+    // note lines are stored negative, so they net out naturally.
+    @Query(
+        """SELECT l.vatRatePermille AS ratePermille,
+                  SUM(l.lineHtCents) AS htCents,
+                  SUM(l.lineVatCents) AS vatCents,
+                  SUM(l.lineTtcCents) AS ttcCents
+           FROM invoice_lines l JOIN invoices i ON i.id = l.invoiceId
+           WHERE i.status != 'CANCELLED' AND i.issueDate >= :from AND i.issueDate < :to
+           GROUP BY l.vatRatePermille
+           ORDER BY l.vatRatePermille DESC"""
+    )
+    fun vatBreakdown(from: Long, to: Long): Flow<List<VatRateBreakdown>>
 }
+
+data class VatRateBreakdown(
+    val ratePermille: Int,
+    val htCents: Long,
+    val vatCents: Long,
+    val ttcCents: Long,
+)

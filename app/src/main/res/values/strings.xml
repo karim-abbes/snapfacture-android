@@ -126,6 +126,16 @@
     <string name="fec_generate">Generate the FEC file</string>
     <string name="fec_done_entries">%1$d accounting entries exported</string>
     <string name="fec_email_subject">FEC export — Snapfacture</string>
+    <string name="settings_tax_report_title">%1$s summary</string>
+    <string name="settings_tax_report_subtitle">The figures to copy into your filing, quarter by quarter</string>
+    <string name="tax_report_title">%1$s summary</string>
+    <string name="tax_report_rate">%1$s%% rate</string>
+    <string name="tax_report_ht">Pre-tax base</string>
+    <string name="tax_report_total_tax">%1$s to remit</string>
+    <string name="tax_report_total_ht">Total pre-tax</string>
+    <string name="tax_report_total_ttc">Total incl. tax</string>
+    <string name="tax_report_empty">No invoices in this period.</string>
+    <string name="tax_report_note">Computed from the invoices and credit notes issued in the period (credit notes are deducted).</string>
     <string name="settings_backup_title">Automatic backup</string>
     <string name="settings_backup_subtitle">Database copy after every invoice (Drive, OneDrive...)</string>
     <string name="settings_company_title">Business</string>

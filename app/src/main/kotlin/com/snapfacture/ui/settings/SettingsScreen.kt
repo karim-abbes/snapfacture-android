@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.UploadFile
+import androidx.compose.material.icons.filled.RequestQuote
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -53,6 +54,7 @@ fun SettingsScreen(
     onOpenImport: () -> Unit,
     onOpenExport: () -> Unit,
     onOpenFec: () -> Unit,
+    onOpenTaxReport: () -> Unit,
     onOpenBackup: () -> Unit,
     onOpenCompany: () -> Unit,
     onOpenSecurity: () -> Unit,
@@ -109,6 +111,14 @@ fun SettingsScreen(
                     title = stringResource(R.string.settings_export_title),
                     subtitle = stringResource(R.string.settings_export_subtitle),
                     onClick = onOpenExport,
+                )
+            }
+            item {
+                SettingsCard(
+                    icon = Icons.Default.RequestQuote,
+                    title = stringResource(R.string.settings_tax_report_title, LocalCountryProfile.current.taxLabel),
+                    subtitle = stringResource(R.string.settings_tax_report_subtitle),
+                    onClick = onOpenTaxReport,
                 )
             }
             // The FEC is a French statutory accounting file — FR profile only.

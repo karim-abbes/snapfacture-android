@@ -126,6 +126,16 @@
     <string name="fec_generate">Générer le fichier FEC</string>
     <string name="fec_done_entries">%1$d écritures comptables exportées</string>
     <string name="fec_email_subject">Export FEC — Snapfacture</string>
+    <string name="settings_tax_report_title">Récap %1$s</string>
+    <string name="settings_tax_report_subtitle">Les chiffres à recopier dans votre déclaration, trimestre par trimestre</string>
+    <string name="tax_report_title">Récap %1$s</string>
+    <string name="tax_report_rate">Taux %1$s %%</string>
+    <string name="tax_report_ht">Base HT</string>
+    <string name="tax_report_total_tax">%1$s à reverser</string>
+    <string name="tax_report_total_ht">Total HT</string>
+    <string name="tax_report_total_ttc">Total TTC</string>
+    <string name="tax_report_empty">Aucune facture sur cette période.</string>
+    <string name="tax_report_note">Calculé sur les factures et avoirs émis dans la période (les avoirs sont déduits).</string>
     <string name="settings_backup_title">Sauvegarde automatique</string>
     <string name="settings_backup_subtitle">Copie de la base après chaque facture (Drive, OneDrive...)</string>
     <string name="settings_company_title">Entreprise</string>
