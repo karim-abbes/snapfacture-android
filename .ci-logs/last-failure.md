@@ -1,33 +1,33 @@
-# Build log for d5088bca70fca353473f09efb60f0036beb9b029
+# Build log for 685bc7ee53128c0ee5aadc19abd38d0418b30ead
 
 ## Kotlin errors (grep e:)
 ```
-e: The daemon has terminated unexpectedly on startup attempt #1 with error code: 0. The daemon process output:
+(none)
 ```
 
 ## Last 200 lines of build.log
 ```
-> Task :app:mergeDebugGlobalSynthetics
-> Task :app:mergeProjectDexDebug
-> Task :app:packageDebug
-> Task :app:assembleDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:compileDebugUnitTestKotlin
-> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
-> Task :app:hiltAggregateDepsDebugUnitTest
-> Task :app:hiltJavaCompileDebugUnitTest NO-SOURCE
-> Task :app:processDebugUnitTestJavaRes
-> Task :app:transformDebugUnitTestClassesWithAsm
-
-> Task :app:testDebugUnitTest
-
 FecExporterTest > entries are balanced, unsigned and credit notes swap sides FAILED
-    java.lang.AssertionError at FecExporterTest.kt:74
+    java.lang.AssertionError: expected:<18> but was:<16>
+        at org.junit.Assert.fail(Assert.java:89)
+        at org.junit.Assert.failNotEquals(Assert.java:835)
+        at org.junit.Assert.assertEquals(Assert.java:120)
+        at org.junit.Assert.assertEquals(Assert.java:146)
+        at com.snapfacture.core.fec.FecExporterTest$entries are balanced, unsigned and credit notes swap sides$1.invokeSuspend(FecExporterTest.kt:89)
+        at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+        at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:99)
+        at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+        at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+        at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+        at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+        at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+        at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+        at com.snapfacture.core.fec.FecExporterTest.entries are balanced, unsigned and credit notes swap sides(FecExporterTest.kt:74)
 
 53 tests completed, 1 failed
 
 > Task :app:testDebugUnitTest FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1783385813136.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1783386345885.json
 
 FAILURE: Build failed with an exception.
 
@@ -204,7 +204,7 @@ Caused by: org.gradle.api.internal.exceptions.MarkedVerificationException: There
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
 
 
-BUILD FAILED in 4m 14s
+BUILD FAILED in 4m 23s
 52 actionable tasks: 52 executed
 Configuration cache entry stored.
 ```
