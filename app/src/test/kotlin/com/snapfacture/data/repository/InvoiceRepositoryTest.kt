@@ -8,6 +8,7 @@ import com.snapfacture.data.local.AppDatabase
 import com.snapfacture.data.local.Seed
 import com.snapfacture.data.local.entity.ClientEntity
 import com.snapfacture.data.local.entity.InvoiceType
+import com.snapfacture.data.local.entity.OperationCategory
 import com.snapfacture.data.local.entity.PaymentMethod
 import com.snapfacture.data.preferences.BackupPreferences
 import com.snapfacture.data.preferences.CountryPreferences
@@ -145,6 +146,45 @@ class InvoiceRepositoryTest {
         assertTrue(payload.contains(",2,"))
 
         assertTrue(repo.verifyAuditChain().ok)
+    }
+
+    @Test
+    fun `reform mentions are snapshotted at issue and survive setting changes`() = runBlocking {
+        val company = db.companyDao().get()!!
+        db.companyDao().upsert(
+            company.copy(operationCategory = OperationCategory.SERVICES, vatOnDebits = true)
+        )
+
+        val id = repo.issue(
+            input(listOf(simpleLine)).copy(deliveryAddress = "12 rue du Chantier, 75011 Paris")
+        )
+        val inv = repo.get(id)!!.invoice
+        assertEquals(OperationCategory.SERVICES, inv.operationCategoryAtIssue)
+        assertEquals(true, inv.vatOnDebitsAtIssue)
+        assertEquals("12 rue du Chantier, 75011 Paris", inv.deliveryAddress)
+
+        // Changing the company settings later must not alter the issued invoice.
+        db.companyDao().upsert(
+            db.companyDao().get()!!.copy(operationCategory = OperationCategory.GOODS, vatOnDebits = false)
+        )
+        val after = repo.get(id)!!.invoice
+        assertEquals(OperationCategory.SERVICES, after.operationCategoryAtIssue)
+        assertEquals(true, after.vatOnDebitsAtIssue)
+
+        // A credit note inherits the original's snapshots, not today's settings.
+        val creditId = repo.issueCredit(id, null)
+        val credit = repo.get(creditId)!!.invoice
+        assertEquals(OperationCategory.SERVICES, credit.operationCategoryAtIssue)
+        assertEquals(true, credit.vatOnDebitsAtIssue)
+
+        assertTrue(repo.verifyAuditChain().ok)
+    }
+
+    @Test
+    fun `vat on debits is neutralized under the franchise`() = runBlocking {
+        db.companyDao().upsert(db.companyDao().get()!!.copy(vatOnDebits = true))
+        val id = repo.issue(input(listOf(simpleLine), taxOptedOut = true))
+        assertEquals(false, repo.get(id)!!.invoice.vatOnDebitsAtIssue)
     }
 
     @Test

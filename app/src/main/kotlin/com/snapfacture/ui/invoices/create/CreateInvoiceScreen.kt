@@ -130,6 +130,12 @@ fun CreateInvoiceScreen(
                     onClear = { vm.setDeliveryDate(null) },
                 )
             }
+            item {
+                DeliveryAddressRow(
+                    address = state.deliveryAddress,
+                    onChange = vm::onDeliveryAddressChange,
+                )
+            }
             item { CatalogGrid(catalog, state, vm::addProduct, vm::decrement, onOpenCatalog, onFreeLine = { showFreeLine = true }) }
             if (state.hasInstallLine) item { DeliveryCard(state, vm) }
             if (state.cart.isNotEmpty()) item {
@@ -213,6 +219,36 @@ private fun utcMidnightToLocalNoon(utcMillis: Long): Long {
             12, 0, 0,
         )
     }.timeInMillis
+}
+
+@Composable
+private fun DeliveryAddressRow(
+    address: String,
+    onChange: (String) -> Unit,
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    if (!expanded && address.isBlank()) {
+        TextButton(onClick = { expanded = true }) {
+            Text(stringResource(R.string.create_delivery_address_add))
+        }
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(
+                value = address,
+                onValueChange = onChange,
+                modifier = Modifier.weight(1f),
+                label = { Text(stringResource(R.string.create_delivery_address_label)) },
+                maxLines = 2,
+            )
+            IconButton(onClick = { onChange(""); expanded = false }) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = stringResource(R.string.action_remove),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
 }
 
 @Composable

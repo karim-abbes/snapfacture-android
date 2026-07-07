@@ -39,6 +39,7 @@ data class IssueInvoiceInput(
     val comment: String? = null,
     val taxOptedOut: Boolean = false,
     val clientSiret: String? = null,
+    val deliveryAddress: String? = null,
 )
 
 @Singleton
@@ -114,6 +115,10 @@ class InvoiceRepository @Inject constructor(
             companyManagerAtIssue = company?.managerName,
             taxOptedOutAtIssue = input.taxOptedOut,
             clientSiretAtIssue = input.clientSiret?.filter { it.isDigit() }?.takeIf { it.isNotBlank() },
+            deliveryAddress = input.deliveryAddress?.trim()?.takeIf { it.isNotBlank() },
+            operationCategoryAtIssue = company?.operationCategory,
+            // The VAT-on-debits option is meaningless under the VAT franchise.
+            vatOnDebitsAtIssue = if (input.taxOptedOut) false else company?.vatOnDebits,
         )
         val invoiceId = invoiceDao.insertInvoice(invoice)
 
@@ -184,6 +189,8 @@ class InvoiceRepository @Inject constructor(
             companyManagerAtIssue = company?.managerName,
             taxOptedOutAtIssue = orig.invoice.taxOptedOutAtIssue ?: (orig.invoice.totalVatCents == 0L),
             clientSiretAtIssue = orig.invoice.clientSiretAtIssue,
+            operationCategoryAtIssue = orig.invoice.operationCategoryAtIssue,
+            vatOnDebitsAtIssue = orig.invoice.vatOnDebitsAtIssue,
         )
         val newId = invoiceDao.insertInvoice(credit)
 

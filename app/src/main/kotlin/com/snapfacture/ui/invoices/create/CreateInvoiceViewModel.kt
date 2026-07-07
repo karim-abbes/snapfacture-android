@@ -55,6 +55,7 @@ data class CreateUiState(
     val cart: List<CartLine> = emptyList(),
     val paymentMethod: PaymentMethod = PaymentMethod.CASH,
     val deliveryDateMillis: Long? = null,
+    val deliveryAddress: String = "",
     val taxOptedOut: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
@@ -191,6 +192,10 @@ class CreateInvoiceViewModel @Inject constructor(
         _state.update { it.copy(deliveryDateMillis = millis) }
     }
 
+    fun onDeliveryAddressChange(addr: String) {
+        _state.update { it.copy(deliveryAddress = addr) }
+    }
+
     // Free lines live only in the cart: a transient ProductEntity with a
     // negative id keeps the existing cart plumbing working without ever
     // touching the catalog. DraftLine (what actually gets issued) only
@@ -313,6 +318,7 @@ class CreateInvoiceViewModel @Inject constructor(
                         comment = st.comment.ifBlank { null },
                         taxOptedOut = st.taxOptedOut,
                         clientSiret = effectiveSiret,
+                        deliveryAddress = st.deliveryAddress.ifBlank { null },
                     )
                 )
                 invoiceId to company

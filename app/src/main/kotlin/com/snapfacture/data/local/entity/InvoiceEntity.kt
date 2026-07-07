@@ -57,5 +57,11 @@ data class InvoiceEntity(
     val companyManagerAtIssue: String? = null,
     val taxOptedOutAtIssue: Boolean? = null,
     val clientSiretAtIssue: String? = null,
+    // Réforme e-facturation 2026-09-01: delivery address when it differs
+    // from the client's billing address, plus two company-setting snapshots
+    // (frozen at issue like the company block above). All null on pre-v5 rows.
+    val deliveryAddress: String? = null,
+    val operationCategoryAtIssue: OperationCategory? = null,
+    val vatOnDebitsAtIssue: Boolean? = null,
     val createdAt: Long = System.currentTimeMillis(),
 )
