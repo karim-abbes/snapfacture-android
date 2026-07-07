@@ -118,6 +118,21 @@ class FacturXGeneratorTest {
         val paymentCode = (doc.getElementsByTagName("ram:SpecifiedTradeSettlementPaymentMeans").item(0) as Element)
             .getElementsByTagName("ram:TypeCode").item(0).textContent
         assertEquals("48", paymentCode)
+        // BT-23 cadre de facturation, mandatory in the French reform.
+        val businessProcess = (doc.getElementsByTagName("ram:BusinessProcessSpecifiedDocumentContextParameter").item(0) as Element)
+            .getElementsByTagName("ram:ID").item(0).textContent
+        assertEquals("A1", businessProcess)
+        // BT-34 / BT-49 routing electronic addresses on both parties.
+        val uris = doc.getElementsByTagName("ram:URIUniversalCommunication")
+        assertEquals(2, uris.length)
+        val seller = (doc.getElementsByTagName("ram:SellerTradeParty").item(0) as Element)
+            .getElementsByTagName("ram:URIID").item(0) as Element
+        assertEquals("123456789", seller.textContent)
+        assertEquals("0002", seller.getAttribute("schemeID"))
+        val buyer = (doc.getElementsByTagName("ram:BuyerTradeParty").item(0) as Element)
+            .getElementsByTagName("ram:URIID").item(0) as Element
+        assertEquals("98765432100012", buyer.textContent)
+        assertEquals("0009", buyer.getAttribute("schemeID"))
     }
 
     @Test

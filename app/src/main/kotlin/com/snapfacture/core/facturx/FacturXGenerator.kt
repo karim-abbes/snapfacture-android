@@ -21,6 +21,12 @@ import javax.inject.Singleton
 @Singleton
 class FacturXGenerator @Inject constructor() {
 
+    private companion object {
+        // BT-23 invoicing framework code ("cadre de facturation"). A1 = deposit
+        // of an invoice — the standard domestic B2B case for this app's users.
+        const val BUSINESS_PROCESS = "A1"
+    }
+
     fun buildXml(details: InvoiceWithDetails, sourceInvoiceNumber: Int? = null): String {
         val inv = details.invoice
         val isCredit = inv.type == InvoiceType.CREDIT_NOTE
@@ -38,6 +44,12 @@ class FacturXGenerator @Inject constructor() {
         ).append('\n')
 
         sb.tag("rsm:ExchangedDocumentContext") {
+            // BT-23 "cadre de facturation": mandatory in the French reform.
+            // A1 = deposit of an invoice (the standard B2B case); confirm the
+            // exact typology code with the target PDP if it rejects it.
+            tag("ram:BusinessProcessSpecifiedDocumentContextParameter") {
+                leaf("ram:ID", BUSINESS_PROCESS)
+            }
             tag("ram:GuidelineSpecifiedDocumentContextParameter") {
                 leaf("ram:ID", "urn:cen.eu:en16931:2017")
             }
@@ -68,6 +80,13 @@ class FacturXGenerator @Inject constructor() {
                         inv.companyCityAtIssue?.takeIf { it.isNotBlank() }?.let { leaf("ram:CityName", it) }
                         leaf("ram:CountryID", "FR")
                     }
+                    // BT-34 seller electronic address (routing). France routes by
+                    // SIREN/SIRET; scheme 0002 = SIRENE. We only hold the SIREN.
+                    inv.companySirenAtIssue?.filter { it.isDigit() }?.takeIf { it.isNotBlank() }?.let {
+                        tag("ram:URIUniversalCommunication") {
+                            leaf("ram:URIID", it, """ schemeID="0002"""")
+                        }
+                    }
                     inv.companyVatNumberAtIssue?.takeIf { it.isNotBlank() }?.let {
                         tag("ram:SpecifiedTaxRegistration") {
                             leaf("ram:ID", it.replace(" ", ""), """ schemeID="VA"""")
@@ -86,6 +105,12 @@ class FacturXGenerator @Inject constructor() {
                         details.client.addressLine?.takeIf { it.isNotBlank() }?.let { leaf("ram:LineOne", it) }
                         details.client.city?.takeIf { it.isNotBlank() }?.let { leaf("ram:CityName", it) }
                         leaf("ram:CountryID", "FR")
+                    }
+                    // BT-49 buyer electronic address (routing). SIRET, scheme 0009.
+                    inv.clientSiretAtIssue?.takeIf { it.length == 14 }?.let {
+                        tag("ram:URIUniversalCommunication") {
+                            leaf("ram:URIID", it, """ schemeID="0009"""")
+                        }
                     }
                 }
             }
