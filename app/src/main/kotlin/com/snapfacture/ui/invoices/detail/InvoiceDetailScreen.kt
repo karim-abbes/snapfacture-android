@@ -66,6 +66,8 @@ fun InvoiceDetailScreen(
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    // Read here: LazyListScope blocks below are not composable contexts.
+    val isFrProfile = LocalCountryProfile.current.code == "FR"
     val inv = state.invoice
 
     var showCreditDialog by rememberSaveable { mutableStateOf(false) }
@@ -279,7 +281,7 @@ fun InvoiceDetailScreen(
             }
             // E-invoice XML (réforme 2026-2027): the structured CII file a
             // PDP ingests directly. FR profile only — no such duty in the US.
-            if (LocalCountryProfile.current.code == "FR") {
+            if (isFrProfile) {
                 item {
                     OutlinedButton(
                         onClick = {
