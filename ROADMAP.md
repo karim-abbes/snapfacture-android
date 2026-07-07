@@ -49,6 +49,9 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 
 ## 🔨 Prévu (par priorité)
 
+0. **Trouver les premiers utilisateurs**
+   Le produit est prêt : c'est le sujet n°1 maintenant. Le reste de cette liste attend des retours réels (forums d'artisans, groupes Facebook BTP, bouche-à-oreille comptables) plutôt que d'être développé à l'aveugle.
+
 1. **Export comptable FEC**
    CSV au format Fichier des Écritures Comptables, importable directement par un expert-comptable français. Effort : ~1 h. Gain : utile à chaque bilan trimestriel.
 
@@ -58,11 +61,14 @@ Statuts : ✅ livré · 🔨 prévu · 🔮 envisagé · ❌ hors-scope
 3. **Écrans de déclaration fiscale**
    Rapport trimestriel TVA (France) et déclaration sales tax par état (US), au format prêt à recopier dans le portail des impôts. Effort : ~2 h.
 
-4. **Précision taxe en basis points**
+4. **Devis**
+   Document non engageant, converti en facture après accord du client. Absent aujourd'hui alors que c'est l'objet n°1 de la vie d'un artisan — plus grosse opportunité produit identifiée à ce jour. Effort non chiffré : **à valider avec les premiers retours utilisateurs avant de coder**, pas à développer à l'aveugle.
+
+5. **Précision taxe en basis points**
    Passer du stockage `permille` (1/1000) au `basisPoints` (1/10000) pour exactement représenter 6,25 % / 7,25 % / etc. Effort : ~30 min, à faire dès qu'un utilisateur US se plaint.
 
-5. **Factur-X / PDP**
-   Émission de factures électroniques B2B au format Factur-X (PDF + XML CII intégré) et connexion à au moins une Plateforme de Dématérialisation Partenaire. Obligatoire pour les TPE françaises à compter du **1er septembre 2027**. Effort : 1-2 semaines. À planifier au printemps 2027.
+6. **Factur-X / PDP**
+   Émission de factures électroniques B2B au format Factur-X (PDF + XML CII intégré) et connexion à au moins une Plateforme de Dématérialisation Partenaire. Obligatoire pour les TPE françaises à compter du **1er septembre 2027**. Effort : 1-2 semaines. À planifier au printemps 2027. **Seule échéance ferme et non négociable de cette liste.**
 
 ---
 
@@ -97,11 +103,13 @@ Status: ✅ shipped · 🔨 planned · 🔮 considered · ❌ out of scope
 Few-tap invoicing, credit notes, gapless chronological numbering, SHA-256 audit chain (FR only), per-invoice company snapshot, FR / US country profiles (invisible after onboarding), B2B mentions, VAT-free mode, configurable default sales tax (US), catalog, FR-only CSV import/export, local PDF + share, SAF backup/restore, biometric lock, stats dashboard, blocking onboarding, FR/EN i18n, **full Snapfacture rebrand** (`com.snapfacture`, clean v1 schema, `snapfacture-android` repo), JUnit tests for CountryProfile, CI APK release, sample `Plomberie Saadi` database + three PDF screenshots in the README.
 
 ### 🔨 Planned (priority order)
+0. **Find the first users** — the product is ready; everything below waits on real feedback rather than being built blind.
 1. **FEC accounting export** — French statutory accounting CSV. ~1 h.
 2. **Interactive CSV import** — column mapper for any third-party format (FR + US). ~3 h.
 3. **Tax filing screens** — quarterly VAT (FR) / state sales tax (US) summaries. ~2 h.
-4. **Tax precision in basis points** — replace permille (1/1000) with basis points (1/10000) to represent 6.25 %, 7.25 % exactly. ~30 min.
-5. **Factur-X / PDP integration** — mandatory for B2B in France from September 2027. ~1-2 weeks, plan for spring 2027.
+4. **Quotes / estimates** — non-binding document converted to an invoice on client approval. Missing today despite being an artisan's #1 document — the single biggest product opportunity identified so far. Effort unscoped: to validate with early user feedback before building.
+5. **Tax precision in basis points** — replace permille (1/1000) with basis points (1/10000) to represent 6.25 %, 7.25 % exactly. ~30 min.
+6. **Factur-X / PDP integration** — mandatory for B2B in France from September 2027. ~1-2 weeks, plan for spring 2027. The only firm, non-negotiable deadline on this list.
 
 ### 🔮 Considered (conditional)
 - **iOS version** via Kotlin Multiplatform once Android reaches ≥ 50 active users.
