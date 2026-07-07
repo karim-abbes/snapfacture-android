@@ -5,11 +5,14 @@ Snapfacture est une application de facturation minimaliste pour artisans, auto-e
 <b>Fonctionnalités</b>
 - Création de facture en quelques taps depuis votre catalogue
 - Avoirs en 1 tap
+- Devis (validité 30 jours) convertibles en facture en 1 tap
 - Numérotation chronologique sans rupture, factures émises immuables
 - Chaîne anti-fraude SHA-256 vérifiable depuis l'app (profil France)
 - Génération et partage de PDF, entièrement hors ligne
 - Profils pays : France (TVA, mentions B2B légales, franchise art. 293 B) et États-Unis (sales tax)
-- Tableau de bord du chiffre d'affaires et récap TVA
+- Tableau de bord du chiffre d'affaires
+- Récap TVA par taux et par trimestre, prêt pour la déclaration
+- Export comptable FEC pour votre expert-comptable (France)
 - Export CSV pour votre comptable
 - Sauvegarde manuelle ou automatique vers le dossier de votre choix (Drive, OneDrive, carte SD…)
 - Verrouillage biométrique optionnel

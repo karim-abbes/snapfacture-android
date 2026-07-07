@@ -29,12 +29,17 @@ Pas de cloud, pas d'abonnement, pas de compte à créer. Tes données restent su
 - Taux de sales tax par défaut configurable (États-Unis)
 - Mentions B2B (SIRET, pénalités de retard, indemnité 40 €) quand le client est un pro — France uniquement
 - Avoir (note de crédit) en 1 tap depuis une facture
+- **Devis** avec numérotation propre et validité 30 jours, convertibles en facture en 1 tap (lignes et prix figés)
+- Ligne libre au panier pour facturer une prestation hors catalogue
 - Génération PDF locale + partage par email/WhatsApp/AirDrop
 - Verrouillage biométrique optionnel
 - Sauvegarde manuelle ou automatique vers un dossier de ton choix (Drive, local…)
 - Restauration depuis un fichier `.db`
 - Tableau de bord (CA mensuel/annuel, TVA collectée, top produits, top clients)
 - Export CSV pour ton expert-comptable
+- **Export comptable FEC** (Fichier des Écritures Comptables, importable tel quel par un expert-comptable) — France uniquement
+- **Récap TVA / sales tax par taux et par trimestre** : les chiffres à recopier dans la déclaration, avoirs déduits
+- Vérification d'intégrité de la chaîne anti-fraude en 1 tap (Réglages) — France uniquement
 - Disponible en français et en anglais (suit la langue du téléphone)
 
 ## Installation
@@ -89,12 +94,17 @@ No cloud, no subscription, no account. Your data stays on your phone.
 - Configurable default sales tax rate (United States)
 - B2B mentions (SIRET, late-payment penalties, 40 € recovery indemnity) when the customer is a business — France only
 - 1-tap credit notes
+- **Quotes** with their own numbering and 30-day validity, convertible to an invoice in one tap (frozen lines and prices)
+- Custom cart line to invoice one-off work outside the catalog
 - Local PDF generation + share via email / messaging / AirDrop
 - Optional biometric lock
 - Manual or automatic backup to a folder of your choice (Drive, local…)
 - Restore from a `.db` file
 - Dashboard (monthly/yearly revenue, VAT collected, top products, top customers)
 - CSV export for your accountant
+- **FEC accounting export** (the normalized French statutory file accountants import directly) — France only
+- **Per-rate VAT / sales tax summary by quarter**: the exact figures a filing asks for, credit notes deducted
+- One-tap anti-fraud chain integrity check (Settings) — France only
 - Available in French and English (follows the phone language)
 
 ## Install

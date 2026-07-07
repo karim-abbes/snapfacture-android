@@ -15,6 +15,9 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/). Les versi
 - Purge du nom « Facturix » (prompt biométrique, export CSV, message de restauration).
 - Sauvegarde : le vidage du journal WAL est vérifié — plus de sauvegardes silencieusement amputées des dernières factures.
 - Restauration : validation complète du fichier (intégrité SQLite, tables attendues, version de schéma) **avant** tout écrasement, avec copie de secours automatique de la base actuelle.
+- PDF : un nom d'entreprise long ne chevauche plus le titre « FACTURE N° X » (réduction de taille puis troncature avec « … »).
+- PDF : les champs entreprise vides n'affichent plus de ponctuation résiduelle (virgule seule, puces orphelines, « SIREN » sans valeur) — les fragments vides disparaissent, la ligne entière est sautée si rien ne reste.
+- Landing : taille réelle de l'APK affichée (~19 Mo).
 
 ### Ajouté
 - **Récap TVA / sales tax** (Réglages) : base HT et taxe ventilées par taux, trimestre par trimestre, avoirs déduits — les chiffres exacts à recopier dans la déclaration.

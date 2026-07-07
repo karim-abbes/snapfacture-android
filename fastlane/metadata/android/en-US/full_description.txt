@@ -5,11 +5,14 @@ Snapfacture is a minimalist invoicing app for tradespeople, freelancers and one-
 <b>Features</b>
 - Few-tap invoice creation from your product catalog
 - Credit notes in one tap
+- Quotes (30-day validity) convertible to an invoice in one tap
 - Gapless sequential numbering and immutable issued invoices
 - Verifiable SHA-256 anti-fraud audit chain (French profile)
 - PDF generation and sharing, fully offline
 - Country profiles: France (VAT, statutory B2B mentions, franchise regime) and United States (sales tax)
-- Revenue dashboard and tax summary
+- Revenue dashboard
+- Per-rate tax summary by quarter, ready for your filing
+- FEC statutory accounting export (France)
 - CSV export for your accountant
 - Manual or automatic backup to a folder you choose (Drive, OneDrive, SD card…)
 - Optional biometric lock
