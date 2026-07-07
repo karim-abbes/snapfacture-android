@@ -95,23 +95,9 @@ class InvoicePdfGenerator @Inject constructor(
         val legalCity = inv.invoice.companyCityAtIssue ?: company.city
         val legalSiren = inv.invoice.companySirenAtIssue ?: company.siren
 
-        val title = Paint().apply {
-            color = Color.WHITE
-            textSize = 34f
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-            isAntiAlias = true
-        }
-        canvas.drawText(legalName.uppercase(country.locale), MARGIN, 70f, title)
-
-        val sub = Paint().apply {
-            color = Color.WHITE
-            textSize = 12f
-            isAntiAlias = true
-        }
-        canvas.drawText("$legalAddress, $legalPostal $legalCity", MARGIN, 92f, sub)
-        canvas.drawText(context.getString(R.string.pdf_contact_line, company.phone, company.email, company.website), MARGIN, 110f, sub)
-        canvas.drawText("${country.legalIdLabel} $legalSiren", MARGIN, 128f, sub)
-
+        // The doc title is measured first so the company name knows how much
+        // width it may use: both share the y=70 baseline and a long name used
+        // to run straight into "FACTURE N° X".
         val docLabel = Paint().apply {
             color = Color.WHITE
             textSize = if (isCredit) 22f else 26f
@@ -127,6 +113,38 @@ class InvoicePdfGenerator @Inject constructor(
             },
             inv.invoice.number,
         )
+
+        val title = Paint().apply {
+            color = Color.WHITE
+            textSize = 34f
+            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+            isAntiAlias = true
+        }
+        var name = legalName.uppercase(country.locale)
+        val availableNameWidth =
+            PAGE_W - MARGIN - MARGIN - docLabel.measureText(docTitle) - COLLISION_GAP
+        while (title.measureText(name) > availableNameWidth && title.textSize > MIN_TITLE_SIZE) {
+            title.textSize -= 1f
+        }
+        if (title.measureText(name) > availableNameWidth) {
+            while (name.isNotEmpty() && title.measureText(name + "…") > availableNameWidth) {
+                name = name.dropLast(1)
+            }
+            name += "…"
+        }
+        canvas.drawText(name, MARGIN, 70f, title)
+
+        val sub = Paint().apply {
+            color = Color.WHITE
+            textSize = 12f
+            isAntiAlias = true
+        }
+        joinNonBlank(legalAddress, joinNonBlank(legalPostal, legalCity, separator = " "))
+            ?.let { canvas.drawText(it, MARGIN, 92f, sub) }
+        contactLine(company)?.let { canvas.drawText(it, MARGIN, 110f, sub) }
+        legalSiren.takeIf { it.isNotBlank() }
+            ?.let { canvas.drawText("${country.legalIdLabel} $it", MARGIN, 128f, sub) }
+
         canvas.drawText(docTitle, PAGE_W - MARGIN, 70f, docLabel)
 
         val factureDate = Paint().apply {
@@ -475,17 +493,18 @@ class InvoicePdfGenerator @Inject constructor(
         canvas.drawLine(MARGIN, PAGE_H - 90f, PAGE_W - MARGIN, PAGE_H - 90f, divider)
 
         val small = Paint().apply { color = MUTED; textSize = 9f; isAntiAlias = true }
-        val identityLine = buildString {
-            append(legalName)
-            company.legalForm.takeIf { it.isNotBlank() }?.let { append(" ($it)") }
-            append(" — ${country.legalIdLabel} $legalSiren")
-            val vatNumber = (inv.invoice.companyVatNumberAtIssue ?: company.vatNumber)
-                ?.takeIf { it.isNotBlank() }
-            vatNumber?.let { append(" — ").append(context.getString(R.string.pdf_vat_number, it)) }
-        }
-        canvas.drawText(identityLine, MARGIN, PAGE_H - 70f, small)
-        canvas.drawText("$legalAddress, $legalPostal $legalCity, ${company.country}", MARGIN, PAGE_H - 58f, small)
-        canvas.drawText(context.getString(R.string.pdf_contact_line, company.phone, company.email, company.website), MARGIN, PAGE_H - 46f, small)
+        val vatNumber = (inv.invoice.companyVatNumberAtIssue ?: company.vatNumber)
+            ?.takeIf { it.isNotBlank() }
+        val identityLine = joinNonBlank(
+            joinNonBlank(legalName, company.legalForm.takeIf { it.isNotBlank() }?.let { "($it)" }, separator = " "),
+            legalSiren.takeIf { it.isNotBlank() }?.let { "${country.legalIdLabel} $it" },
+            vatNumber?.let { context.getString(R.string.pdf_vat_number, it) },
+            separator = " — ",
+        )
+        identityLine?.let { canvas.drawText(it, MARGIN, PAGE_H - 70f, small) }
+        joinNonBlank(legalAddress, joinNonBlank(legalPostal, legalCity, separator = " "), company.country)
+            ?.let { canvas.drawText(it, MARGIN, PAGE_H - 58f, small) }
+        contactLine(company)?.let { canvas.drawText(it, MARGIN, PAGE_H - 46f, small) }
         val effectiveTaxOptedOut = inv.invoice.taxOptedOutAtIssue ?: (inv.invoice.totalVatCents == 0L)
         country.footerMention(effectiveTaxOptedOut)?.let { mention ->
             canvas.drawText(mention, MARGIN, PAGE_H - 32f, small)
@@ -498,6 +517,18 @@ class InvoicePdfGenerator @Inject constructor(
             context.getString(R.string.pdf_footer_manager, legalManager),
             PAGE_W - MARGIN, PAGE_H - 46f, signature,
         )
+    }
+
+    // Empty optional company fields must drop the whole fragment, never leave
+    // an orphan separator behind ("Tel. · ·", a lone comma, "SIREN " with no
+    // value). Same idiom as the client block's listOfNotNull/ifBlank chain.
+    private fun joinNonBlank(vararg parts: String?, separator: String = ", "): String? =
+        parts.filterNot { it.isNullOrBlank() }.joinToString(separator).ifBlank { null }
+
+    private fun contactLine(company: CompanyEntity): String? {
+        val phonePart = company.phone.takeIf { it.isNotBlank() }
+            ?.let { context.getString(R.string.pdf_contact_phone_prefix, it) }
+        return joinNonBlank(phonePart, company.email, company.website, separator = "  •  ")
     }
 
     private fun paymentLabel(method: PaymentMethod): String = context.getString(
@@ -517,6 +548,8 @@ class InvoicePdfGenerator @Inject constructor(
         private const val PAGE_W = 595
         private const val PAGE_H = 842
         private const val MARGIN = 40f
+        private const val COLLISION_GAP = 20f
+        private const val MIN_TITLE_SIZE = 18f
 
         private val BRAND = Color.rgb(0x0D, 0x47, 0xA1)
         private val ACCENT = Color.rgb(0xFF, 0xB3, 0x00)

@@ -220,7 +220,7 @@
     <string name="pdf_b2b_recovery">Fixed indemnity for recovery costs: 40 € (Art. D441-5 French Commercial Code).</string>
     <string name="pdf_escompte">No discount for early payment (escompte: none).</string>
     <string name="pdf_vat_number">VAT no. %1$s</string>
-    <string name="pdf_contact_line">Tel. %1$s  •  %2$s  •  %3$s</string>
+    <string name="pdf_contact_phone_prefix">Tel. %1$s</string>
 
     <!-- Issue confirmation -->
     <string name="confirm_issue_title">Confirm the invoice</string>

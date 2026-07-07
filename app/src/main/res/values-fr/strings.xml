@@ -315,7 +315,7 @@
     <string name="pdf_credit_reference">Annule et remplace la facture N° %1$d%2$s</string>
     <string name="pdf_credit_reference_date_suffix">" du %1$s"</string>
     <string name="pdf_footer_manager">%1$s • Gérant</string>
-    <string name="pdf_contact_line">Tél. %1$s  •  %2$s  •  %3$s</string>
+    <string name="pdf_contact_phone_prefix">Tél. %1$s</string>
     <string name="pdf_client_siret">SIRET %1$s</string>
     <string name="pdf_b2b_penalties">Pénalités de retard : taux directeur de la BCE majoré de 10 points (art. L441-10 C. com.).</string>
     <string name="pdf_b2b_recovery">Indemnité forfaitaire pour frais de recouvrement : 40 € (art. D441-5 C. com.).</string>
