@@ -7,6 +7,22 @@ object CsvParser {
 
     private const val BOM: Char = '\uFEFF'
 
+    /** French tools export with ';' \u2014 pick whichever dominates the header line. */
+    fun detectSeparator(headerLine: String): Char {
+        var semicolons = 0
+        var commas = 0
+        var inQuotes = false
+        for (c in headerLine) {
+            when {
+                c == '"' -> inQuotes = !inQuotes
+                inQuotes -> {}
+                c == ';' -> semicolons++
+                c == ',' -> commas++
+            }
+        }
+        return if (semicolons > commas) ';' else ','
+    }
+
     fun parse(input: Reader, separator: Char = ','): List<List<String>> {
         val reader = PushbackReader(input, 4)
         val rows = mutableListOf<List<String>>()

@@ -93,17 +93,13 @@ fun SettingsScreen(
                     onClick = onOpenCatalog,
                 )
             }
-            // Import is gated on the FR profile (legacy fixed CSV format);
-            // export is universal — it's the only way to get data out for an accountant.
-            if (isFr) {
-                item {
-                    SettingsCard(
-                        icon = Icons.Default.UploadFile,
-                        title = stringResource(R.string.settings_import_title),
-                        subtitle = stringResource(R.string.settings_import_subtitle),
-                        onClick = onOpenImport,
-                    )
-                }
+            item {
+                SettingsCard(
+                    icon = Icons.Default.UploadFile,
+                    title = stringResource(R.string.settings_import_title),
+                    subtitle = stringResource(R.string.settings_import_subtitle),
+                    onClick = onOpenImport,
+                )
             }
             item {
                 SettingsCard(

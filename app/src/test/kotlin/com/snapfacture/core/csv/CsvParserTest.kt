@@ -69,4 +69,13 @@ class CsvParserTest {
     fun `trailing newline does not create an extra row`() {
         assertEquals(1, parse("a,b\n").size)
     }
+
+    @Test
+    fun `separator detection prefers the dominant character`() {
+        assertEquals(';', CsvParser.detectSeparator("Numéro;Client;Montant"))
+        assertEquals(',', CsvParser.detectSeparator("Number,Client,Amount"))
+        // Quoted separators don't count: this is a comma-separated file.
+        assertEquals(',', CsvParser.detectSeparator("\"a;b;c;d\",x,y"))
+        assertEquals(',', CsvParser.detectSeparator("single-column"))
+    }
 }

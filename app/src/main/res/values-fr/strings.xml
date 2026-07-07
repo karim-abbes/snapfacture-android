@@ -257,7 +257,7 @@
     <!-- CSV import -->
     <string name="import_title">Importer un CSV</string>
     <string name="import_intro_title">Reprendre votre historique</string>
-    <string name="import_intro_body">Importez le CSV exporté de votre ancien outil pour récupérer toutes les factures précédentes. Les numéros déjà présents sont ignorés. Le compteur de numérotation est automatiquement mis à jour.</string>
+    <string name="import_intro_body">Importez le CSV exporté de votre ancien outil (Pennylane, Sellsy, QuickBooks, Excel…) pour récupérer toutes les factures précédentes. Vous faites correspondre les colonnes une fois, puis tout s\'importe. Le compteur de numérotation est automatiquement mis à jour.</string>
     <string name="import_choose_file">Choisir un fichier .csv</string>
     <string name="import_running">Import en cours...</string>
     <string name="import_done_title">Import terminé</string>
@@ -356,6 +356,28 @@
     <string name="confirm_issue_confirm">Confirmer • %1$s</string>
     <string name="common_unknown_error">Erreur inconnue</string>
     <string name="import_err_open_file">Impossible d\'ouvrir le fichier</string>
+    <string name="import_err_empty">Le fichier est vide ou ne contient aucune ligne de données</string>
+    <string name="import_mapping_title">%1$d ligne(s) trouvée(s). Vérifiez la correspondance des colonnes :</string>
+    <string name="import_mapping_optional">Champs optionnels</string>
+    <string name="import_start">Importer %1$d ligne(s)</string>
+    <string name="import_column_none">— Absent de mon fichier —</string>
+    <string name="import_column_unnamed">Colonne %1$d</string>
+    <string name="import_preview_value">Ex. : %1$s</string>
+    <string name="import_field_number">N° de facture</string>
+    <string name="import_field_client">Client</string>
+    <string name="import_field_issue_date">Date d\'émission</string>
+    <string name="import_field_total">Montant TTC</string>
+    <string name="import_field_ht">Montant HT</string>
+    <string name="import_field_vat">Montant de TVA</string>
+    <string name="import_field_type">Type de pièce (facture/avoir)</string>
+    <string name="import_field_due_date">Date d\'échéance</string>
+    <string name="import_field_delivery_date">Date de livraison</string>
+    <string name="import_field_payment_method">Mode de paiement</string>
+    <string name="import_field_payment_date">Date de règlement</string>
+    <string name="import_field_issuer">Établi par</string>
+    <string name="import_field_street">Rue (client)</string>
+    <string name="import_field_postal">Code postal (client)</string>
+    <string name="import_field_city">Ville (client)</string>
     <string name="stats_quarter_label">T%1$d %2$d</string>
     <string name="backup_msg_success">Sauvegarde effectuée : %1$s</string>
     <string name="backup_msg_failure">Échec : %1$s</string>
