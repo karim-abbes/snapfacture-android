@@ -10,6 +10,7 @@
     <string name="action_print">Imprimer</string>
     <string name="action_retry">Réessayer</string>
     <string name="action_remove">Retirer</string>
+    <string name="action_ok">OK</string>
     <string name="action_edit">Modifier</string>
     <string name="action_add">Ajouter</string>
 
@@ -70,6 +71,8 @@
     <string name="create_catalog_empty_body">Ajoutez vos produits et prestations une fois — la facturation ne prendra ensuite que quelques taps. Pour un cas ponctuel, utilisez une ligne libre ci-dessous.</string>
     <string name="create_catalog_open">Ouvrir le catalogue</string>
     <string name="create_quote_button">Devis</string>
+    <string name="create_delivery_date_add">+ Date d\'intervention différente ?</string>
+    <string name="create_delivery_date_label">Date d\'intervention : %1$s</string>
     <string name="quotes_title">Devis</string>
     <string name="quotes_empty">Aucun devis pour l\'instant. Touchez + pour créer votre premier devis.</string>
     <string name="quote_list_n">Devis N° %1$d</string>

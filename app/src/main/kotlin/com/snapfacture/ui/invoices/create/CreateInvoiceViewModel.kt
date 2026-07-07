@@ -53,6 +53,7 @@ data class CreateUiState(
     val selectedClient: ClientEntity? = null,
     val cart: List<CartLine> = emptyList(),
     val paymentMethod: PaymentMethod = PaymentMethod.CASH,
+    val deliveryDateMillis: Long? = null,
     val taxOptedOut: Boolean = false,
     val isSaving: Boolean = false,
     val error: String? = null,
@@ -166,6 +167,10 @@ class CreateInvoiceViewModel @Inject constructor(
 
     fun setPaymentMethod(m: PaymentMethod) {
         _state.update { it.copy(paymentMethod = m) }
+    }
+
+    fun setDeliveryDate(millis: Long?) {
+        _state.update { it.copy(deliveryDateMillis = millis) }
     }
 
     // Free lines live only in the cart: a transient ProductEntity with a
@@ -285,7 +290,7 @@ class CreateInvoiceViewModel @Inject constructor(
                         lines = lines,
                         paymentMethod = st.paymentMethod,
                         issueDateMillis = now,
-                        deliveryDateMillis = if (lines.any { it.extraNote != null }) now else null,
+                        deliveryDateMillis = st.deliveryDateMillis,
                         issuerName = company.managerName.ifBlank { company.name },
                         comment = st.comment.ifBlank { null },
                         taxOptedOut = st.taxOptedOut,

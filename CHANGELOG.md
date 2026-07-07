@@ -21,6 +21,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/). Les versi
 - Liste des factures : carte CA compacte (une ligne) au lieu d'une carte pleine hauteur — plus de factures visibles sans défiler.
 
 ### Ajouté
+- **Date d'intervention optionnelle** à la création de facture (mention légale, art. 242 nonies A CGI : la date de la prestation doit figurer si elle diffère de la date d'émission). Repliée par défaut derrière un lien « + Date d'intervention différente ? » — rien ne change pour la facture du jour. La date choisie s'imprime sur le PDF (« Livraison ») ; l'ancienne heuristique qui datait automatiquement les prestations avec note est retirée.
 - **Barre de navigation basse** persistante (Factures / Devis / Stats) avec icône + libellé, accessible au pouce — remplace les icônes sans texte tassées dans la barre du haut. Les Réglages restent une icône (destination secondaire).
 - **Bouton « Nouveau devis »** sur l'écran Devis : créer un devis sans passer par l'écran Facture.
 - **Pastille de statut** sur les devis (« Facturé » / « Expiré »), au même niveau visuel que le titre.

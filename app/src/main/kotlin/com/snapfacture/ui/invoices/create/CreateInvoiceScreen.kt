@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Person
@@ -32,6 +33,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -40,6 +43,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -64,6 +68,8 @@ import com.snapfacture.R
 import com.snapfacture.core.country.LocalCountryProfile
 import com.snapfacture.data.local.entity.PaymentMethod
 import com.snapfacture.data.local.entity.ProductEntity
+import java.util.Calendar
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,6 +84,7 @@ fun CreateInvoiceScreen(
     val catalog by vm.catalog.collectAsStateWithLifecycle()
     var showConfirm by rememberSaveable { mutableStateOf(false) }
     var showFreeLine by rememberSaveable { mutableStateOf(false) }
+    var showDatePicker by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -113,6 +120,13 @@ fun CreateInvoiceScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item { ClientCard(state, vm) }
+            item {
+                DeliveryDateRow(
+                    deliveryDateMillis = state.deliveryDateMillis,
+                    onPick = { showDatePicker = true },
+                    onClear = { vm.setDeliveryDate(null) },
+                )
+            }
             item { CatalogGrid(catalog, state, vm::addProduct, vm::decrement, onOpenCatalog, onFreeLine = { showFreeLine = true }) }
             if (state.hasInstallLine) item { DeliveryCard(state, vm) }
             if (state.cart.isNotEmpty()) item { CartSummary(state, onRemove = vm::decrement) }
@@ -140,6 +154,78 @@ fun CreateInvoiceScreen(
                 vm.issue(onIssued)
             },
         )
+    }
+
+    if (showDatePicker) {
+        val pickerState = rememberDatePickerState(
+            initialSelectedDateMillis = state.deliveryDateMillis ?: System.currentTimeMillis(),
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        pickerState.selectedDateMillis?.let { vm.setDeliveryDate(utcMidnightToLocalNoon(it)) }
+                        showDatePicker = false
+                    },
+                    enabled = pickerState.selectedDateMillis != null,
+                ) { Text(stringResource(R.string.action_ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        ) {
+            DatePicker(state = pickerState)
+        }
+    }
+}
+
+// The M3 DatePicker returns midnight UTC: formatted in a western timezone that
+// shifts to the previous day. Re-anchoring at local noon keeps the picked date
+// stable whatever the device timezone.
+private fun utcMidnightToLocalNoon(utcMillis: Long): Long {
+    val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = utcMillis }
+    return Calendar.getInstance().apply {
+        clear()
+        set(
+            utc.get(Calendar.YEAR),
+            utc.get(Calendar.MONTH),
+            utc.get(Calendar.DAY_OF_MONTH),
+            12, 0, 0,
+        )
+    }.timeInMillis
+}
+
+@Composable
+private fun DeliveryDateRow(
+    deliveryDateMillis: Long?,
+    onPick: () -> Unit,
+    onClear: () -> Unit,
+) {
+    if (deliveryDateMillis == null) {
+        TextButton(onClick = onPick) {
+            Text(stringResource(R.string.create_delivery_date_add))
+        }
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(onClick = onPick, modifier = Modifier.weight(1f, fill = false)) {
+                Text(
+                    stringResource(
+                        R.string.create_delivery_date_label,
+                        LocalCountryProfile.current.formatDate(deliveryDateMillis),
+                    ),
+                )
+            }
+            IconButton(onClick = onClear) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = stringResource(R.string.action_remove),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 
