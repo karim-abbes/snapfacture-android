@@ -19,7 +19,7 @@ sealed interface CountryProfile {
     val dateFormat: String
     val legalIdLabel: String
     val taxLabel: String
-    val defaultTaxRatePermille: Int
+    val defaultTaxRateBp: Int
     val sequentialNumberingRequired: Boolean
     val antiFraudHashChain: Boolean
 
@@ -47,7 +47,7 @@ object FranceProfile : CountryProfile {
     override val dateFormat = "dd/MM/yyyy"
     override val legalIdLabel = "SIREN"
     override val taxLabel = "TVA"
-    override val defaultTaxRatePermille = 200
+    override val defaultTaxRateBp = 2_000
     override val sequentialNumberingRequired = true
     override val antiFraudHashChain = true
 
@@ -63,7 +63,7 @@ object UsaProfile : CountryProfile {
     override val dateFormat = "MM/dd/yyyy"
     override val legalIdLabel = "EIN / Tax ID"
     override val taxLabel = "Sales Tax"
-    override val defaultTaxRatePermille = 0
+    override val defaultTaxRateBp = 0
     override val sequentialNumberingRequired = false
     override val antiFraudHashChain = false
 

@@ -647,7 +647,7 @@ fun com.snapfacture.data.local.relation.QuoteWithDetails.asInvoiceForPdf(): Invo
                 extraNote = l.extraNote,
                 quantityMilliUnits = l.quantityMilliUnits,
                 unitPriceHtCents = l.unitPriceHtCents,
-                vatRatePermille = l.vatRatePermille,
+                vatRateBp = l.vatRateBp,
                 lineHtCents = l.lineHtCents,
                 lineVatCents = l.lineVatCents,
                 lineTtcCents = l.lineTtcCents,

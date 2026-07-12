@@ -200,12 +200,7 @@ fun TaxReportScreen(
                     Card {
                         Column(Modifier.fillMaxWidth().padding(16.dp)) {
                             state.rows.forEach { row ->
-                                val rate = row.ratePermille / 10.0
-                                val rateLabel = if (rate == rate.toInt().toDouble()) {
-                                    rate.toInt().toString()
-                                } else {
-                                    String.format(profile.locale, "%.1f", rate)
-                                }
+                                val rateLabel = com.snapfacture.core.money.TaxRate.formatPercent(row.rateBp, profile.locale)
                                 Text(
                                     stringResource(R.string.tax_report_rate, rateLabel),
                                     style = MaterialTheme.typography.titleSmall,

@@ -116,6 +116,18 @@ object DatabaseModule {
         }
     }
 
+    // v6: tax rates move from permille (base 1000) to basis points
+    // (base 10000) so US rates like 6.25 % are exact. Reinterpretation,
+    // not retyping: every stored rate is multiplied by 10.
+    val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("UPDATE `products` SET `vatRatePermille` = `vatRatePermille` * 10")
+            db.execSQL("UPDATE `invoice_lines` SET `vatRatePermille` = `vatRatePermille` * 10")
+            db.execSQL("UPDATE `quote_lines` SET `vatRatePermille` = `vatRatePermille` * 10")
+            db.execSQL("UPDATE `company` SET `defaultTaxPermille` = `defaultTaxPermille` * 10")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(
@@ -136,7 +148,7 @@ object DatabaseModule {
                     }
                 }
             })
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
             .build()
     }
 

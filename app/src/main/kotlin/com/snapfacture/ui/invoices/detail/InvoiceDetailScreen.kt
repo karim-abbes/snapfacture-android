@@ -66,6 +66,8 @@ fun InvoiceDetailScreen(
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    // Read here: LazyListScope blocks below are not composable contexts.
+    val isFrProfile = LocalCountryProfile.current.code == "FR"
     val inv = state.invoice
 
     var showCreditDialog by rememberSaveable { mutableStateOf(false) }
@@ -274,6 +276,31 @@ fun InvoiceDetailScreen(
                         Icon(Icons.Default.Print, contentDescription = null)
                         Spacer(Modifier.size(8.dp))
                         Text(stringResource(R.string.detail_print))
+                    }
+                }
+            }
+            // E-invoice XML (réforme 2026-2027): the structured CII file a
+            // PDP ingests directly. FR profile only — no such duty in the US.
+            if (isFrProfile) {
+                item {
+                    OutlinedButton(
+                        onClick = {
+                            vm.shareFacturX { file ->
+                                context.startActivity(
+                                    ShareInvoice.intent(
+                                        context = context,
+                                        file = file,
+                                        invoiceNumber = inv.invoice.number,
+                                        companyName = inv.invoice.companyNameAtIssue.orEmpty(),
+                                        recipientEmail = inv.client.email,
+                                        mimeType = "text/xml",
+                                    ),
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                    ) {
+                        Text(stringResource(R.string.detail_share_facturx))
                     }
                 }
             }

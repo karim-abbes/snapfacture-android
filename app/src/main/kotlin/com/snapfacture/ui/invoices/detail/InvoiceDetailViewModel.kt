@@ -1,9 +1,12 @@
 package com.snapfacture.ui.invoices.detail
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.snapfacture.core.facturx.FacturXGenerator
 import com.snapfacture.core.pdf.InvoicePdfGenerator
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.snapfacture.data.local.entity.CompanyEntity
 import com.snapfacture.data.local.entity.InvoiceType
 import com.snapfacture.data.local.relation.InvoiceWithDetails
@@ -37,9 +40,11 @@ data class DetailUiState(
 @HiltViewModel
 class InvoiceDetailViewModel @Inject constructor(
     handle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
     private val invoiceRepo: InvoiceRepository,
     private val companyRepo: CompanyRepository,
     private val pdfGenerator: InvoicePdfGenerator,
+    private val facturXGenerator: FacturXGenerator,
     private val countryPrefs: CountryPreferences,
 ) : ViewModel() {
 
@@ -86,6 +91,19 @@ class InvoiceDetailViewModel @Inject constructor(
         }
         invoiceRepo.attachPdf(inv.invoice.id, file.absolutePath)
         _state.update { it.copy(pdfFile = file) }
+    }
+
+    // The XML is cheap and derived: regenerated on every share rather than
+    // stored, so it always reflects the (immutable) invoice row.
+    fun shareFacturX(onReady: (File) -> Unit) = viewModelScope.launch {
+        val inv = _state.value.invoice ?: return@launch
+        val file = withContext(Dispatchers.IO) {
+            val xml = facturXGenerator.buildXml(inv, sourceInvoiceNumber = _state.value.sourceInvoiceNumber)
+            val dir = File(context.filesDir, "invoices").apply { mkdirs() }
+            val prefix = if (inv.invoice.type == InvoiceType.CREDIT_NOTE) "AV" else "F"
+            File(dir, "$prefix-${inv.invoice.number}.xml").apply { writeText(xml) }
+        }
+        onReady(file)
     }
 
     fun issueCredit(reason: String?, onDone: (Long) -> Unit) {

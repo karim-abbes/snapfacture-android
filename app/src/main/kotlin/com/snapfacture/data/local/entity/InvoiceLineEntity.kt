@@ -27,7 +27,9 @@ data class InvoiceLineEntity(
     // migration multiplied every stored value by 1000.
     @ColumnInfo(name = "quantity") val quantityMilliUnits: Long,
     val unitPriceHtCents: Long,
-    val vatRatePermille: Int,
+    // Basis points (2000 = 20 %, 625 = 6.25 %). Column keeps its pre-v6
+    // name; the v5→v6 migration multiplied every stored value by 10.
+    @ColumnInfo(name = "vatRatePermille") val vatRateBp: Int,
     val lineHtCents: Long,
     val lineVatCents: Long,
     val lineTtcCents: Long,

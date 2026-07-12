@@ -54,10 +54,10 @@ class CatalogViewModel @Inject constructor(
     val items: StateFlow<List<ProductEntity>> =
         repo.observeAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    private suspend fun resolveDefaultTaxPermille(): Int {
-        val companyPermille = companyRepo.get()?.defaultTaxPermille ?: 0
-        if (companyPermille > 0) return companyPermille
-        return countryPrefs.flow.first().profile.defaultTaxRatePermille
+    private suspend fun resolveDefaultTaxBp(): Int {
+        val companyBp = companyRepo.get()?.defaultTaxBp ?: 0
+        if (companyBp > 0) return companyBp
+        return countryPrefs.flow.first().profile.defaultTaxRateBp
     }
 
     fun save(draft: CatalogDraft, onDone: () -> Unit) {
@@ -69,7 +69,7 @@ class CatalogViewModel @Inject constructor(
                     ProductEntity(
                         label = draft.label.trim(),
                         priceTtcCents = cents,
-                        vatRatePermille = resolveDefaultTaxPermille(),
+                        vatRateBp = resolveDefaultTaxBp(),
                         withInstall = draft.withInstall,
                         serviceNote = if (draft.withInstall) note else null,
                         active = draft.active,

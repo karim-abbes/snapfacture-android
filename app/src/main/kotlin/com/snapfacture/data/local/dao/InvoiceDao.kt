@@ -52,7 +52,7 @@ interface InvoiceDao {
     // quarterly VAT filing (or a US sales-tax filing) asks for. Credit
     // note lines are stored negative, so they net out naturally.
     @Query(
-        """SELECT l.vatRatePermille AS ratePermille,
+        """SELECT l.vatRatePermille AS rateBp,
                   SUM(l.lineHtCents) AS htCents,
                   SUM(l.lineVatCents) AS vatCents,
                   SUM(l.lineTtcCents) AS ttcCents
@@ -65,7 +65,7 @@ interface InvoiceDao {
 }
 
 data class VatRateBreakdown(
-    val ratePermille: Int,
+    val rateBp: Int,
     val htCents: Long,
     val vatCents: Long,
     val ttcCents: Long,

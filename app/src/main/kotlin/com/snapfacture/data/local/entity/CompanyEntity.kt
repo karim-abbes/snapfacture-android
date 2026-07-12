@@ -27,7 +27,7 @@ data class CompanyEntity(
     val iban: String?,
     val nextInvoiceNumber: Int,
     @ColumnInfo(defaultValue = "1") val nextQuoteNumber: Int = 1,
-    val defaultTaxPermille: Int = 0,
+    @ColumnInfo(name = "defaultTaxPermille") val defaultTaxBp: Int = 0,
     @ColumnInfo(defaultValue = "MIXED") val operationCategory: OperationCategory = OperationCategory.MIXED,
     @ColumnInfo(defaultValue = "0") val vatOnDebits: Boolean = false,
 )

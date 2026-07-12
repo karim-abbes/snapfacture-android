@@ -15,11 +15,12 @@ object ShareInvoice {
         companyName: String,
         recipientEmail: String? = null,
         isQuote: Boolean = false,
+        mimeType: String = "application/pdf",
     ): Intent {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         val sender = companyName.ifBlank { context.getString(R.string.app_name) }
         val send = Intent(Intent.ACTION_SEND).apply {
-            type = "application/pdf"
+            type = mimeType
             putExtra(Intent.EXTRA_STREAM, uri)
             val subjectRes = if (isQuote) R.string.share_subject_quote else R.string.share_subject
             val bodyRes = if (isQuote) R.string.share_body_quote else R.string.share_body
