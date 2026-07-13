@@ -90,6 +90,10 @@ jobs:
           fi
           echo "Found APK: $APK"
           cp "$APK" artifact/snapfacture-debug.apk
+          SPIKE=$(find spike-assistant/build/outputs/apk/debug -name "*.apk" 2>/dev/null | head -n 1 || true)
+          if [ -n "$SPIKE" ]; then
+            cp "$SPIKE" artifact/spike-assistant-debug.apk
+          fi
           ls -lh artifact/
 
       - name: Upload APK artifact
@@ -108,6 +112,8 @@ jobs:
           body: |
             Build automatique du dernier commit sur ${{ github.ref_name }}.
             Commit: ${{ github.sha }}
-          files: artifact/snapfacture-debug.apk
+          files: |
+            artifact/snapfacture-debug.apk
+            artifact/spike-assistant-debug.apk
           prerelease: true
           make_latest: false

@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Snapfacture"
 include(":app")
+// Harnais d'évaluation phase 0 de l'assistant IA (docs/DESIGN-ASSISTANT-IA.md) — jetable, jamais distribué aux utilisateurs.
+include(":spike-assistant")
